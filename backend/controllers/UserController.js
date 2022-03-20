@@ -1,25 +1,25 @@
 import {
-    getUser,
-    postUser,
-    deleteUser,
+    findUser,
+    createUser,
+    destroyUser,
     updateUser,
   } from "../services/UserService.js";
 import { NotFoundException } from "../errors.js";
 
-async function getUsers(req, res) {
-    if (req.params.email === undefined)
-      res.status(400).send({ message: "Username must be defined" });
+async function getUser(req, res) {
+    if (req.params.id === undefined)
+      res.status(400).send({ message: "ID must be defined" });
     try {
-      const user = await getUser(req.params.username);
+      const user = await findUser(req.params.id);
       res.status(200).json(user);
     } catch (e) {
       return res.status(400).json({ message: e.message });
     }
 }
 
-async function postUsers(req, res) {
+async function postUser(req, res) {
     try {
-      const createdUser = await postUser(
+      const createdUser = await createUser(
         req.body.email,
         req.body.password,
         req.body.name
@@ -30,19 +30,19 @@ async function postUsers(req, res) {
     }
 }
 
-async function deleteUsers(req, res) {
+async function deleteUser(req, res) {
     try {
-      await deleteUser(req.params.email);
+      await destroyUser(req.params.id);
       res.status(200).send();
     } catch (e) {
       res.status(400).send({ message: e.message });
     }
 }
 
-async function updateUsers(req, res) {
+async function patchUser(req, res) {
     try {
-      const email = req.params.email;
-      await updateUser(email, req.body);
+      const id = req.params.id;
+      await updateUser(id, req.body);
       res.status(200).send();
     } catch (e) {
       if (e instanceof NotFoundException) {
@@ -54,4 +54,4 @@ async function updateUsers(req, res) {
     }
   }
 
-  export { getUsers, postUsers, deleteUsers, updateUsers };
+  export { getUser, postUser, deleteUser, patchUser };

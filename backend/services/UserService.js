@@ -6,7 +6,7 @@ import { db } from '../models/index.js';
 
 const User = db.User;
 
-async function postUser(email, password, name) {
+async function createUser(email, password, name) {
     if (password.length < 5 || password.length > 20) {
         const err = new Error(
           "Password must have length between 5 and 20 characters"
@@ -37,21 +37,21 @@ async function postUser(email, password, name) {
     }
 };
 
-async function getUser(email) {
+async function findUser(id) {
     let user = null;
     try {
         user = await User.findOne({
             where: {
-                email: email
+                id: id
             }
         });
         return user;
     } catch(e) {
-        throw new NotFoundException("Email not found");
+        throw new NotFoundException("User not found");
     }
 }
 
-async function getAllUsers() {
+async function findAllUsers() {
     let users = null;
     try {
         users = await User.findAll({
@@ -67,20 +67,20 @@ async function getAllUsers() {
     }
 }
 
-async function deleteUser(username) {
+async function destroyUser(id) {
     try {
       await db.User.destroy({
-        where: { username: username },
+        where: { id: id },
       });
     } catch (e) {
       throw new Error(e.message);
     }
 }
 
-async function updateUser(email, updatedFields) {
+async function updateUser(id, updatedFields) {
     try {
-      if ((await db.User.findOne({ where: { email: email } })) === null)
-        throw new NotFoundException("Email not found");
+      if ((await db.User.findOne({ where: { id: id } })) === null)
+        throw new NotFoundException("User not found");
       const modelKeys = Object.keys(db.User.rawAttributes);
       let subsetFields = modelKeys
         .filter((key) => key in updatedFields)
@@ -90,10 +90,10 @@ async function updateUser(email, updatedFields) {
         }, {});
       if ("password" in subsetFields)
         subsetFields.password = hashPassword(subsetFields.password);
-      await db.User.update(subsetFields, { where: { email: email } });
+      await db.User.update(subsetFields, { where: { id: id } });
     } catch (e) {
       throw new Error(e.message);
     }
   }
 
-  export { postUser, updateUser, deleteUser, getUser, getAllUsers }
+  export { createUser, updateUser, destroyUser, findUser, findAllUsers }
