@@ -1,7 +1,10 @@
-import User from "../models/UserModel.js";
 import types from "sequelize";
 import hashPassword from "../hashing.js";
 import { NotFoundException } from "../errors.js";
+import { UniqueConstraintError } from 'sequelize';
+import { db } from '../models/index.js';
+
+const User = db.User;
 
 async function postUser(email, password, name) {
     if (password.length < 5 || password.length > 20) {
@@ -18,6 +21,9 @@ async function postUser(email, password, name) {
             name: name
         });
     } catch (e) {
+        if(e instanceof UniqueConstraintError) {
+            throw new Error("Account with this email already exists");
+        }
         if (e.errors[0] instanceof types.ValidationErrorItem) {
             const errorData = (({ message, path }) => ({ message, path }))(
               e.errors[0]
