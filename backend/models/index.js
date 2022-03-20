@@ -1,5 +1,6 @@
 import { dbConfig } from "../config/dbConfig.js";
 import { Sequelize, DataTypes } from "sequelize";
+import User from "./UserModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -27,6 +28,8 @@ sequelize.authenticate().then( ()=> {
 const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
+
+db.User = User(sequelize, DataTypes)
 
 db.sequelize.sync({force: false}).then(() => {
     console.log("Re-Sync done!");
