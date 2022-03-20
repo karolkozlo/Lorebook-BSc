@@ -1,6 +1,6 @@
 import express from "express";
 import cors from 'cors';
-//import apiRouter from "./routes/index.js";
+import apiRouter from "./routes/index.js";
 
 const app = express();
 
@@ -16,11 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //routers
-/*app.use('/', apiRouter);
-
-app.get('/users', (req, res) => {
-    res.json({ message: 'hello from api'} )
-});*/
+app.use('/', apiRouter);
 
 
 //port
