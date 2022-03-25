@@ -33,8 +33,11 @@ db.sequelize = sequelize;
 db.User = User(sequelize, DataTypes);
 db.Universe = Universe(sequelize, DataTypes);
 
-db.User.associate(db);
-db.Universe.associate(db);
+for(const property in db) {
+    if(db[property].associate) {
+        db[property].associate(db);
+    }
+}
 
 db.sequelize.sync({force: false}).then(() => {
     console.log("Re-Sync done!");
