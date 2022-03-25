@@ -2,7 +2,9 @@ import { Model } from "sequelize";
 
 const User = (sequelize, DataTypes) => {
     class User extends Model {
-        static associate(models) {}
+        static associate(models) {
+            User.hasMany(models.Universe);
+        }
     }
     User.init(
         {
@@ -35,6 +37,7 @@ const User = (sequelize, DataTypes) => {
             sequelize,
             modelName: 'User',
             timestamps: false,
+            underscored: true,
         }
     );
     return User;

@@ -1,6 +1,7 @@
 import { dbConfig } from "../config/dbConfig.js";
 import { Sequelize, DataTypes } from "sequelize";
 import User from "./UserModel.js";
+import Universe from "./UniverseModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -29,7 +30,11 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-db.User = User(sequelize, DataTypes)
+db.User = User(sequelize, DataTypes);
+db.Universe = Universe(sequelize, DataTypes);
+
+db.User.associate(db);
+db.Universe.associate(db);
 
 db.sequelize.sync({force: false}).then(() => {
     console.log("Re-Sync done!");
