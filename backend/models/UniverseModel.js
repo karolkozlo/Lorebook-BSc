@@ -3,7 +3,9 @@ import { Model } from "sequelize";
 const Universe = (sequelize, DataTypes) => {
     class Universe extends Model {
         static associate(models) {
-            Universe.belongsTo(models.User);
+            Universe.belongsTo(models.User, {
+                foreignKey: "User_id"
+            });
         }
     }
     Universe.init(

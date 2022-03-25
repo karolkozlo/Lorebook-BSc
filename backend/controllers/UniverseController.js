@@ -4,7 +4,7 @@ import {
     findUserUniverses,
     updateUniverse,
     destroyUniverse,
-} from "../services/UniverseService";
+} from "../services/UniverseService.js";
 import { NotFoundException } from "../errors.js";
 
 async function getUniverse(req, res) {
