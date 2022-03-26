@@ -2,6 +2,7 @@ import { dbConfig } from "../config/dbConfig.js";
 import { Sequelize, DataTypes } from "sequelize";
 import User from "./UserModel.js";
 import Universe from "./UniverseModel.js";
+import Character from "./CharacterModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -32,6 +33,7 @@ db.sequelize = sequelize;
 
 db.User = User(sequelize, DataTypes);
 db.Universe = Universe(sequelize, DataTypes);
+db.Character = Character(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {

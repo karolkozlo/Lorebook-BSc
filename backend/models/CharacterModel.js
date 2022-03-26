@@ -1,17 +1,14 @@
 import { Model } from "sequelize";
 
-const Universe = (sequelize, DataTypes) => {
-    class Universe extends Model {
+const Character = (sequelize, DataTypes) => {
+    class Character extends Model {
         static associate(models) {
-            Universe.belongsTo(models.User, {
-                foreignKey: "User_id"
-            });
-            Universe.hasMany(models.Character, {
+            Character.belongsTo(models.Universe, {
                 foreignKey: "Universe_id"
             });
         }
     }
-    Universe.init(
+    Character.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -24,17 +21,21 @@ const Universe = (sequelize, DataTypes) => {
             },
             description: {
                 type: DataTypes.STRING,
+            },
+            last_modified: {
+                type: DataTypes.DATE,
+                allowNull: false
             }
         },
         {
             sequelize,
-            modelName: 'Universe',
+            modelName: 'Character',
             timestamps: false,
             underscored: true,
         }
     );
-    return Universe;
+    return Character;
 
 };
 
-export default Universe;
+export default Character;
