@@ -1,47 +1,47 @@
 import { Model } from "sequelize";
 
-const Character = (sequelize, DataTypes) => {
-    class Character extends Model {
+const Relation = (sequelize, DataTypes) => {
+    class Relation extends Model {
         static associate(models) {
-            Character.belongsTo(models.Universe, {
-                foreignKey: "Universe_id"
-            });
-            Character.hasMany(models.Relation, {
+            Relation.belongsTo(models.Character, {
                 foreignKey: "Character1_id"
             });
-            Character.hasMany(models.Relation, {
+            Relation.belongsTo(models.Character, {
                 foreignKey: "Character2_id"
             });
         }
     }
-    Character.init(
+    Relation.init(
         {
             id: {
                 type: DataTypes.INTEGER,
                 primaryKey: true,
                 autoIncrement: true
             },
-            name: {
-                type: DataTypes.STRING,
+            level: {
+                type: DataTypes.INTEGER,
                 allowNull: false,
             },
             description: {
                 type: DataTypes.STRING,
-            },
-            last_modified: {
-                type: DataTypes.DATE,
-                allowNull: false
             }
         },
         {
             sequelize,
-            modelName: 'Character',
+            modelName: 'Relation',
             timestamps: false,
             underscored: true,
+            indexes: [
+                {
+                    name: 'Relation_U',
+                    unique: true,
+                    fields: ['Character1_id', 'Character2_id']
+                }
+            ]
         }
     );
-    return Character;
+    return Relation;
 
 };
 
-export default Character;
+export default Relation;
