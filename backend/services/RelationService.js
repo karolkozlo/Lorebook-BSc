@@ -66,7 +66,7 @@ async function destroyRelation(id) {
           where: { id: id },
         });
       } catch (err) {
-        throw new Error(e.message);
+        throw new Error(err.message);
       }
 };
 
@@ -81,7 +81,7 @@ async function updateRelation(id, updatedFields) {
         }, {});
         await db.Relation.update(subsetFields, { where: { id: id } })
     } catch (err) {
-        throw new Error(e.message);
+        throw new Error(err.message);
     }
 };
 

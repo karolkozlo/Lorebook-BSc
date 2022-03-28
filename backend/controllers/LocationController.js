@@ -1,37 +1,37 @@
 import {
-    createCharacter,
-    findCharacter,
-    findUniverseCharacters,
-    searchCharacters,
-    updateCharacter,
-    destroyCharacter,
-} from "../services/CharacterService.js";
+    createLocation,
+    findLocation,
+    findUniverseLocations,
+    searchLocations,
+    updateLocation,
+    destroyLocation,
+} from "../services/LocationService.js";
 import { NotFoundException } from "../errors.js";
 
-async function getCharacter(req, res) {
+async function getLocation(req, res) {
     if (req.params.id === undefined)
       res.status(400).send({ message: "ID must be defined" });
     try {
-      const Character = await findCharacter(req.params.id);
-      res.status(200).json(Character);
+      const location = await findLocation(req.params.id);
+      res.status(200).json(location);
     } catch (e) {
       return res.status(400).json({ message: e.message });
     }
 }
 
-async function getUniverseCharacters(req, res) {
+async function getUniverseLocations(req, res) {
     if (req.params.universeID === undefined) {
         res.status(400).send({ message: "universeID must be defined" });
     }
     try {
-      const Characters = await findUniverseCharacters(req.params.universeID, parseInt(req.query.limit), parseInt(req.query.offset));
-      res.status(200).json(Characters);
+      const locations = await findUniverseLocations(req.params.universeID, parseInt(req.query.limit), parseInt(req.query.offset));
+      res.status(200).json(locations);
     } catch (e) {
       return res.status(400).json({ message: e.message });
     }
 }
 
-async function getSearchedCharacters(req, res) {
+async function getSearchedLocations(req, res) {
     if (req.params.universeID === undefined) {
         res.status(400).send({ message: "universeID must be defined" });
     }
@@ -39,39 +39,41 @@ async function getSearchedCharacters(req, res) {
       let q = req.query.q;
       let limit = parseInt(req.query.limit);
       let offset = parseInt(req.query.offset);
-      const Characters = await searchCharacters(req.params.universeID, q, limit, offset);
-      res.status(200).json(Characters);
+      const locations = await searchLocations(req.params.universeID, q, limit, offset);
+      res.status(200).json(locations);
     } catch (e) {
       return res.status(400).json({ message: e.message });
     }
 }
 
-async function postCharacter(req, res) {
+async function postLocation(req, res) {
     try {
-      const createdCharacter = await createCharacter(
+        let parentLocation = req.body.locationID ? req.body.locationID : null;
+      const createdLocation = await createLocation(
         req.body.name,
         req.body.description,
-        req.body.universeID
+        req.body.universeID,
+        parentLocation
       );
-      res.status(201).json(createdCharacter);
+      res.status(201).json(createdLocation);
     } catch (e) {
       res.status(400).send({ message: e.message });
     }
 }
 
-async function deleteCharacter(req, res) {
+async function deleteLocation(req, res) {
     try {
-      await destroyCharacter(req.params.id);
+      await destroyLocation(req.params.id);
       res.status(200).send();
     } catch (e) {
       res.status(400).send({ message: e.message });
     }
 }
 
-async function patchCharacter(req, res) {
+async function patchLocation(req, res) {
     try {
       const id = req.params.id;
-      await updateCharacter(id, req.body);
+      await updateLocation(id, req.body);
       res.status(200).send();
     } catch (e) {
       if (e instanceof NotFoundException) {
@@ -83,4 +85,4 @@ async function patchCharacter(req, res) {
     }
   }
 
-  export { getCharacter, getUniverseCharacters, getSearchedCharacters, postCharacter, deleteCharacter, patchCharacter };
+  export { getLocation, getUniverseLocations, getSearchedLocations, postLocation, deleteLocation, patchLocation };
