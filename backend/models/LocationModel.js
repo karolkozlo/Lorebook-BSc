@@ -1,20 +1,20 @@
 import { Model } from "sequelize";
 
-const Universe = (sequelize, DataTypes) => {
-    class Universe extends Model {
+const Location = (sequelize, DataTypes) => {
+    class Location extends Model {
         static associate(models) {
-            Universe.belongsTo(models.User, {
-                foreignKey: "User_id"
-            });
-            Universe.hasMany(models.Character, {
+            Location.belongsTo(models.Universe, {
                 foreignKey: "Universe_id"
             });
-            Universe.hasMany(models.Location, {
-                foreignKey: "Universe_id"
+            Location.hasMany(models.Location, {
+                foreignKey: "Location_id"
+            });
+            Location.belongsTo(models.Location, {
+                foreignKey: "Location_id"
             });
         }
     }
-    Universe.init(
+    Location.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -27,17 +27,21 @@ const Universe = (sequelize, DataTypes) => {
             },
             description: {
                 type: DataTypes.STRING,
+            },
+            last_modified: {
+                type: DataTypes.DATE,
+                allowNull: false
             }
         },
         {
             sequelize,
-            modelName: 'Universe',
+            modelName: 'Location',
             timestamps: false,
             underscored: true,
         }
     );
-    return Universe;
+    return Location;
 
 };
 
-export default Universe;
+export default Location;
