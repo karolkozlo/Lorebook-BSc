@@ -2,34 +2,36 @@ import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize } from "sequelize";
 
-async function createCharacter(name, description, universeID) {
+async function createLocation(name, description, universeID, parentLocationID = null) {
     let lastModified = new Date().toISOString().slice(0, 19).replace('T', ' ');
     try {
-        db.Character.create({
+        const location = await db.Location.create({
             name: name,
             description: description,
             last_modified: lastModified,
-            Universe_id: universeID
+            Universe_id: universeID,
+            Location_id: parentLocationID
         });
+        return location;
     } catch(err) {
         throw new Error(err.message);
     }
 };
 
-async function findCharacter(id) {
+async function findLocation(id) {
     try {
-        const Character = db.Character.findOne({
+        const location = db.Location.findOne({
             where: {
                 id: id
             }
         });
-        return Character;
+        return location;
     } catch(err) {
-        throw new NotFoundException("Character not found");
+        throw new NotFoundException("Location not found");
     }
 };
 
-async function findUniverseCharacters(universeID, limit, offset) {
+async function findUniverseLocations(universeID, limit, offset) {
     let findLimit = limit;
     if(!limit) {
         findLimit = 50;
@@ -39,7 +41,7 @@ async function findUniverseCharacters(universeID, limit, offset) {
         findOffset = 0;
     }
     try {
-        const Characters = db.Character.findAll({
+        const locations = db.Location.findAll({
             where: {
                 Universe_id: universeID,
             },
@@ -47,13 +49,13 @@ async function findUniverseCharacters(universeID, limit, offset) {
             limit: findLimit,
             order: [['last_modified', 'DESC']]
         });
-        return Characters;
+        return locations;
     } catch(err) {
-        throw new NotFoundException("Characters for this universe were not found");
+        throw new NotFoundException("Locations for this universe were not found");
     }
 };
 
-async function searchCharacters(universeID, expr, limit, offset) {
+async function searchLocations(universeID, expr, limit, offset) {
     let findLimit = limit;
     if(!limit) {
         findLimit = 50;
@@ -65,7 +67,7 @@ async function searchCharacters(universeID, expr, limit, offset) {
     let searchLike = '.*'+expr+'.*';
     let Op = Sequelize.Op;
     try {
-        const Characters = db.Character.findAll({
+        const locations = db.Location.findAll({
             where: {
                 [Op.and]: [
                     {Universe_id: universeID},
@@ -78,15 +80,15 @@ async function searchCharacters(universeID, expr, limit, offset) {
             limit: findLimit,
             order: [['last_modified', 'DESC']]
         });
-        return Characters;
+        return locations;
     } catch(err) {
         throw new Error(err.message);
     }
 }
 
-async function destroyCharacter(id) {
+async function destroyLocation(id) {
     try {
-        await db.Character.destroy({
+        await db.Location.destroy({
           where: { id: id },
         });
       } catch (err) {
@@ -94,10 +96,10 @@ async function destroyCharacter(id) {
       }
 };
 
-async function updateCharacter(id, updatedFields) {
+async function updateLocation(id, updatedFields) {
     let lastModified = new Date().toISOString().slice(0, 19).replace('T', ' ');
     try {
-        const modelKeys = Object.keys(db.Character.getAttributes());
+        const modelKeys = Object.keys(db.Location.getAttributes());
         let subsetFields = modelKeys
             .filter((key) => key in updatedFields)
             .reduce((subset, key) => {
@@ -105,10 +107,10 @@ async function updateCharacter(id, updatedFields) {
             return subset;
         }, {});
         subsetFields.last_modified = lastModified;
-        await db.Character.update(subsetFields, { where: { id: id } })
+        await db.Location.update(subsetFields, { where: { id: id } })
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
-export { createCharacter, updateCharacter, findCharacter, findUniverseCharacters, searchCharacters, destroyCharacter };
+export { createLocation, updateLocation, findLocation, findUniverseLocations, searchLocations, destroyLocation };

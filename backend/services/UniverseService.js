@@ -45,7 +45,7 @@ async function destroyUniverse(id) {
           where: { id: id },
         });
       } catch (err) {
-        throw new Error(e.message);
+        throw new Error(err.message);
       }
 }
 
@@ -60,7 +60,7 @@ async function updateUniverse(id, updatedFields) {
         }, {});
         await db.Universe.update(subsetFields, { where: { id: id } })
     } catch (err) {
-        throw new Error(e.message);
+        throw new Error(err.message);
     }
 }
 
