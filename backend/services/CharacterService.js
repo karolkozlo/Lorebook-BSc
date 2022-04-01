@@ -1,9 +1,10 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize } from "sequelize";
+import { currentDateTimetoIsoString } from "./utils.js";
 
 async function createCharacter(name, description, universeID) {
-    let lastModified = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let lastModified = currentDateTimetoIsoString();
     try {
         db.Character.create({
             name: name,
@@ -95,7 +96,7 @@ async function destroyCharacter(id) {
 };
 
 async function updateCharacter(id, updatedFields) {
-    let lastModified = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let lastModified = currentDateTimetoIsoString();
     try {
         const modelKeys = Object.keys(db.Character.getAttributes());
         let subsetFields = modelKeys
