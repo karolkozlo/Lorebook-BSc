@@ -1,9 +1,10 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize } from "sequelize";
+import { currentDateTimetoIsoString } from "./utils.js";
 
 async function createLocation(name, description, universeID, parentLocationID = null) {
-    let lastModified = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let lastModified = currentDateTimetoIsoString();
     try {
         const location = await db.Location.create({
             name: name,
@@ -97,7 +98,7 @@ async function destroyLocation(id) {
 };
 
 async function updateLocation(id, updatedFields) {
-    let lastModified = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    let lastModified = currentDateTimetoIsoString();
     try {
         const modelKeys = Object.keys(db.Location.getAttributes());
         let subsetFields = modelKeys

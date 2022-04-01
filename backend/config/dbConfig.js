@@ -9,5 +9,10 @@ export const dbConfig = {
         min: 0,
         acquire: 30000,
         idle: 10000,
+    },
+    dialectOptions: {
+        useUTC: false,
+        dateStrings: true,
+        typeCast: true
     }
 };
