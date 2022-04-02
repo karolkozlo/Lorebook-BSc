@@ -12,6 +12,9 @@ const Universe = (sequelize, DataTypes) => {
             Universe.hasMany(models.Location, {
                 foreignKey: "Universe_id"
             });
+            Universe.hasMany(models.Category, {
+                foreignKey: "Universe_id"
+            });
         }
     }
     Universe.init(
