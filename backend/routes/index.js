@@ -5,6 +5,7 @@ import CharacterRouter from "./CharacterRouter.js";
 import RelationRouter from "./RelationRouter.js";
 import LocationRouter from "./LocationRouter.js";
 import CategoryRouter from "./CategoryRouter.js";
+import EntryRouter from "./EntryRouter.js";
 
 // define /api/* routers
 const mainRouter = new Router();
@@ -14,6 +15,7 @@ mainRouter.use(CharacterRouter);
 mainRouter.use(RelationRouter);
 mainRouter.use(LocationRouter);
 mainRouter.use(CategoryRouter);
+mainRouter.use(EntryRouter);
 // define /api router
 const apiRouter = new Router();
 apiRouter.use("/api", mainRouter);

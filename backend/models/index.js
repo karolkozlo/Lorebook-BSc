@@ -6,6 +6,7 @@ import Character from "./CharacterModel.js";
 import Relation from "./RelationModel.js";
 import Location from "./LocationModel.js";
 import Category from "./CategoryModel.js";
+import Entry from "./EntryModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -40,6 +41,7 @@ db.Character = Character(sequelize, DataTypes);
 db.Relation = Relation(sequelize, DataTypes);
 db.Location = Location(sequelize, DataTypes);
 db.Category = Category(sequelize, DataTypes);
+db.Entry = Entry(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {

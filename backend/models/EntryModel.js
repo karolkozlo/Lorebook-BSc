@@ -1,18 +1,15 @@
 import { Model } from "sequelize";
 
-const Category = (sequelize, DataTypes) => {
-    class Category extends Model {
+const Entry = (sequelize, DataTypes) => {
+    class Entry extends Model {
         static associate(models) {
-            Category.belongsTo(models.Universe, {
-                foreignKey: "Universe_id"
-            });
-            Category.hasMany(models.Entry, {
+            Entry.belongsTo(models.Category, {
                 foreignKey: "Category_id",
                 onDelete: "CASCADE"
             });
         }
     }
-    Category.init(
+    Entry.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -23,25 +20,25 @@ const Category = (sequelize, DataTypes) => {
                 type: DataTypes.STRING,
                 allowNull: false,
             },
+            description: {
+                type: DataTypes.STRING,
+            },
+            last_modified: {
+                type: DataTypes.DATE,
+                allowNull: false
+            }
         },
         {
             sequelize,
-            modelName: 'Category',
+            modelName: 'Entry',
             timestamps: false,
             underscored: true,
             freezeTableName: true,
-            tableName: 'categories',
-            indexes: [
-                {
-                    name: 'Category_U',
-                    unique: true,
-                    fields: ['name', 'Universe_id']
-                }
-            ]
+            tableName: 'entries',
         }
     );
-    return Category;
+    return Entry;
 
 };
 
-export default Category;
+export default Entry;
