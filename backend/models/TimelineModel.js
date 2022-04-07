@@ -6,6 +6,10 @@ const Timeline = (sequelize, DataTypes) => {
             Timeline.belongsTo(models.Universe, {
                 foreignKey: "Universe_id"
             });
+            Timeline.belongsToMany(models.Event, {
+                through: models.TimelineEvent,
+                foreignKey: "Timeline_id"
+            });
         }
     }
     Timeline.init(
