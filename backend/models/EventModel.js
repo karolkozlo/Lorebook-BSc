@@ -3,6 +3,9 @@ import { Model } from "sequelize";
 const Event = (sequelize, DataTypes) => {
     class Event extends Model {
         static associate(models) {
+            Event.belongsTo(models.Universe, {
+                foreignKey: "Universe_id"
+            });
             Event.belongsToMany(models.Timeline, {
                 through: models.TimelineEvent,
                 foreignKey: 'Event_id'
