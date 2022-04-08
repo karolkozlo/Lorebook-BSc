@@ -94,7 +94,7 @@ async function findTimelineEvents(timelineID, limit, offset) {
     }
 }
 
-/*
+
 async function searchEvents(universeID, expr, limit, offset) {
     let findLimit = limit;
     if(!limit) {
@@ -105,27 +105,29 @@ async function searchEvents(universeID, expr, limit, offset) {
         findOffset = 0;
     }
     let searchLike = '.*'+expr+'.*';
-    let Op = Sequelize.Op;
     try {
-        const events = db.Event.findAll({
-            where: {
-                [Op.and]: [
-                    {Universe_id: universeID},
-                    {name: {
-                        [Op.regexp]: searchLike
-                    }}
-                ]
-            },
-            offset: findOffset,
-            limit: findLimit,
-            order: [['last_modified', 'DESC']]
+        const events = await db.sequelize.query(`SELECT e.id, e.name, e.description, e.year, e.month, e.day, e.last_modified
+        FROM universes u JOIN timelines t ON u.id = t.universe_id
+        JOIN timeline_event te ON t.id = te.Timeline_id
+        JOIN events e ON e.id = te.Event_id AND u.id = :universeID
+        WHERE e.name REGEXP :like
+        ORDER BY e.last_modified DESC
+        LIMIT :limit
+        OFFSET :offset;`,
+        {
+            type: QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID,
+                limit: findLimit,
+                offset: findOffset,
+                like: searchLike
+            }
         });
         return events;
     } catch(err) {
         throw new Error(err.message);
     }
 }
-*/
 
 async function destroyEvent(id) {
     try {
@@ -154,4 +156,4 @@ async function updateEvent(id, updatedFields) {
     }
 };
 
-export { /*createEvent,*/ updateEvent, findEvent, findUniverseEvents, /*searchEvents,*/findTimelineEvents, destroyEvent };
+export { /*createEvent,*/ updateEvent, findEvent, findUniverseEvents, searchEvents, findTimelineEvents, destroyEvent };
