@@ -32,7 +32,7 @@ async function findEvent(id) {
     }
 };
 
-/*
+
 async function findUniverseEvents(universeID, limit, offset) {
     let findLimit = limit;
     if(!limit) {
@@ -43,19 +43,26 @@ async function findUniverseEvents(universeID, limit, offset) {
         findOffset = 0;
     }
     try {
-        const events = db.Event.findAll({
-            where: {
-                Universe_id: universeID,
-            },
-            offset: findOffset,
-            limit: findLimit,
-            order: [['last_modified', 'DESC']]
+        const events = await db.sequelize.query(`SELECT e.id, e.name, e.description, e.year, e.month, e.day, e.last_modified
+        FROM universes u JOIN timelines t ON u.id = t.universe_id
+        JOIN timeline_event te ON t.id = te.Timeline_id
+        JOIN events e ON e.id = te.Event_id AND u.id = :universeID
+        ORDER BY e.last_modified DESC
+        LIMIT :limit
+        OFFSET :offset;`,
+        {
+            type: QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID,
+                limit: findLimit,
+                offset: findOffset
+            }
         });
         return events;
     } catch(err) {
         throw new NotFoundException("Events for this universe were not found");
     }
-};*/
+};
 
 async function findTimelineEvents(timelineID, limit, offset) {
     let findLimit = limit;
@@ -147,4 +154,4 @@ async function updateEvent(id, updatedFields) {
     }
 };
 
-export { /*createEvent,*/ updateEvent, findEvent, /*findUniverseEvents,*/ /*searchEvents,*/findTimelineEvents, destroyEvent };
+export { /*createEvent,*/ updateEvent, findEvent, findUniverseEvents, /*searchEvents,*/findTimelineEvents, destroyEvent };
