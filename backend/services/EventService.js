@@ -129,6 +129,19 @@ async function searchEvents(universeID, expr, limit, offset) {
     }
 }
 
+async function destroyEventTimeline(timelineID, eventID) {
+    try {
+        await db.TimelineEvent.destroy({
+          where: {
+              Timeline_id: timelineID,
+              Event_id: eventID
+          },
+        });
+      } catch (err) {
+        throw new Error(err.message);
+      }
+}
+
 async function destroyEvent(id) {
     try {
         await db.Event.destroy({
@@ -156,4 +169,4 @@ async function updateEvent(id, updatedFields) {
     }
 };
 
-export { /*createEvent,*/ updateEvent, findEvent, findUniverseEvents, searchEvents, findTimelineEvents, destroyEvent };
+export { /*createEvent,*/ updateEvent, findEvent, findUniverseEvents, searchEvents, findTimelineEvents, destroyEvent, destroyEventTimeline };
