@@ -3,7 +3,7 @@ import { NotFoundException } from "../errors.js";
 import { Sequelize, QueryTypes } from "sequelize";
 import { currentDateTimetoIsoString } from "./utils.js";
 
-/*async function createEvent(name, description, date) {
+async function createEvent(universeID, name, description, date) {
     let lastModified = currentDateTimetoIsoString();
     try {
         db.Event.create({
@@ -12,12 +12,13 @@ import { currentDateTimetoIsoString } from "./utils.js";
             last_modified: lastModified,
             year: date.year,
             month: date.month,
-            day: date.day
+            day: date.day,
+            Universe_id: universeID
         });
     } catch(err) {
         throw new Error(err.message);
     }
-};*/
+};
 
 async function findEvent(id) {
     try {
@@ -159,4 +160,4 @@ async function updateEvent(id, updatedFields) {
     }
 };
 
-export { /*createEvent,*/ updateEvent, findEvent, findUniverseEvents, searchEvents, findTimelineEvents, destroyEvent, destroyEventTimeline };
+export { createEvent, updateEvent, findEvent, findUniverseEvents, searchEvents, findTimelineEvents, destroyEvent, destroyEventTimeline };
