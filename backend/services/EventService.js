@@ -43,20 +43,13 @@ async function findUniverseEvents(universeID, limit, offset) {
         findOffset = 0;
     }
     try {
-        const events = await db.sequelize.query(`SELECT e.id, e.name, e.description, e.year, e.month, e.day, e.last_modified
-        FROM universes u JOIN timelines t ON u.id = t.universe_id
-        JOIN timeline_event te ON t.id = te.Timeline_id
-        JOIN events e ON e.id = te.Event_id AND u.id = :universeID
-        ORDER BY e.last_modified DESC
-        LIMIT :limit
-        OFFSET :offset;`,
-        {
-            type: QueryTypes.SELECT,
-            replacements: {
-                universeID: universeID,
-                limit: findLimit,
-                offset: findOffset
-            }
+        const events = db.Event.findAll({
+            where: {
+                Universe_id: universeID,
+            },
+            offset: findOffset,
+            limit: findLimit,
+            order: [['last_modified', 'DESC']]
         });
         return events;
     } catch(err) {
@@ -105,23 +98,20 @@ async function searchEvents(universeID, expr, limit, offset) {
         findOffset = 0;
     }
     let searchLike = '.*'+expr+'.*';
+    let Op = Sequelize.Op;
     try {
-        const events = await db.sequelize.query(`SELECT e.id, e.name, e.description, e.year, e.month, e.day, e.last_modified
-        FROM universes u JOIN timelines t ON u.id = t.universe_id
-        JOIN timeline_event te ON t.id = te.Timeline_id
-        JOIN events e ON e.id = te.Event_id AND u.id = :universeID
-        WHERE e.name REGEXP :like
-        ORDER BY e.last_modified DESC
-        LIMIT :limit
-        OFFSET :offset;`,
-        {
-            type: QueryTypes.SELECT,
-            replacements: {
-                universeID: universeID,
-                limit: findLimit,
-                offset: findOffset,
-                like: searchLike
-            }
+        const events = await db.Event.findAll({
+            where: {
+                [Op.and]: [
+                    {Universe_id: universeID},
+                    {name: {
+                        [Op.regexp]: searchLike
+                    }}
+                ]
+            },
+            offset: findOffset,
+            limit: findLimit,
+            order: [['last_modified', 'DESC']]
         });
         return events;
     } catch(err) {
