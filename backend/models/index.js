@@ -8,6 +8,8 @@ import Location from "./LocationModel.js";
 import Category from "./CategoryModel.js";
 import Entry from "./EntryModel.js";
 import Timeline from "./TimelineModel.js";
+import Event from "./EventModel.js";
+import TimelineEvent from "./TimelineEventModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -44,6 +46,8 @@ db.Location = Location(sequelize, DataTypes);
 db.Category = Category(sequelize, DataTypes);
 db.Entry = Entry(sequelize, DataTypes);
 db.Timeline = Timeline(sequelize, DataTypes);
+db.Event = Event(sequelize, DataTypes);
+db.TimelineEvent = TimelineEvent(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {
