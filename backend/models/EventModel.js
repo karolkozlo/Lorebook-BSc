@@ -37,7 +37,7 @@ const Event = (sequelize, DataTypes) => {
                 },
             },
             month : {
-                type: DataTypes.INTEGER,
+                type: DataTypes.TINYINT,
                 validate: {
                     isInt: true,
                     min: 1,
@@ -45,7 +45,7 @@ const Event = (sequelize, DataTypes) => {
                 },
             },
             day: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.TINYINT,
             }
         },
         {
