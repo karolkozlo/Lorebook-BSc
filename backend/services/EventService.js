@@ -44,6 +44,17 @@ async function createEvent(universeID, name, description, date) {
     }
 };
 
+async function addEventToTimeline(eventID, timelineID) {
+    try {
+        const event = await db.Event.findByPk(eventID);
+        await db.Timeline.findByPk(timelineID).then(async (timeline) => {
+            await timeline.addEvent(event);
+        });
+    } catch(err) {
+        throw new Error(err.message);
+    }
+}
+
 async function findEvent(id) {
     try {
         const event = db.Event.findOne({
@@ -191,6 +202,7 @@ async function updateEvent(id, updatedFields) {
 
 export {
     createEvent,
+    addEventToTimeline,
     updateEvent,
     findEvent,
     findUniverseEvents,
