@@ -3,9 +3,33 @@ import { NotFoundException } from "../errors.js";
 import { Sequelize, QueryTypes } from "sequelize";
 import { currentDateTimetoIsoString } from "./utils.js";
 
+function checkEventDate(year, m, d) {
+    if (m < 1 || m > 12) {
+        return false;
+    }
+    if (d < 1 || d > 31) {
+        return false;
+    }
+    if (m == 2) {
+        if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+            return (d <= 29);
+        }
+        else {
+            return (d <= 28);
+        }
+    }
+    if (m == 4 || m == 6 || m == 9 || m == 11) {
+            return (d <= 30);
+    }
+    return true;
+}
+
 async function createEvent(universeID, name, description, date) {
     let lastModified = currentDateTimetoIsoString();
     try {
+        if(!checkEventDate(date.year, date.month, date.day)) {
+            throw new Error("Date for event is invalid!");
+        }
         db.Event.create({
             name: name,
             description: description,
@@ -154,10 +178,24 @@ async function updateEvent(id, updatedFields) {
             return subset;
         }, {});
         subsetFields.last_modified = lastModified;
+        if(subsetFields.year && subsetFields.month && subsetFields.day) {
+            if(!checkEventDate(subsetFields.year, subsetFields.month, subsetFields.day)) {
+                throw new Error("Date for event is invalid!");
+            }
+        }
         await db.Event.update(subsetFields, { where: { id: id } })
     } catch (err) {
         throw new Error(err.message);
     }
 };
 
-export { createEvent, updateEvent, findEvent, findUniverseEvents, searchEvents, findTimelineEvents, destroyEvent, destroyEventTimeline };
+export {
+    createEvent,
+    updateEvent,
+    findEvent,
+    findUniverseEvents,
+    searchEvents,
+    findTimelineEvents,
+    destroyEvent,
+    destroyEventTimeline
+ };
