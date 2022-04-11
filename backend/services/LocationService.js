@@ -2,6 +2,7 @@ import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize } from "sequelize";
 import { currentDateTimetoIsoString } from "./utils.js";
+import { createContent } from "./ContentService.js";
 
 async function createLocation(name, description, universeID, parentLocationID = null) {
     let lastModified = currentDateTimetoIsoString();
@@ -13,6 +14,7 @@ async function createLocation(name, description, universeID, parentLocationID = 
             Universe_id: universeID,
             Location_id: parentLocationID
         });
+        await createContent(location.getDataValue("id"), "Location");
         return location;
     } catch(err) {
         throw new Error(err.message);

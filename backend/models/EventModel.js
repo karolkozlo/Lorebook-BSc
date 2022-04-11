@@ -10,6 +10,10 @@ const Event = (sequelize, DataTypes) => {
                 through: models.TimelineEvent,
                 foreignKey: 'Event_id'
             });
+            Event.hasOne(models.Content, {
+                foreignKey: "Event_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Event.init(

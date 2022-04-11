@@ -2,6 +2,7 @@ import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize } from "sequelize";
 import { currentDateTimetoIsoString } from "./utils.js";
+import { createContent } from "./ContentService.js";
 
 async function createEntry(name, description, categoryID) {
     let lastModified = currentDateTimetoIsoString();
@@ -12,6 +13,7 @@ async function createEntry(name, description, categoryID) {
             last_modified: lastModified,
             Category_id: categoryID
         });
+        await createContent(entry.getDataValue("id"), "Entry");
         return entry;
     } catch(err) {
         throw new Error(err.message);

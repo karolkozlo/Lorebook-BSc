@@ -2,16 +2,19 @@ import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize } from "sequelize";
 import { currentDateTimetoIsoString } from "./utils.js";
+import { createContent } from "./ContentService.js";
 
 async function createCharacter(name, description, universeID) {
     let lastModified = currentDateTimetoIsoString();
     try {
-        db.Character.create({
+        const character = await db.Character.create({
             name: name,
             description: description,
             last_modified: lastModified,
             Universe_id: universeID
         });
+        await createContent(character.getDataValue("id"), "Character");
+        return character;
     } catch(err) {
         throw new Error(err.message);
     }
@@ -19,12 +22,12 @@ async function createCharacter(name, description, universeID) {
 
 async function findCharacter(id) {
     try {
-        const Character = db.Character.findOne({
+        const character = db.Character.findOne({
             where: {
                 id: id
             }
         });
-        return Character;
+        return character;
     } catch(err) {
         throw new NotFoundException("Character not found");
     }
@@ -40,7 +43,7 @@ async function findUniverseCharacters(universeID, limit, offset) {
         findOffset = 0;
     }
     try {
-        const Characters = db.Character.findAll({
+        const characters = db.Character.findAll({
             where: {
                 Universe_id: universeID,
             },
@@ -48,7 +51,7 @@ async function findUniverseCharacters(universeID, limit, offset) {
             limit: findLimit,
             order: [['last_modified', 'DESC']]
         });
-        return Characters;
+        return characters;
     } catch(err) {
         throw new NotFoundException("Characters for this universe were not found");
     }
@@ -66,7 +69,7 @@ async function searchCharacters(universeID, expr, limit, offset) {
     let searchLike = '.*'+expr+'.*';
     let Op = Sequelize.Op;
     try {
-        const Characters = db.Character.findAll({
+        const characters = db.Character.findAll({
             where: {
                 [Op.and]: [
                     {Universe_id: universeID},
@@ -79,7 +82,7 @@ async function searchCharacters(universeID, expr, limit, offset) {
             limit: findLimit,
             order: [['last_modified', 'DESC']]
         });
-        return Characters;
+        return characters;
     } catch(err) {
         throw new Error(err.message);
     }

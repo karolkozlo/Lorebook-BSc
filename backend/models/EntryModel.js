@@ -7,6 +7,10 @@ const Entry = (sequelize, DataTypes) => {
                 foreignKey: "Category_id",
                 onDelete: "CASCADE"
             });
+            Entry.hasOne(models.Content, {
+                foreignKey: "Entry_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Entry.init(
