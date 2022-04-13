@@ -12,6 +12,10 @@ const Location = (sequelize, DataTypes) => {
             Location.belongsTo(models.Location, {
                 foreignKey: "Location_id"
             });
+            Location.hasOne(models.Content, {
+                foreignKey: "Location_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Location.init(

@@ -10,6 +10,7 @@ import Entry from "./EntryModel.js";
 import Timeline from "./TimelineModel.js";
 import Event from "./EventModel.js";
 import TimelineEvent from "./TimelineEventModel.js";
+import Content from "./ContentModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -48,6 +49,7 @@ db.Entry = Entry(sequelize, DataTypes);
 db.Timeline = Timeline(sequelize, DataTypes);
 db.Event = Event(sequelize, DataTypes);
 db.TimelineEvent = TimelineEvent(sequelize, DataTypes);
+db.Content = Content(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {

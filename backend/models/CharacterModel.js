@@ -12,6 +12,10 @@ const Character = (sequelize, DataTypes) => {
             Character.hasMany(models.Relation, {
                 foreignKey: "Character2_id"
             });
+            Character.hasOne(models.Content, {
+                foreignKey: "Character_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Character.init(

@@ -2,6 +2,7 @@ import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize, QueryTypes } from "sequelize";
 import { currentDateTimetoIsoString } from "./utils.js";
+import { createContent } from "./ContentService.js";
 
 function checkEventDate(year, m, d) {
     if (m < 1 || m > 12) {
@@ -39,6 +40,7 @@ async function createEvent(universeID, name, description, date) {
             day: date.day,
             Universe_id: universeID
         });
+        await createContent(event.getDataValue("id"), "Event");
         return event;
     } catch(err) {
         throw new Error(err.message);
