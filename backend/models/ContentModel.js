@@ -19,6 +19,10 @@ const Content = (sequelize, DataTypes) => {
                 foreignKey: "Event_id",
                 onDelete: "CASCADE"
             });
+            Content.hasMany(models.Text, {
+                foreignKey: "Content_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Content.init(
