@@ -23,6 +23,10 @@ const Content = (sequelize, DataTypes) => {
                 foreignKey: "Content_id",
                 onDelete: "CASCADE"
             });
+            Content.hasMany(models.List, {
+                foreignKey: "List_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Content.init(
