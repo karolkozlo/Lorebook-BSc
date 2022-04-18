@@ -1,19 +1,15 @@
 import { Model } from "sequelize";
 
-const List = (sequelize, DataTypes) => {
-    class List extends Model {
+const ListItem = (sequelize, DataTypes) => {
+    class ListItem extends Model {
         static associate(models) {
-            List.belongsTo(models.Content, {
-                foreignKey: "Content_id",
-                onDelete: "CASCADE"
-            });
-            List.hasMany(models.ListItem, {
+            ListItem.belongsTo(models.List, {
                 foreignKey: "List_id",
                 onDelete: "CASCADE"
             });
         }
     }
-    List.init(
+    ListItem.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -21,21 +17,28 @@ const List = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             title: {
-                type: DataTypes.STRING(60),
+                type: DataTypes.STRING(50),
                 allowNull: false,
             },
+            text: {
+                type: DataTypes.STRING(1000),
+            },
+            ordinal_number: {
+                type: DataTypes.INTEGER.UNSIGNED,
+                allowNull: false,
+            }
         },
         {
             sequelize,
-            modelName: 'List',
+            modelName: 'ListItem',
             timestamps: false,
             underscored: true,
             freezeTableName: true,
-            tableName: 'lists',
+            tableName: 'list_items',
         }
     );
-    return List;
+    return ListItem;
 
 };
 
-export default List;
+export default ListItem;

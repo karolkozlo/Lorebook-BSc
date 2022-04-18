@@ -13,6 +13,7 @@ import TimelineEvent from "./TimelineEventModel.js";
 import Content from "./ContentModel.js";
 import Text from "./TextModel.js";
 import List from "./ListModel.js";
+import ListItem from "./ListItemModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -54,6 +55,7 @@ db.TimelineEvent = TimelineEvent(sequelize, DataTypes);
 db.Content = Content(sequelize, DataTypes);
 db.Text = Text(sequelize, DataTypes);
 db.List = List(sequelize, DataTypes);
+db.ListItem = ListItem(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {
