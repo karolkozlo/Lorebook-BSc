@@ -2,6 +2,7 @@ import { dbConfig } from "../config/dbConfig.js";
 import { Sequelize, DataTypes } from "sequelize";
 import User from "./UserModel.js";
 import Universe from "./UniverseModel.js";
+import Story from "./StoryModel.js";
 import Character from "./CharacterModel.js";
 import Relation from "./RelationModel.js";
 import Location from "./LocationModel.js";
@@ -44,6 +45,7 @@ db.sequelize = sequelize;
 
 db.User = User(sequelize, DataTypes);
 db.Universe = Universe(sequelize, DataTypes);
+db.Story = Story(sequelize, DataTypes);
 db.Character = Character(sequelize, DataTypes);
 db.Relation = Relation(sequelize, DataTypes);
 db.Location = Location(sequelize, DataTypes);
