@@ -1,6 +1,7 @@
 import { Router } from "express";
 import UserRouter from "./UserRouter.js";
 import UniverseRouter from "./UniverseRouter.js";
+import StoryRouter from "./StoryRouter.js";
 import CharacterRouter from "./CharacterRouter.js";
 import RelationRouter from "./RelationRouter.js";
 import LocationRouter from "./LocationRouter.js";
@@ -16,6 +17,7 @@ import ListItemRouter from "./ListItemRouter.js";
 const mainRouter = new Router();
 mainRouter.use(UserRouter);
 mainRouter.use(UniverseRouter);
+mainRouter.use(StoryRouter);
 mainRouter.use(CharacterRouter);
 mainRouter.use(RelationRouter);
 mainRouter.use(LocationRouter);
