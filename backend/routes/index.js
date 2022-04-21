@@ -9,6 +9,7 @@ import CategoryRouter from "./CategoryRouter.js";
 import EntryRouter from "./EntryRouter.js";
 import TimelineRouter from "./TimelineRouter.js";
 import EventRouter from "./EventRouter.js";
+import TagRouter from "./TagRouter.js";
 import TextRouter from "./TextRouter.js";
 import ListRouter from "./ListRouter.js";
 import ListItemRouter from "./ListItemRouter.js";
@@ -28,6 +29,7 @@ mainRouter.use(EventRouter);
 mainRouter.use(TextRouter);
 mainRouter.use(ListRouter);
 mainRouter.use(ListItemRouter);
+mainRouter.use(TagRouter);
 // define /api router
 const apiRouter = new Router();
 apiRouter.use("/api", mainRouter);
