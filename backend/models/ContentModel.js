@@ -19,6 +19,11 @@ const Content = (sequelize, DataTypes) => {
                 foreignKey: "Event_id",
                 onDelete: "CASCADE"
             });
+            Content.belongsToMany(models.Tag, {
+                through: models.TagContent,
+                foreignKey: "Content_id",
+                onDelete: 'CASCADE',
+            });
             Content.hasMany(models.Text, {
                 foreignKey: "Content_id",
                 onDelete: "CASCADE"
