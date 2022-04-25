@@ -4,12 +4,35 @@ import apiRouter from "./routes/index.js";
 
 const app = express();
 
+const filterRequestMethods =  (req, res, next) => {
+    const allowedMethods = [
+      "OPTIONS",
+      "HEAD",
+      "CONNECT",
+      "GET",
+      "POST",
+      "PUT",
+      "DELETE",
+      "PATCH",
+    ];
+    if (!allowedMethods.includes(req.method)) {
+        res.status(405).send(`${req.method} not allowed`);
+    }
+    next();
+};
+
 const corsOptions = {
-    origin: 'https://localhost:8081',
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        return callback(null, true);
+    },
 
 };
 
 app.use(cors(corsOptions));
+app.use(filterRequestMethods);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

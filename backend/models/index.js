@@ -17,6 +17,7 @@ import TagContent from "./TagContentModel.js";
 import Text from "./TextModel.js";
 import List from "./ListModel.js";
 import ListItem from "./ListItemModel.js";
+import Chapter from "./ChapterModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -62,6 +63,7 @@ db.TagContent = TagContent(sequelize, DataTypes);
 db.Text = Text(sequelize, DataTypes);
 db.List = List(sequelize, DataTypes);
 db.ListItem = ListItem(sequelize, DataTypes);
+db.Chapter = Chapter(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {
