@@ -1,19 +1,15 @@
 import { Model } from "sequelize";
 
-const Story = (sequelize, DataTypes) => {
-    class Story extends Model {
+const Chapter = (sequelize, DataTypes) => {
+    class Chapter extends Model {
         static associate(models) {
-            Story.belongsTo(models.Universe, {
-                foreignKey: "Universe_id",
-                onDelete: "CASCADE"
-            });
-            Story.hasMany(models.Chapter, {
+            Chapter.belongsTo(models.Story, {
                 foreignKey: "Story_id",
                 onDelete: "CASCADE"
             });
         }
     }
-    Story.init(
+    Chapter.init(
         {
             id: {
                 type: DataTypes.INTEGER,
@@ -21,24 +17,30 @@ const Story = (sequelize, DataTypes) => {
                 autoIncrement: true
             },
             title: {
-                type: DataTypes.STRING(80),
+                type: DataTypes.STRING,
                 allowNull: false,
             },
+            ordinal_number: {
+                type: DataTypes.INTEGER.UNSIGNED,
+                allowNull: false,
+            },
+            text: {
+                type: DataTypes.JSON,
+                allowNull: false
+            },
             description: {
-                type: DataTypes.STRING(500),
-            }
+                type: DataTypes.STRING,
+            },
         },
         {
             sequelize,
-            modelName: 'Story',
+            modelName: 'Chapter',
             timestamps: false,
             underscored: true,
-            freezeTableName: true,
-            tableName: 'stories',
         }
     );
-    return Story;
+    return Chapter;
 
 };
 
-export default Story;
+export default Chapter;

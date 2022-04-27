@@ -13,6 +13,7 @@ import TagRouter from "./TagRouter.js";
 import TextRouter from "./TextRouter.js";
 import ListRouter from "./ListRouter.js";
 import ListItemRouter from "./ListItemRouter.js";
+import ChapterRouter from "./ChapterRouter.js";
 
 // define /api/* routers
 const mainRouter = new Router();
@@ -30,6 +31,7 @@ mainRouter.use(TextRouter);
 mainRouter.use(ListRouter);
 mainRouter.use(ListItemRouter);
 mainRouter.use(TagRouter);
+mainRouter.use(ChapterRouter);
 // define /api router
 const apiRouter = new Router();
 apiRouter.use("/api", mainRouter);

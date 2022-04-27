@@ -2,7 +2,7 @@
   <main>
     <button @click="postChapter" class="main__post-btn">Post Chapter</button>
     <rich-editor
-      :content="chapterText"
+      :content="chapter.text"
       @update="updateChapterText"
       @save="saveChapterText"
     ></rich-editor>
@@ -12,8 +12,7 @@
 <script>
 import RichEditor from "./components/RichEditor.vue";
 import { createPatch, applyPatch } from "diff";
-import { createChapter } from "./httpLayers/chapter.http.js";
-//const Diff = require('diff');
+import { createChapter, getChapter, updateChapter } from "./httpLayers/chapter.http.js";
 
 export default {
   name: "App",
@@ -22,21 +21,22 @@ export default {
   },
   data() {
     return {
-      chapterText: {
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
+      chapter: {
+        id: null,
+        title: "Tytuł Chaptera",
+        description: "Opis Chaptera",
+        text: {
+            type: "doc",
             content: [
               {
-                type: "text",
-                text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris",
+                type: "paragraph",
               },
             ],
           },
-        ],
+        ordinalNumber: 1,
+        storyID: 1
       },
-      savedChapterText: {
+      oldChapterText: {
         type: "doc",
         content: [
           {
@@ -48,26 +48,37 @@ export default {
   },
   methods: {
     updateChapterText(newText) {
-      this.chapterText = newText;
+      this.chapter.text = newText;
     },
-    saveChapterText() {
-      const patch = createPatch(
-        "newText",
-        JSON.stringify(this.savedChapterText),
-        JSON.stringify(this.chapterText)
-      );
-      this.savedChapterText = applyPatch(JSON.stringify(this.savedChapterText), patch);
-      this.chapterText = JSON.parse(this.savedChapterText);
+    async saveChapterText() {
+      const patch = createPatch("newText", JSON.stringify(this.oldChapterText), JSON.stringify(this.chapter.text));
+      try {
+        await updateChapter(this.chapter.id, patch);
+        this.oldChapterText = this.chapter.text;
+      } catch(err) {
+        console.log(err.message);
+      }
     },
     async postChapter() {
       try {
-        let createdChapter = await createChapter();
-        this.chapterText = JSON.parse(createdChapter.text);
+        let createdChapter = await createChapter(this.chapter);
+        this.chapter = createdChapter;
+      } catch(err) {
+        console.log(err.message);
+      }
+    },
+    async getCurrentChapter() {
+      try {
+        this.chapter = await getChapter(6);
+        this.oldChapterText = this.chapter.text;
       } catch(err) {
         console.log(err.message);
       }
     }
   },
+  async mounted() {
+    await this.getCurrentChapter();
+  }
 };
 </script>
 
