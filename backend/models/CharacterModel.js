@@ -16,6 +16,10 @@ const Character = (sequelize, DataTypes) => {
                 foreignKey: "Character_id",
                 onDelete: "CASCADE"
             });
+            Character.hasMany(models.Link, {
+                foreignKey: "Character_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Character.init(
