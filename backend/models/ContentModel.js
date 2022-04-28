@@ -29,7 +29,11 @@ const Content = (sequelize, DataTypes) => {
                 onDelete: "CASCADE"
             });
             Content.hasMany(models.List, {
-                foreignKey: "List_id",
+                foreignKey: "Content_id",
+                onDelete: "CASCADE"
+            });
+            Content.hasMany(models.LinkGroup, {
+                foreignKey: "Content_id",
                 onDelete: "CASCADE"
             });
         }

@@ -18,6 +18,7 @@ import Text from "./TextModel.js";
 import List from "./ListModel.js";
 import ListItem from "./ListItemModel.js";
 import Chapter from "./ChapterModel.js";
+import LinkGroup from "./LinkGroupModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -64,6 +65,7 @@ db.Text = Text(sequelize, DataTypes);
 db.List = List(sequelize, DataTypes);
 db.ListItem = ListItem(sequelize, DataTypes);
 db.Chapter = Chapter(sequelize, DataTypes);
+db.LinkGroup = LinkGroup(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {
