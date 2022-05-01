@@ -36,6 +36,10 @@ const Content = (sequelize, DataTypes) => {
                 foreignKey: "Content_id",
                 onDelete: "CASCADE"
             });
+            Content.hasMany(models.ImageGroup, {
+                foreignKey: "Content_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Content.init(
