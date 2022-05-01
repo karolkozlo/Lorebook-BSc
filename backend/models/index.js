@@ -19,6 +19,7 @@ import List from "./ListModel.js";
 import ListItem from "./ListItemModel.js";
 import Chapter from "./ChapterModel.js";
 import LinkGroup from "./LinkGroupModel.js";
+import ImageGroup from "./ImageGroupModel.js";
 
 const sequelize = new Sequelize(
     dbConfig.DB,
@@ -66,6 +67,7 @@ db.List = List(sequelize, DataTypes);
 db.ListItem = ListItem(sequelize, DataTypes);
 db.Chapter = Chapter(sequelize, DataTypes);
 db.LinkGroup = LinkGroup(sequelize, DataTypes);
+db.ImageGroup = ImageGroup(sequelize, DataTypes);
 
 for(const property in db) {
     if(db[property].associate) {
