@@ -1,6 +1,7 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { UniqueConstraintError } from 'sequelize';
+import { destroyTemplatesOfType } from "./TemplateService.js";
 
 async function createCategory(name, universeID) {
     try {
@@ -45,6 +46,10 @@ async function findUniverseCategories(universeID) {
 
 async function destroyCategory(id) {
     try {
+        let category = await db.Category.findByPk(id, {
+            raw: true
+        });
+        await destroyTemplatesOfType(category.name);
         await db.Category.destroy({
           where: { id: id },
         });

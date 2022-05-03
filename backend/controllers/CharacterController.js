@@ -9,8 +9,10 @@ import {
 import { NotFoundException } from "../errors.js";
 
 async function getCharacter(req, res) {
-    if (req.params.id === undefined)
+    if (req.params.id === undefined) {
       res.status(400).send({ message: "ID must be defined" });
+      return;
+    }
     try {
       const Character = await findCharacter(req.params.id);
       res.status(200).json(Character);
@@ -22,6 +24,7 @@ async function getCharacter(req, res) {
 async function getUniverseCharacters(req, res) {
     if (req.params.universeID === undefined) {
         res.status(400).send({ message: "universeID must be defined" });
+        return;
     }
     try {
       const Characters = await findUniverseCharacters(req.params.universeID, parseInt(req.query.limit), parseInt(req.query.offset));
@@ -34,6 +37,7 @@ async function getUniverseCharacters(req, res) {
 async function getSearchedCharacters(req, res) {
     if (req.params.universeID === undefined) {
         res.status(400).send({ message: "universeID must be defined" });
+        return;
     }
     try {
       let q = req.query.q;

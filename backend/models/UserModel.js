@@ -4,7 +4,8 @@ const User = (sequelize, DataTypes) => {
     class User extends Model {
         static associate(models) {
             User.hasMany(models.Universe, {
-                foreignKey: "User_id"
+                foreignKey: "User_id",
+                onDelete: "CASCADE"
             });
         }
     }
