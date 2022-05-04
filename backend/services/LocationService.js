@@ -23,7 +23,7 @@ async function createLocation(name, description, universeID, parentLocationID = 
 
 async function findLocation(id) {
     try {
-        const location = db.Location.findOne({
+        const location = await db.Location.findOne({
             where: {
                 id: id
             }
@@ -44,7 +44,7 @@ async function findUniverseLocations(universeID, limit, offset) {
         findOffset = 0;
     }
     try {
-        const locations = db.Location.findAll({
+        const locations = await db.Location.findAll({
             where: {
                 Universe_id: universeID,
             },
@@ -55,6 +55,43 @@ async function findUniverseLocations(universeID, limit, offset) {
         return locations;
     } catch(err) {
         throw new NotFoundException("Locations for this universe were not found");
+    }
+};
+
+async function findChildLocations(id) {
+    try {
+        const locations = await db.Location.findAll({
+            where: {
+                Location_id: id
+            }
+        });
+        return locations;
+    } catch(err) {
+        throw new NotFoundException("Locations were not found");
+    }
+};
+
+async function findAncestorLocations(id) {
+    try {
+        const locations = await db.sequelize.query(`WITH RECURSIVE cte (id, name, description, Location_id) as (
+            SELECT id, name, description, Location_id
+            FROM locations
+            WHERE id = :id
+            UNION ALL
+            SELECT p.id, p.name, p.description, p.Location_id
+            FROM locations p
+            INNER JOIN cte ON p.id = cte.Location_id
+          )
+          SELECT * FROM cte WHERE id != :id;`,
+        {
+            type: db.sequelize.QueryTypes.SELECT,
+            replacements: {
+                id: id
+            }
+        });
+        return locations;
+    } catch(err) {
+        throw new NotFoundException("Ancestors for this locations were not found");
     }
 };
 
@@ -70,7 +107,7 @@ async function searchLocations(universeID, expr, limit, offset) {
     let searchLike = '.*'+expr+'.*';
     let Op = Sequelize.Op;
     try {
-        const locations = db.Location.findAll({
+        const locations = await db.Location.findAll({
             where: {
                 [Op.and]: [
                     {Universe_id: universeID},
@@ -116,4 +153,13 @@ async function updateLocation(id, updatedFields) {
     }
 };
 
-export { createLocation, updateLocation, findLocation, findUniverseLocations, searchLocations, destroyLocation };
+export {
+    createLocation,
+    updateLocation,
+    findLocation,
+    findChildLocations,
+    findAncestorLocations,
+    findUniverseLocations,
+    searchLocations,
+    destroyLocation
+};
