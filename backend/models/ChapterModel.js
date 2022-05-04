@@ -7,6 +7,10 @@ const Chapter = (sequelize, DataTypes) => {
                 foreignKey: "Story_id",
                 onDelete: "CASCADE"
             });
+            Chapter.hasMany(models.Link, {
+                foreignKey: "Chapter_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Chapter.init(

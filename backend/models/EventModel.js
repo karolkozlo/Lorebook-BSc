@@ -14,6 +14,10 @@ const Event = (sequelize, DataTypes) => {
                 foreignKey: "Event_id",
                 onDelete: "CASCADE"
             });
+            Event.hasMany(models.Link, {
+                foreignKey: "Event_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Event.init(

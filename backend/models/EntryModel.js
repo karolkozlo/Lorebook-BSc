@@ -11,6 +11,10 @@ const Entry = (sequelize, DataTypes) => {
                 foreignKey: "Entry_id",
                 onDelete: "CASCADE"
             });
+            Entry.hasMany(models.Link, {
+                foreignKey: "Entry_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     Entry.init(
