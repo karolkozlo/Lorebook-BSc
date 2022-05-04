@@ -1,4 +1,12 @@
-import { postLocation, patchLocation, getLocation, getUniverseLocations, getSearchedLocations, deleteLocation }
+import { getLocation,
+    getUniverseLocations,
+    getChildLocations,
+    getAncestorLocations,
+    getSearchedLocations,
+    postLocation,
+    deleteLocation,
+    patchLocation
+}
 from "../controllers/LocationController.js";
 import express from "express";
 
@@ -8,6 +16,8 @@ LocationRouter.use(express.json());
 LocationRouter.route('/locations').post(postLocation);
 LocationRouter.route('/locations/:id').get(getLocation);
 LocationRouter.route('/locations/universe/:universeID').get(getUniverseLocations);
+LocationRouter.route('/locations/children/:id').get(getChildLocations);
+LocationRouter.route('/locations/ancestors/:id').get(getAncestorLocations);
 LocationRouter.route('/locations/search/:universeID').get(getSearchedLocations);
 LocationRouter.route('/locations/:id').delete(deleteLocation);
 LocationRouter.route('/locations/:id').patch(patchLocation);

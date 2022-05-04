@@ -1,6 +1,6 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
-import { Sequelize, QueryTypes } from "sequelize";
+import { Sequelize } from "sequelize";
 import { currentDateTimetoIsoString } from "./utils.js";
 import { createContent } from "./ContentService.js";
 
@@ -112,7 +112,7 @@ async function findTimelineEvents(timelineID, limit, offset) {
         LIMIT :limit
         OFFSET :offset;`,
         {
-            type: QueryTypes.SELECT,
+            type: db.sequelize.QueryTypes.SELECT,
             replacements: {
                 timelineID: timelineID,
                 limit: findLimit,
@@ -121,7 +121,6 @@ async function findTimelineEvents(timelineID, limit, offset) {
         });
         return events;
     } catch(err) {
-        console.log(err.message);
         throw new NotFoundException("Events for this timeline were not found");
     }
 }
