@@ -7,6 +7,10 @@ const LinkGroup = (sequelize, DataTypes) => {
                 foreignKey: "Content_id",
                 onDelete: "CASCADE"
             });
+            LinkGroup.hasMany(models.Link, {
+                foreignKey: "Link_group_id",
+                onDelete: "CASCADE"
+            });
         }
     }
     LinkGroup.init(

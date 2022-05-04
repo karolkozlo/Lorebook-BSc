@@ -16,6 +16,7 @@ import ListItemRouter from "./ListItemRouter.js";
 import ChapterRouter from "./ChapterRouter.js";
 import LinkGroupRouter from "./LinkGroupRouter.js";
 import ImageGroupRouter from "./ImageGroupRouter.js";
+import LinkRouter from "./LinkRouter.js";
 
 // define /api/* routers
 const mainRouter = new Router();
@@ -36,6 +37,7 @@ mainRouter.use(TagRouter);
 mainRouter.use(ChapterRouter);
 mainRouter.use(LinkGroupRouter);
 mainRouter.use(ImageGroupRouter);
+mainRouter.use(LinkRouter);
 // define /api router
 const apiRouter = new Router();
 apiRouter.use("/api", mainRouter);
