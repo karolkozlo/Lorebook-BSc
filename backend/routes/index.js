@@ -17,6 +17,7 @@ import ChapterRouter from "./ChapterRouter.js";
 import LinkGroupRouter from "./LinkGroupRouter.js";
 import ImageGroupRouter from "./ImageGroupRouter.js";
 import LinkRouter from "./LinkRouter.js";
+import TemplateRouter from "./TemplateRouter.js";
 
 // define /api/* routers
 const mainRouter = new Router();
@@ -38,6 +39,7 @@ mainRouter.use(ChapterRouter);
 mainRouter.use(LinkGroupRouter);
 mainRouter.use(ImageGroupRouter);
 mainRouter.use(LinkRouter);
+mainRouter.use(TemplateRouter);
 // define /api router
 const apiRouter = new Router();
 apiRouter.use("/api", mainRouter);
