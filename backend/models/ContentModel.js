@@ -49,6 +49,10 @@ const Content = (sequelize, DataTypes) => {
                 primaryKey: true,
                 autoIncrement: true
             },
+            configuration: {
+                type: DataTypes.JSON,
+                allowNull: false
+            },
         },
         {
             sequelize,

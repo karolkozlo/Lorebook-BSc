@@ -8,8 +8,10 @@ import {
 } from "../services/ListItemService.js";
 
 async function getListItem(req, res) {
-    if (req.params.id === undefined)
+    if (req.params.id === undefined) {
       res.status(400).send({ message: "ID must be defined" });
+      return;
+    }
     try {
       const listItem = await findListItem(req.params.id);
       res.status(200).json(listItem);
@@ -21,6 +23,7 @@ async function getListItem(req, res) {
 async function getListItems(req, res) {
     if (req.params.listID === undefined) {
         res.status(400).send({ message: "listID must be defined" });
+        return;
     }
     try {
       const listItems = await findListItems(req.params.listID);
@@ -31,6 +34,10 @@ async function getListItems(req, res) {
 }
 
 async function postListItem(req, res) {
+    if (req.body.contentID == undefined || req.body.listID == undefined) {
+      res.status(400).send({ message: "contentID and listID must be defined" });
+        return;
+    }
     try {
       const createdListItem = await createListItem(
         req.body.title,

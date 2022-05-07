@@ -4,6 +4,16 @@ import { updateEntry } from "./EntryService.js";
 import { updateLocation } from "./LocationService.js";
 import { updateEvent } from "./EventService.js";
 
+function insertIDintoConfig(config, id) {
+    for(let i = 0; i < config.length; i++) {
+        if(config[i].id == null) {
+            config[i].id = id;
+            break;
+        }
+    }
+    return config;
+};
+
 async function pingContentOwner(contentID) {
     const content = await db.Content.findOne({
         where: {
@@ -39,4 +49,8 @@ function currentDateTimetoIsoString() {
         ':' + pad(Math.abs(tzo) % 60);
 }
 
-export { currentDateTimetoIsoString, pingContentOwner };
+export {
+    currentDateTimetoIsoString,
+    pingContentOwner,
+    insertIDintoConfig
+};
