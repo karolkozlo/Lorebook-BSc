@@ -112,6 +112,24 @@ async function findGroupLinks(linkGroupID) {
     }
 };
 
+async function findContentLinks(contentID) {
+    try {
+        const links = await db.sequelize.query(`SELECT l.id, l.description, l.Link_group_id, l.Character_id, l.Location_id, l.Event_id, l.Entry_id
+        FROM contents c
+        JOIN link_groups lg ON c.id = lg.Content_id
+        JOIN links l ON lg.id = l.Link_group_id AND c.id = :contentID;`,
+        {
+            type: db.sequelize.QueryTypes.SELECT,
+            replacements: {
+                contentID: contentID,
+            }
+        });
+        return await enrichLinks(links);
+    } catch(err) {
+        throw new NotFoundException("links for this content were not found");
+    };
+};
+
 async function findChapterLinks(chapterID) {
     try {
         const links = await db.Link.findAll({
@@ -173,6 +191,7 @@ export {
     updateLink,
     findLink,
     findGroupLinks,
+    findContentLinks,
     findChapterLinks,
     findLinksTo
 };

@@ -34,6 +34,12 @@ async function findContentLists(contentID) {
             where: {
                 Content_id: contentID,
             },
+            include: {
+                model: db.ListItem,
+                attributes: {
+                    exclude: ["List_id"]
+                }
+            }
         });
         return lists;
     } catch(err) {
