@@ -6,10 +6,14 @@ import {
     destroyText,
 } from "../services/TextService.js";
 import { NotFoundException } from "../errors.js";
+import { insertIDintoConfig } from "../services/utils.js";
+import { updateContentConfig } from "../services/ContentService.js";
 
 async function getText(req, res) {
-    if (req.params.id === undefined)
+    if (req.params.id === undefined) {
       res.status(400).send({ message: "ID must be defined" });
+      return;
+    }
     try {
       const text = await findText(req.params.id);
       res.status(200).json(text);
@@ -21,6 +25,7 @@ async function getText(req, res) {
 async function getContentTexts(req, res) {
     if (req.params.contentID === undefined) {
         res.status(400).send({ message: "contentID must be defined" });
+        return;
     }
     try {
       const texts = await findContentTexts(req.params.contentID);
@@ -37,6 +42,8 @@ async function postText(req, res) {
         req.body.text,
         req.body.contentID
       );
+      const newConfig = insertIDintoConfig(req.body.config, createdText.id);
+      await updateContentConfig(newConfig, req.body.contentID);
       res.status(201).json(createdText);
     } catch (e) {
       res.status(400).send({ message: e.message });

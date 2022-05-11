@@ -107,7 +107,7 @@ async function findTimelineEvents(timelineID, limit, offset) {
     }
     try {
         const events = await db.sequelize.query(`SELECT e.id, e.name, e.description, e.year, e.month, e.day, e.last_modified
-        FROM events AS e INNER JOIN timeline_event AS te ON e.id = te.Event_id AND te.Timeline_id = 1
+        FROM events AS e INNER JOIN timeline_event AS te ON e.id = te.Event_id AND te.Timeline_id = :timelineID
         ORDER BY year ASC, month ASC, day ASC
         LIMIT :limit
         OFFSET :offset;`,

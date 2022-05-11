@@ -8,11 +8,28 @@ async function createContent(id, type) {
         } else {
             throw new Error("Invalid type of content!");
         }
+        values.configuration = JSON.stringify([]);
         let content = await db.Content.create(values);
         return content;
     } catch(err) {
         throw new Error(err.message);
     }
+};
+
+async function updateContentConfig(newConfig, contentID) {
+    try {
+        let values = {
+            configuration: newConfig
+        };
+        let content = await db.Content.update(values, {
+            where: {
+                id: contentID
+            }
+        });
+        return content;
+    } catch(err) {
+        throw new Error(err.message);
+    };
 };
 
 async function findContent(id, type) {
@@ -26,7 +43,7 @@ async function findContent(id, type) {
         }
         content = await db.Content.findOne({
             where: where,
-            attributes: [["id", "contentID"]]
+            attributes: [["id", "contentID"], "configuration"]
         });
         return content;
     } catch(err) {
@@ -34,4 +51,8 @@ async function findContent(id, type) {
     }
 };
 
-export { createContent, findContent };
+export {
+    createContent,
+    updateContentConfig,
+    findContent
+};
