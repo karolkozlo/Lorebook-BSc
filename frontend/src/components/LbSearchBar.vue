@@ -32,8 +32,9 @@ export default {
         };
     },
     methods: {
-        handleEnterPress(e) {
-            if(e.key == 'Enter') {
+        handleEnterPress(event) {
+            event.preventDefault();
+            if(event.key == 'Enter') {
                 this.$emit('search', this.value);
             }
         }
