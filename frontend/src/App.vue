@@ -15,6 +15,9 @@ export default {
 
 <style lang="less">
 @import './common.less';
+html {
+  font-size: 16px;
+}
 
 body {
   margin: 0;
@@ -29,6 +32,7 @@ main {
   flex-direction: column;
   width: 100%;
   min-height: 95vh;
+  font-family: 'Roboto';
 
   .main__nav {
     background-color: @primary-color;
