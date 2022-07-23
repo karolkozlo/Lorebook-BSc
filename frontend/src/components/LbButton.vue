@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     onClick() {
-      if (!loading && !disabled) {
+      if (!this.loading && !this.disabled) {
         this.$emit('click');
       }
     }

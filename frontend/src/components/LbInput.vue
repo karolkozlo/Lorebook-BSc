@@ -71,13 +71,14 @@ export default {
       margin: 0;
       margin-right: 0.5em;
       font-weight: 500;
+      font-size: 1.4rem;
       color: @light-text-color;
     }
   }
 
   .lb-input__field {
     border: 2px solid transparent;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     padding: 0.2em;
     box-shadow: inset 0px 1px 8px rgba(0, 0, 0, 0.2);
 
