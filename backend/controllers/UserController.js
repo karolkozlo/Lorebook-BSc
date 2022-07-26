@@ -22,7 +22,7 @@ async function postUser(req, res) {
       const createdUser = await createUser(
         req.body.email,
         req.body.password,
-        req.body.name
+        req.body.username
       );
       res.status(201).json(createdUser);
     } catch (e) {
