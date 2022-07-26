@@ -34,17 +34,21 @@
         </div>
       </div>
       <lb-spinner v-if="loading" size="70px" thickness="10px"></lb-spinner>
+      <lb-popup-box :isOpen="isPopupOpen" :title="resultTitle" :message="resultMessage" @close="closePopup"></lb-popup-box>
     </div>
   </div>
 </template>
 
 <script>
 import LbInput from "../components/LbInput.vue";
+import LbPopupBox from '../components/LbPopupBox.vue';
+import { registerUser } from '../httpLayers/account.http';
 
 export default {
   name: "RegisterPage",
   components: {
     LbInput,
+    LbPopupBox
   },
   data() {
     return {
@@ -65,6 +69,9 @@ export default {
         errorMsg: ''
       },
       loading: false,
+      isPopupOpen: false,
+      resultTitle: '',
+      resultMessage: ''
     };
   },
   computed: {
@@ -122,18 +129,42 @@ export default {
       }
       return false;
     },
-    register() {
-      this.loading = true;
-      if(this.formValidation) {
-        console.log("USER DATA");
-        console.log(this.username.value);
-        console.log(this.email.value);
-        console.log(this.password.value);
-        console.log(this.passwordConfirm.value);
-      }
-      setTimeout(() => {
+    closePopup() {
+      this.isPopupOpen = false;
+      this.resultMessage = '';
+      this.resultTitle = '';
+    },
+    async register() {
+      if (this.formValidation()) {
+        let registeredUser = null;
+        this.loading = true;
+        try {
+          registeredUser = await registerUser(this.username.value, this.password.value, this.email.value);
+        } catch(err) {
+            switch(err.path) {
+              case 'password':
+                this.password.errorMsg = err.message;
+              break;
+              case 'email':
+                this.email.errorMsg = err.message;
+              break;
+              case 'username':
+                this.username.errorMsg = err.message;
+              break;
+              default:
+                this.resultTitle = 'Error';
+                this.resultMessage = err.message;
+                this.isPopupOpen = true;
+              break;
+            }
+        }
+        if(registeredUser) {
+          this.resultTitle = 'Success';
+          this.resultMessage = 'User Created';
+          this.isPopupOpen = true;
+        }
         this.loading = false;
-      }, 2000)
+      }
     },
   },
 };

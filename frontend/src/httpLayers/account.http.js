@@ -7,7 +7,7 @@ async function registerUser(username, password, email) {
             return true;
         })
         .catch((error) => {
-            if (error.response) {
+            if (error.response && error.response.data.message) {
                 const err = new Error(`${error.response.data.message}`);
                 err.path = error.response.data.path;
                 throw err;
@@ -17,6 +17,6 @@ async function registerUser(username, password, email) {
                 throw new Error("Undefined error");
             }
         });
-}
+};
 
 export { registerUser };

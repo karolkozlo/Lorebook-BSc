@@ -15,11 +15,16 @@ async function createUser(email, password, name) {
         throw err;
     }
     try {
-        await User.create({
+        const createdUser = await User.create({
             email: email,
             password: hashPassword(password),
             name: name
+        }).then((result) => {
+          const resultToReturn = result.get({plain: true});
+          delete resultToReturn.password;
+          return resultToReturn;
         });
+        return createdUser;
     } catch (e) {
         if(e instanceof UniqueConstraintError) {
             throw new Error("Account with this email already exists");
