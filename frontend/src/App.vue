@@ -1,9 +1,6 @@
 <template>
   <main>
-    <nav class="main__nav">
-      <router-link class="main__nav-link" to="/">Home</router-link>
-      <router-link class="main__nav-link" to="/register">Register</router-link>
-    </nav>
+    <lb-header/>
     <div class="main__content">
       <router-view></router-view>
     </div>
@@ -11,8 +8,13 @@
 </template>
 
 <script>
+import LbHeader from './components/LbHeader.vue';
+
 export default {
   name: "App",
+  components: {
+    LbHeader
+  }
 };
 </script>
 
