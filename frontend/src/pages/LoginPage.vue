@@ -18,7 +18,7 @@
                     :error="password.errorMsg"/>
         </div>
         <div class="login-page__bottom">
-          <router-link to="/logIn" class="login-page__link">Don't have an account? Sign Up</router-link>
+          <router-link to="/register" class="login-page__link">Don't have an account? Sign Up</router-link>
           <lb-button @click="logIn" :size="1.2" :disabled="isButtonDisabled">Log In</lb-button>
         </div>
       </div>
