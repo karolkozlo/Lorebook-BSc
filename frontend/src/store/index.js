@@ -25,17 +25,16 @@ const store = createStore({
   },
   mutations: {
     setUser(state, payload) {
-      state.userID = payload.userID;
-      state.username = payload.username;
+      state.userID = payload.id;
+      state.username = payload.name;
       state.email = payload.email;
+      state.isAuth = true;
     },
     clearUser(state) {
       state.userID = null;
       state.username =  null;
       state.email =  null;
-    },
-    setAuth(state, payload) {
-      state.isAuth = payload;
+      state.isAuth = false;
     }
   },
   actions: {

@@ -1,10 +1,28 @@
 import LbAPI from "./LbAPI.js";
 
-const loginUser = async (email, password) => {
+const loginUser = async (name, password) => {
   const user = await LbAPI
-    .post("/login", { email: email, password: password })
+    .post("/login", { name: name, password: password })
     .then((response) => {
       return response.data;
+    })
+    .catch((error) => {
+      if (error.response) {
+        throw new Error(`${error.response.data.message}`);
+      } else if (error.request) {
+        throw new Error("Service refused connection");
+      } else {
+        throw new Error("Undefined error");
+      }
+    });
+  return user;
+};
+
+async function logoutUser() {
+  return await LbAPI
+    .get("/logout")
+    .then(() => {
+      return true;
     })
     .catch((error) => {
       if (error.response) {
@@ -15,7 +33,15 @@ const loginUser = async (email, password) => {
         throw new Error("Undefined error");
       }
     });
-  return user;
-}
+};
 
-export { loginUser };
+const refreshToken = async () => {
+  const user = await LbAPI.get('/refreshToken')
+  .then((response) => {
+    return response.data;
+  }).catch(() => {
+  });
+  return user;
+};
+
+export { loginUser, logoutUser, refreshToken };

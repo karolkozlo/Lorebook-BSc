@@ -5,17 +5,19 @@
             <router-link class="lb-header__link" to="/">Home</router-link>
         </div>
         <div class="lb-header__nav-right">
-            <router-link class="lb-header__link lb-header__link--account" to="/login">
+            <router-link class="lb-header__link lb-header__link--account" :to="setLink">
                 <span class="lb-header__account-text">{{ setAccountLinkText }}</span>
                 <icon icon="lb-user" :size="1.5"></icon>
             </router-link>
+            <lb-button v-if="this.username" icon="lb-logout" :size="1.5" @click="logOut"></lb-button>
         </div>
     </nav>
   </header>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
+import { logoutUser } from '../httpLayers/login.http.js';
 
 export default {
     name: 'LbHeader',
@@ -23,6 +25,23 @@ export default {
         ...mapGetters(['username']),
         setAccountLinkText() {
             return this.username ? this.username : 'Log In';
+        },
+        setLink() {
+            return this.username ? '/user' : '/login';
+        }
+    },
+    methods: {
+        ...mapMutations(['clearUser']),
+        async logOut() {
+            try {
+                await logoutUser();
+            }
+            catch(err) {
+                console.error(err.message);
+            } finally {
+                this.clearUser();
+                this.$router.push('/login');
+            }
         }
     }
 };
@@ -52,6 +71,7 @@ export default {
             display: flex;
             justify-content: flex-end;
             flex: 1;
+            gap: 15px;
         }
 
         .lb-header__link {

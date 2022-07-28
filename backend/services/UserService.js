@@ -27,7 +27,7 @@ async function createUser(email, password, name) {
         return createdUser;
     } catch (e) {
         if(e instanceof UniqueConstraintError) {
-            throw new Error("Account with this email already exists");
+            throw new Error("Account with this email or username already exists");
         }
         if (e.errors[0] instanceof types.ValidationErrorItem) {
             const errorData = (({ message, path }) => ({ message, path }))(
@@ -56,12 +56,12 @@ async function findUser(id) {
     }
 }
 
-async function findUserByEmail(email) {
+async function findUserByName(name) {
   let user = null;
   try {
       user = await User.findOne({
           where: {
-              email: email
+              name: name
           }
       });
       return user;
@@ -115,4 +115,4 @@ async function updateUser(id, updatedFields) {
     }
   }
 
-  export { createUser, updateUser, destroyUser, findUser, findUserByEmail, findAllUsers }
+  export { createUser, updateUser, destroyUser, findUser, findUserByName, findAllUsers }
