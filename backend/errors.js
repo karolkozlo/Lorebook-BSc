@@ -12,4 +12,11 @@ class NotFoundException extends Error {
     }
 }
 
-export {InvalidArgumentException, NotFoundException};
+class InvalidPasswordException extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "InvalidPasswordException";
+  }
+}
+
+export {InvalidArgumentException, NotFoundException, InvalidPasswordException };
