@@ -56,6 +56,20 @@ async function findUser(id) {
     }
 }
 
+async function findUserByEmail(email) {
+  let user = null;
+  try {
+      user = await User.findOne({
+          where: {
+              email: email
+          }
+      });
+      return user;
+  } catch(e) {
+      throw new NotFoundException("User not found");
+  }
+};
+
 async function findAllUsers() {
     let users = null;
     try {
@@ -101,4 +115,4 @@ async function updateUser(id, updatedFields) {
     }
   }
 
-  export { createUser, updateUser, destroyUser, findUser, findAllUsers }
+  export { createUser, updateUser, destroyUser, findUser, findUserByEmail, findAllUsers }
