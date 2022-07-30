@@ -5,11 +5,11 @@
         <h1 class="login-page__header">Log In</h1>
         <div class="util__horizontal-line--white"></div>
         <div class="login-page__inputs">
-          <lb-input :name="'Email address'"
-                    type="email" :value="email.value"
-                    @update:value="setEmail"
+          <lb-input :name="'Username'"
+                    :value="username.value"
+                    @update:value="setUsername"
                     :maxLength="45"
-                    :error="email.errorMsg"/>
+                    :error="username.errorMsg"/>
           <lb-input :name="'Password'"
                     type="password"
                     :value="password.value"
@@ -32,6 +32,7 @@
 import LbInput from "../components/LbInput.vue";
 import { loginUser } from "@/httpLayers/login.http.js";
 import LbPopupBox from '../components/LbPopupBox.vue';
+import { mapMutations } from 'vuex';
 
 export default {
   name: "LoginPage",
@@ -41,7 +42,7 @@ export default {
   },
   data() {
     return {
-      email: {
+      username: {
         value: '',
         errorMsg: ''
       },
@@ -56,7 +57,7 @@ export default {
   },
   computed: {
     isButtonDisabled() {
-        if( this.email.value.length === 0 || this.password.value.length === 0 ) {
+        if( this.username.value.length === 0 || this.password.value.length === 0 ) {
             return true;
         }
         return false;
@@ -69,21 +70,18 @@ export default {
     }
   },
   methods: {
-    setEmail(newValue) {
-      this.email.value = newValue;
-      if(!this.email.value.includes('@') && this.email.value.length > 0) {
-        this.email.errorMsg = 'Email should contain "@"';
-      } else {
-        this.email.errorMsg = '';
-      }
+    ...mapMutations(['setUser']),
+    setUsername(newValue) {
+      this.username.value = newValue;
+      this.username.errorMsg = '';
     },
     setPassword(newValue) {
       this.password.value = newValue;
       this.password.errorMsg = '';
     },
     formValidation() {
-     if(this.password.errorMsg == '' && this.email.errorMsg == '') {
-        if(this.password.value.length > 0 && this.email.value.length > 0) {
+     if(this.password.errorMsg == '' && this.username.errorMsg == '') {
+        if(this.password.value.length > 0 && this.username.value.length > 0) {
           return true;
         }
       }
@@ -93,13 +91,13 @@ export default {
       this.isErrorOpen = false;
       this.resultMessage = '';
     },
-     async logIn() {
-     this.loading = true;
+    async logIn() {
+      this.loading = true;
       let start = Date.now();
       let result = false;
       if(this.formValidation()) {
         try {
-          result = await loginUser(this.email.value, this.password.value);
+          result = await loginUser(this.username.value, this.password.value);
         } catch(err) {
           this.loading = false;
           this.isErrorOpen = true;
@@ -110,11 +108,13 @@ export default {
           if(timeRemaining < 500) {
             setTimeout(() => {
               this.loading = false;
-              console.log("Logged In");
+              this.setUser(result);
+              this.$router.push('/user');
             }, 500 - timeRemaining);
           } else {
             this.loading = false;
-            console.log("Logged In");
+            this.setUser(result);
+            this.$router.push('/user');
           }
         }
       }

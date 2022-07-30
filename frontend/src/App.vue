@@ -9,11 +9,22 @@
 
 <script>
 import LbHeader from './components/LbHeader.vue';
+import { mapMutations } from 'vuex';
+import { refreshToken } from './httpLayers/login.http.js';
 
 export default {
   name: "App",
   components: {
     LbHeader
+  },
+  methods: {
+    ...mapMutations(['setUser'])
+  },
+  async mounted() {
+    let user = await refreshToken();
+    if (user && user.data.name && user.data.email && user.data.id) {
+      this.setUser(user.data);
+    }
   }
 };
 </script>
