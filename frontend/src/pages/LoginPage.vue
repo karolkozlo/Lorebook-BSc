@@ -23,7 +23,7 @@
         </div>
       </div>
       <lb-spinner v-if="loading" size="70px" thickness="10px"></lb-spinner>
-      <lb-popup-box :isOpen="isErrorOpen" title="Error" :message="resultMessage" @close="closeError"></lb-popup-box>
+      <lb-popup-box :isOpen="isErrorOpen" title="Error" :message="resultMessage" :variant="resultType" @close="closeError"></lb-popup-box>
     </div>
   </div>
 </template>
@@ -52,7 +52,8 @@ export default {
       },
       loading: false,
       isErrorOpen: false,
-      resultMessage: ''
+      resultMessage: '',
+      resultType: 'negative'
     };
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
     <lb-popper :isOpen="isOpen">
-        <div v-if="isOpen" class="lb-popup-box">
+        <div v-if="isOpen" :class="setVariantClass">
             <div class="lb-popup-box__header">
                 <div class="lb-popup-box__title">
                     {{ title }}
@@ -8,7 +8,7 @@
                 <div class="lb-popup-box__close-window-block">
                     <icon :id="`lb-popup-box__close-button`" @click="$emit('close')" icon="lb-cancel-circled" :size=1.5 />
                 </div>
-        </div>
+            </div>
             <div class="lb-popup-box__content">
                 <slot>
                     <span class="lb-popup-box__message">
@@ -39,11 +39,18 @@ export default {
         message: {
             type: String,
             default: "Message text"
+        },
+        variant: {
+            type: String,
+            default: "default",
+            validator(value) {
+                return ["negative", "positive", "default"].includes(value);
+            }
         }
     },
     computed: {
-    infoBoxType: function() {
-      return "info-box info-box--"+this.type;
+    setVariantClass() {
+      return `lb-popup-box lb-popup-box--${this.variant}`;
     }
   }
 }
@@ -63,7 +70,7 @@ export default {
     color: @light-text-color;
     overflow-wrap: anywhere;
 
-    .lb-popup-box__header{
+    .lb-popup-box__header {
         display: flex;
         padding: 0.2em;
         justify-content: space-between;
@@ -92,6 +99,30 @@ export default {
 
         .lb-popup-box__message {
             font-family: 'Roboto';
+        }
+    }
+
+    &--negative {
+        background-color: @negative-tertiary-color;
+
+        .lb-popup-box__header {
+            background-color: @negative-color;
+        }
+
+        .lb-popup-box__content {
+            color: @dark-text-color;
+        }
+    }
+
+    &--positive {
+        background-color: @positive-tertiary-color;
+
+        .lb-popup-box__header {
+            background-color: @positive-color;
+        }
+
+        .lb-popup-box__content {
+            color: @dark-text-color;
         }
     }
 }
