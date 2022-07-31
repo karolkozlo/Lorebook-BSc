@@ -71,7 +71,8 @@ export default {
       loading: false,
       isPopupOpen: false,
       resultTitle: '',
-      resultMessage: ''
+      resultMessage: '',
+      resultType: ''
     };
   },
   computed: {
@@ -133,6 +134,7 @@ export default {
       this.isPopupOpen = false;
       this.resultMessage = '';
       this.resultTitle = '';
+      this.resultType = '';
     },
     async register() {
       if (this.formValidation()) {
@@ -154,6 +156,7 @@ export default {
               default:
                 this.resultTitle = 'Error';
                 this.resultMessage = err.message;
+                this.resultType = 'negative';
                 this.isPopupOpen = true;
               break;
             }
@@ -161,6 +164,7 @@ export default {
         if(registeredUser) {
           this.resultTitle = 'Success';
           this.resultMessage = 'User Created';
+          this.resultType = 'positive';
           this.isPopupOpen = true;
         }
         this.loading = false;
