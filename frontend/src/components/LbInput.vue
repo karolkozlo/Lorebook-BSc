@@ -4,10 +4,19 @@
       <h2 class="lb-input__title" v-if="name">{{ name}}</h2>
       <lb-small-error v-if="error.length && !isFocused" :text="error" :size="1.5" />
     </div>
-    <input v-model="value"
+    <input v-if="type !== 'textarea'"
+           v-model="value"
            :type="type"
            :class="fieldClass"
            :maxlength="maxLength"
+           @input="$emit('update:value', value)"
+           @focus="isFocused = true"
+           @blur="isFocused = false" />
+    <textarea v-else
+           v-model="value"
+           :class="fieldClass"
+           :maxlength="maxLength"
+           :style="`min-height: ${minHeight}px;`"
            @input="$emit('update:value', value)"
            @focus="isFocused = true"
            @blur="isFocused = false" />
@@ -39,6 +48,10 @@ export default {
     },
     maxLength: {
       type: Number,
+    },
+    minHeight: {
+        type: Number,
+        default: 150
     }
   },
   data() {
@@ -81,6 +94,7 @@ export default {
     font-size: 1.2rem;
     padding: 0.2em;
     box-shadow: inset 0px 1px 8px rgba(0, 0, 0, 0.2);
+    resize: vertical;
 
     &:focus {
       background-color: @neutral-secondary-color;
