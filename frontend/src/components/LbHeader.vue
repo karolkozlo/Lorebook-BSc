@@ -64,12 +64,14 @@ export default {
         .lb-header__nav-left {
             display: flex;
             justify-content: flex-start;
+            align-items: center;
             flex: 1;
         }
 
         .lb-header__nav-right {
             display: flex;
             justify-content: flex-end;
+            align-items: center;
             flex: 1;
             gap: 15px;
         }

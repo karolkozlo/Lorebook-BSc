@@ -89,6 +89,8 @@ export default {
 
   .button__content {
     display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   &:active {
