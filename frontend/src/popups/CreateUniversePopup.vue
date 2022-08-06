@@ -20,6 +20,8 @@
 
 <script>
 import LbInput from '../components/LbInput.vue';
+import { mapGetters } from "vuex";
+import { createUniverse } from '../httpLayers/universe.http.js';
 
 export default {
   components: { LbInput },
@@ -42,6 +44,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters(["userID"]),
     setVisibilityOnLoading() {
         return this.loading ? 'visibility: hidden;' : 'visibility: visible;';
     },
@@ -62,11 +65,17 @@ export default {
             this.title.errorMsg = 'Title cannot be empty!';
         }
     },
-    create() {
+    async create() {
         this.loading = true;
-        setTimeout(() => { this.loading = false }, 3000);
-        console.log("Title: ", this.title.value);
-        console.log("Description: ", this.description);
+        try {
+            const createdUniverse = await createUniverse({name: this.title.value, description: this.description, userID: this.userID});
+            this.$emit('onResult', createdUniverse);
+        } catch (error) {
+            console.error(error.message);
+            this.$emit('onResult', false);
+        } finally {
+            this.loading = false;
+        }
     },
     close() {
         this.title = {

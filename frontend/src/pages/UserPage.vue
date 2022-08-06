@@ -42,7 +42,7 @@
         </tr>
         <tr class="universes-table__row" v-for="uni in universes" :key="uni.id">
           <td class="universes-table__cell">
-            <router-link class="universes-table__link" to="/user">
+            <router-link class="universes-table__link" to="/universe">
                 {{ uni.name }}
             </router-link>
           </td>
@@ -50,17 +50,18 @@
             <span>{{ uni.elementCount }}</span>
           </td>
           <td class="universes-table__cell universes-table__cell--button">
-            <lb-button variant="negative" icon="lb-cancel"></lb-button>
+            <lb-button variant="negative" icon="lb-cancel" @click="deleteUniverse(uni.id, uni.name)"></lb-button>
           </td>
         </tr>
       </table>
     </section>
-    <create-universe-popup :isOpen="isCreateUniverseOpen" @close="closeUniverseCreator"></create-universe-popup>
+    <create-universe-popup :isOpen="isCreateUniverseOpen" @close="closeUniverseCreator" @onResult="onCreateUniverse"></create-universe-popup>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import { getUserUniverses, removeUniverse } from '../httpLayers/universe.http.js';
 import CreateUniversePopup from '../popups/CreateUniversePopup.vue';
 
 export default {
@@ -71,27 +72,11 @@ export default {
   data() {
     return {
       isCreateUniverseOpen: false,
-      universes: [
-        {
-          id: 1,
-          name: "Some universe",
-          elementCount: 10,
-        },
-        {
-          id: 2,
-          name: "Another universe with some longer name",
-          elementCount: 14,
-        },
-        {
-          id: 3,
-          name: "Test Universe",
-          elementCount: 2,
-        },
-      ],
+      universes: [],
     };
   },
   computed: {
-    ...mapGetters(["username", "email", "username"]),
+    ...mapGetters(["username", "email", "userID"]),
   },
   methods: {
     openUniverseCreator() {
@@ -99,7 +84,37 @@ export default {
     },
     closeUniverseCreator() {
       this.isCreateUniverseOpen = false;
+    },
+    async fetchUserUniverses() {
+      try {
+        this.universes = await getUserUniverses(this.userID);
+      } catch (error) {
+        console.error(error.message);
+      }
+    },
+    async deleteUniverse(universeID, universeName) {
+      try {
+        if(confirm(`Are you sure that you want delete ${universeName} universe?`)) {
+          const result = await removeUniverse(universeID);
+          if (result) {
+            this.universes = this.universes.filter((uni)=> uni.id !== universeID);
+          }
+        }
+      } catch (err) {
+        console.error(err.message);
+      }
+    },
+    onCreateUniverse(result) {
+      if(result) {
+        let createdUniverse = result;
+        createdUniverse.elementCount = 0;
+        this.universes.push(createdUniverse);
+        this.isCreateUniverseOpen = false;
+      }
     }
+  },
+  async mounted() {
+    await this.fetchUserUniverses();
   }
 };
 </script>
