@@ -29,6 +29,7 @@
         <div class="universe-section__header-part">
           <lb-button
             class="universe-section__create-button"
+            @click="openUniverseCreator"
             icon="lb-plus"
             :size="1.2">Create New Universe</lb-button>
         </div>
@@ -54,16 +55,22 @@
         </tr>
       </table>
     </section>
+    <create-universe-popup :isOpen="isCreateUniverseOpen" @close="closeUniverseCreator"></create-universe-popup>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
+import CreateUniversePopup from '../popups/CreateUniversePopup.vue';
 
 export default {
-  name: "MainPage",
+  name: "UserPage",
+  components: {
+    CreateUniversePopup
+  },
   data() {
     return {
+      isCreateUniverseOpen: false,
       universes: [
         {
           id: 1,
@@ -86,6 +93,14 @@ export default {
   computed: {
     ...mapGetters(["username", "email", "username"]),
   },
+  methods: {
+    openUniverseCreator() {
+      this.isCreateUniverseOpen = true;
+    },
+    closeUniverseCreator() {
+      this.isCreateUniverseOpen = false;
+    }
+  }
 };
 </script>
 
