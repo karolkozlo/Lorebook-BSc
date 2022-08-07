@@ -22,6 +22,7 @@
 import LbInput from '../components/LbInput.vue';
 import { mapGetters } from "vuex";
 import { createUniverse } from '../httpLayers/universe.http.js';
+import { mapMutations } from "vuex";
 
 export default {
   components: { LbInput },
@@ -58,6 +59,7 @@ export default {
     },
   },
   methods: {
+    ...mapMutations('notifications', ['notify']),
     setTitle(newValue) {
         this.title.errorMsg = '';
         this.title.value = newValue;
@@ -71,7 +73,7 @@ export default {
             const createdUniverse = await createUniverse({name: this.title.value, description: this.description, userID: this.userID});
             this.$emit('onResult', createdUniverse);
         } catch (error) {
-            console.error(error.message);
+            this.notify({type: 'negative', message: error.message});
             this.$emit('onResult', false);
         } finally {
             this.loading = false;
