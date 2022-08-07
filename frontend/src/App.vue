@@ -2,6 +2,7 @@
   <main>
     <lb-header/>
     <div class="main__content">
+      <lb-toast :type="notificationType" :message="notificationMessage" :isOpen="isNotificationOpen" @close="closeNotification"></lb-toast>
       <router-view></router-view>
     </div>
   </main>
@@ -9,16 +10,22 @@
 
 <script>
 import LbHeader from './components/LbHeader.vue';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 import { refreshToken } from './httpLayers/login.http.js';
+import LbToast from './components/LbToast.vue';
 
 export default {
   name: "App",
   components: {
-    LbHeader
+    LbHeader,
+    LbToast
+  },
+  computed: {
+    ...mapGetters('notifications', ['isNotificationOpen', 'notificationMessage', 'notificationType'])
   },
   methods: {
-    ...mapMutations(['setUser'])
+    ...mapMutations(['setUser']),
+    ...mapMutations('notifications', ['closeNotification'])
   },
   async mounted() {
     let user = await refreshToken();
@@ -66,6 +73,7 @@ main {
 
   .main__content {
     padding: 1em;
+    position: relative;
   }
 }
 </style>

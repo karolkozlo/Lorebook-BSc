@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapMutations } from "vuex";
 import { getUserUniverses, removeUniverse } from '../httpLayers/universe.http.js';
 import CreateUniversePopup from '../popups/CreateUniversePopup.vue';
 
@@ -79,6 +79,7 @@ export default {
     ...mapGetters(["username", "email", "userID"]),
   },
   methods: {
+    ...mapMutations('notifications', ['notify']),
     openUniverseCreator() {
       this.isCreateUniverseOpen = true;
     },
@@ -106,6 +107,7 @@ export default {
     },
     onCreateUniverse(result) {
       if(result) {
+        this.notify({type: 'positive', message: 'Universe Created'});
         let createdUniverse = result;
         createdUniverse.elementCount = 0;
         this.universes.push(createdUniverse);

@@ -40,6 +40,7 @@
 </template>
 
 <script>
+import { mapMutations } from "vuex";
 import LbInput from "../components/LbInput.vue";
 import LbPopupBox from '../components/LbPopupBox.vue';
 import { registerUser } from '../httpLayers/account.http';
@@ -93,6 +94,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('notifications', ['notify']),
     setUsername(newValue) {
         this.username.errorMsg = '';
         this.username.value = newValue;
@@ -162,10 +164,7 @@ export default {
             }
         }
         if(registeredUser) {
-          this.resultTitle = 'Success';
-          this.resultMessage = 'User Created';
-          this.resultType = 'positive';
-          this.isPopupOpen = true;
+          this.notify({type: 'positive', message: 'User Created'});
         }
         this.loading = false;
       }

@@ -1,7 +1,9 @@
 import { createStore } from 'vuex';
+import notificationsModule from './notifications.store';
 
 const store = createStore({
   modules: {
+    notifications: notificationsModule
   },
   state: {
     userID: null,
