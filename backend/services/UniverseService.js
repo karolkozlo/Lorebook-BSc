@@ -3,7 +3,7 @@ import { NotFoundException } from "../errors.js";
 
 async function createUniverse(name, description, userID) {
     try {
-        db.Universe.create({
+        return await db.Universe.create({
             name: name,
             description: description,
             User_id: userID
@@ -28,34 +28,36 @@ async function findUniverse(id) {
 
 async function findUserUniverses(userID) {
     try {
-        const universes = await db.sequelize.query(`SELECT id, name, description,  SUM('count') as elementCount FROM
+        const universes = await db.sequelize.query(`SELECT id, name, SUM(${'`count`'}) as elementCount FROM
         (SELECT u.id, u.name, u.description, count(c.id) as count
         FROM characters c
-        JOIN universes u ON c.Universe_id = u.id
+        RIGHT JOIN universes u ON c.Universe_id = u.id
         JOIN users us ON u.User_id = us.id
         WHERE us.id = :userID
         GROUP BY u.id
         UNION ALL
         SELECT u.id, u.name, u.description, count(l.id) as count
-        FROM locations l JOIN universes u ON l.Universe_id = u.id
+        FROM locations l
+        RIGHT JOIN universes u ON l.Universe_id = u.id
         JOIN users us ON u.User_id = us.id
         WHERE us.id = :userID
         GROUP BY u.id
         UNION ALL
         SELECT u.id, u.name, u.description, count(e.id) as count
-        FROM events e JOIN universes u ON e.Universe_id = u.id
+        FROM events e
+        RIGHT JOIN universes u ON e.Universe_id = u.id
         JOIN users us ON u.User_id = us.id
         WHERE us.id = :userID
         GROUP BY u.id
         UNION ALL
         SELECT u.id, u.name, u.description, count(e.id) as count
         FROM entries e
-        JOIN categories c ON e.Category_id = c.id
-        JOIN universes u ON c.Universe_id = u.id
+        RIGHT JOIN categories c ON e.Category_id = c.id
+        RIGHT JOIN universes u ON c.Universe_id = u.id
         JOIN users us ON u.User_id = us.id
         WHERE us.id = :userID
         GROUP BY u.id
-        ) AS universeElements
+        ) AS counts
         GROUP BY id;`,
         {
             type: db.sequelize.QueryTypes.SELECT,
@@ -65,6 +67,7 @@ async function findUserUniverses(userID) {
         });
         return universes;
     } catch(err) {
+        console.log(err.message);
         throw new NotFoundException("Universes for this user were not found");
     }
 };

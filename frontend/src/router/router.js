@@ -5,6 +5,7 @@ import ChapterPage from "../pages/ChapterPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import UserPage from "../pages/UserPage.vue";
+import UniversePage from "../pages/UniversePage.vue";
 
 const routes = [
   { path: '/', name: 'Main', component: MainPage },
@@ -12,6 +13,7 @@ const routes = [
   { path: '/register', name: 'Register', component: RegisterPage, meta: {requiresUnAuth: true} },
   { path: '/login', name: 'Login', component: LoginPage, meta: {requiresUnAuth: true} },
   { path: '/user', name: 'User', component: UserPage, meta: {requiresAuth: true} },
+  { path: '/universe', name: 'Universe', component: UniversePage, meta: {requiresAuth: true} },
   { path: '/:notFound(.*)', redirect: `/` }
 ];
 
