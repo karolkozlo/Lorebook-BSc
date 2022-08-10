@@ -2,6 +2,7 @@ import {
     createCategory,
     findCategory,
     findUniverseCategories,
+    findUniverseCategoryList,
     updateCategory,
     destroyCategory,
 } from "../services/CategoryService.js";
@@ -28,6 +29,18 @@ async function getUniverseCategories(req, res) {
     } catch (e) {
       return res.status(400).json({ message: e.message });
     }
+}
+
+async function getUniverseCategoryList(req, res) {
+  if (req.params.universeID === undefined) {
+      res.status(400).send({ message: "universeID must be defined" });
+  }
+  try {
+    const categoryList = await findUniverseCategoryList(req.params.universeID);
+    res.status(200).json(categoryList);
+  } catch (e) {
+    return res.status(400).json({ message: e.message });
+  }
 }
 
 async function postCategory(req, res) {
@@ -66,4 +79,11 @@ async function patchCategory(req, res) {
     }
   }
 
-  export { getCategory, getUniverseCategories, postCategory, deleteCategory, patchCategory };
+  export {
+    getCategory,
+    getUniverseCategories,
+    getUniverseCategoryList,
+    postCategory,
+    deleteCategory,
+    patchCategory
+  };
