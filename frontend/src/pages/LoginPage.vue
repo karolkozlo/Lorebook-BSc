@@ -33,12 +33,14 @@ import LbInput from "../components/LbInput.vue";
 import { loginUser } from "@/httpLayers/login.http.js";
 import LbPopupBox from '../components/LbPopupBox.vue';
 import { mapMutations } from 'vuex';
+import LbSearchSelect from '../components/LbSearchSelect.vue';
 
 export default {
   name: "LoginPage",
   components: {
     LbInput,
     LbPopupBox,
+    LbSearchSelect,
   },
   data() {
     return {
@@ -53,7 +55,7 @@ export default {
       loading: false,
       isErrorOpen: false,
       resultMessage: '',
-      resultType: 'negative'
+      resultType: 'negative',
     };
   },
   computed: {
