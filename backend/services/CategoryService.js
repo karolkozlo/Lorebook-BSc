@@ -44,6 +44,42 @@ async function findUniverseCategories(universeID) {
     }
 };
 
+async function findUniverseCategoryList(universeID) {
+    try {
+        const categoryList = await db.sequelize.query(`
+        SELECT "Characters" as id, "Characters" as name, COUNT(c.id) as entryCount
+        FROM characters c
+        JOIN universes u ON c.Universe_id = u.id
+        WHERE u.id = :universeID
+        UNION ALL
+        SELECT "Locations" as id, "Locations" as name, COUNT(l.id) as entryCount
+        FROM locations l
+        JOIN universes u ON l.Universe_id = u.id
+        WHERE u.id = :universeID
+        UNION ALL
+        SELECT "Events" as id, "Events" as name, COUNT(e.id) as entryCount
+        FROM events e
+        JOIN universes u ON e.Universe_id = u.id
+        WHERE u.id = :universeID
+        UNION ALL
+        SELECT c.id, c.name, COUNT(e.id) as entryCount
+        FROM entries e
+        JOIN categories c ON e.Category_id = c.id
+        JOIN universes u ON c.Universe_id = u.id
+        WHERE u.id = :universeID
+        GROUP BY c.id;`,
+        {
+            type: db.sequelize.QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID
+            }
+        });
+        return categoryList;
+    } catch(err) {
+        throw new NotFoundException("Categories for this universe were not found");
+    }
+};
+
 async function destroyCategory(id) {
     try {
         let category = await db.Category.findByPk(id, {
@@ -71,4 +107,11 @@ async function updateCategory(id, name) {
     }
 };
 
-export { createCategory, updateCategory, findCategory, findUniverseCategories, destroyCategory };
+export {
+    createCategory,
+    updateCategory,
+    findCategory,
+    findUniverseCategories,
+    findUniverseCategoryList,
+    destroyCategory
+};

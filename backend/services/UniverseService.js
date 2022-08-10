@@ -67,7 +67,6 @@ async function findUserUniverses(userID) {
         });
         return universes;
     } catch(err) {
-        console.log(err.message);
         throw new NotFoundException("Universes for this user were not found");
     }
 };
