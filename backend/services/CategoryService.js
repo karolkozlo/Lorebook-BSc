@@ -49,24 +49,20 @@ async function findUniverseCategoryList(universeID) {
         const categoryList = await db.sequelize.query(`
         SELECT "Characters" as id, "Characters" as name, COUNT(c.id) as entryCount
         FROM characters c
-        JOIN universes u ON c.Universe_id = u.id
-        WHERE u.id = :universeID
+        WHERE c.Universe_id = :universeID
         UNION ALL
         SELECT "Locations" as id, "Locations" as name, COUNT(l.id) as entryCount
         FROM locations l
-        JOIN universes u ON l.Universe_id = u.id
-        WHERE u.id = :universeID
+        WHERE l.Universe_id = :universeID
         UNION ALL
         SELECT "Events" as id, "Events" as name, COUNT(e.id) as entryCount
         FROM events e
-        JOIN universes u ON e.Universe_id = u.id
-        WHERE u.id = :universeID
+        WHERE e.Universe_id = :universeID
         UNION ALL
         SELECT c.id, c.name, COUNT(e.id) as entryCount
         FROM entries e
         JOIN categories c ON e.Category_id = c.id
-        JOIN universes u ON c.Universe_id = u.id
-        WHERE u.id = :universeID
+        WHERE c.Universe_id = :universeID
         GROUP BY c.id;`,
         {
             type: db.sequelize.QueryTypes.SELECT,
