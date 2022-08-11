@@ -1,6 +1,6 @@
 <template>
     <div>
-        <i :class="icon" :style="`font-size: ${size}rem`"></i>
+        <i :class="icon" :style="setSize"></i>
     </div>
 </template>
 
@@ -14,7 +14,13 @@ export default {
         },
         size: {
             type: Number,
-            default: 1
+        }
+    },
+    computed: {
+        setSize() {
+            if(this.size) {
+                return `font-size: ${this.size}rem`;
+            }
         }
     }
 }
