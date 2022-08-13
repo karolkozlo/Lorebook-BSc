@@ -55,4 +55,28 @@ async function removeUniverse(universeID) {
         });
 };
 
-export { getUserUniverses, createUniverse, removeUniverse };
+async function getUniverse(universeID) {
+    return await LbAPI
+        .get(`/universes/${universeID}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                const err = new Error(`${error.response.data.message}`);
+                err.path = error.response.data.path;
+                throw err;
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
+}
+
+export {
+    getUniverse,
+    getUserUniverses,
+    createUniverse,
+    removeUniverse
+};
