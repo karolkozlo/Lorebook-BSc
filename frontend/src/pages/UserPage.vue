@@ -61,7 +61,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import { getUserUniverses, removeUniverse } from '../httpLayers/universe.http.js';
+import { getUserUniverseList, removeUniverse } from '../httpLayers/universe.http.js';
 import CreateUniversePopup from '../popups/CreateUniversePopup.vue';
 
 export default {
@@ -88,10 +88,9 @@ export default {
     closeUniverseCreator() {
       this.isCreateUniverseOpen = false;
     },
-    async fetchUserUniverses() {
+    async fetchUserUniverseList() {
       try {
-        this.universes = await getUserUniverses(this.userID);
-        this.setUserUniverses(this.universes.map(uni => ({id: uni.id, name: uni.name})));
+        this.universes = await getUserUniverseList(this.userID);
       } catch (error) {
         console.error(error.message);
       }
@@ -127,7 +126,7 @@ export default {
     }
   },
   async mounted() {
-    await this.fetchUserUniverses();
+    await this.fetchUserUniverseList();
   }
 };
 </script>

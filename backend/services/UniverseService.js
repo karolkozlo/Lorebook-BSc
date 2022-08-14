@@ -24,9 +24,23 @@ async function findUniverse(id) {
     } catch(err) {
         throw new NotFoundException("Universe not found");
     }
-}
+};
 
 async function findUserUniverses(userID) {
+    try {
+        const universes = db.Universe.findAll({
+            attributes: ['id', 'name'],
+            where: {
+                User_id: userID
+            }
+        });
+        return universes;
+    } catch(err) {
+        throw new NotFoundException("Universes for this user were not found");
+    }
+};
+
+async function findUserUniverseList(userID) {
     try {
         const universes = await db.sequelize.query(`SELECT id, name, SUM(${'`count`'}) as elementCount FROM
         (SELECT u.id, u.name, u.description, count(c.id) as count
@@ -96,4 +110,11 @@ async function updateUniverse(id, updatedFields) {
     }
 }
 
-export { createUniverse, updateUniverse, findUniverse, findUserUniverses, destroyUniverse };
+export {
+    createUniverse,
+    updateUniverse,
+    findUniverse,
+    findUserUniverses,
+    findUserUniverseList,
+    destroyUniverse
+};

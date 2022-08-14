@@ -32,7 +32,7 @@
 import LbInput from "../components/LbInput.vue";
 import { loginUser } from "@/httpLayers/login.http.js";
 import LbPopupBox from '../components/LbPopupBox.vue';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapActions } from 'vuex';
 import LbSearchSelect from '../components/LbSearchSelect.vue';
 
 export default {
@@ -74,6 +74,7 @@ export default {
   },
   methods: {
     ...mapMutations(['setUser']),
+    ...mapActions('universe', ['fetchUserUniverses']),
     setUsername(newValue) {
       this.username.value = newValue;
       this.username.errorMsg = '';
@@ -97,7 +98,7 @@ export default {
     async logIn() {
       this.loading = true;
       let start = Date.now();
-      let result = false;
+      let result = null;
       if(this.formValidation()) {
         try {
           result = await loginUser(this.username.value, this.password.value);
@@ -109,14 +110,16 @@ export default {
         if(result) {
           let timeRemaining = Date.now() - start;
           if(timeRemaining < 500) {
-            setTimeout(() => {
+            setTimeout( async () => {
               this.loading = false;
               this.setUser(result);
+              await this.fetchUserUniverses(result.id);
               this.$router.push('/user');
             }, 500 - timeRemaining);
           } else {
             this.loading = false;
             this.setUser(result);
+            await this.fetchUserUniverses(result.id);
             this.$router.push('/user');
           }
         }

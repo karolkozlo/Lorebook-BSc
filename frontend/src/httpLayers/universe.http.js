@@ -19,6 +19,25 @@ async function getUserUniverses(userID) {
         });
 };
 
+async function getUserUniverseList(userID) {
+    return await LbAPI
+        .get(`/universes/user/list/${userID}`)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                const err = new Error(`${error.response.data.message}`);
+                err.path = error.response.data.path;
+                throw err;
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
+};
+
 async function createUniverse({name, description, userID}) {
     return await LbAPI
         .post(`/universes`, {name, description, userID})
@@ -77,6 +96,7 @@ async function getUniverse(universeID) {
 export {
     getUniverse,
     getUserUniverses,
+    getUserUniverseList,
     createUniverse,
     removeUniverse
 };
