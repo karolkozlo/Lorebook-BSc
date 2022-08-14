@@ -1,12 +1,32 @@
 <template>
   <div class="universe-page">
-    Example of Universe
+    {{ `${universeID} : ${universeName}`}}
   </div>
 </template>
 
 <script>
+import { mapGetters, mapMutations, mapActions } from 'vuex';
+import { getUniverse } from '../httpLayers/universe.http.js';
+
 export default {
-    name: 'UniversePage'
+    name: 'UniversePage',
+    computed: {
+      ...mapGetters('universe', ['universeName', 'universeID'])
+    },
+    methods: {
+      ...mapMutations('universe', ['setUniverse']),
+      ...mapMutations('notifications', ['notify']),
+    },
+    async mounted() {
+      const universeID = this.$route.params.universeID;
+      try {
+        const currentUniverse = await getUniverse(universeID);
+        this.setUniverse({ id: currentUniverse.id, name: currentUniverse.name });
+      } catch (err) {
+        this.notify({type: 'negative', message: `Error: ${err.message}`});
+      }
+
+    }
 };
 </script>
 

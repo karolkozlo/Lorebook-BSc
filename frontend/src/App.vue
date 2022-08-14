@@ -11,7 +11,6 @@
 <script>
 import LbHeader from './components/LbHeader.vue';
 import { mapMutations, mapGetters } from 'vuex';
-import { refreshToken } from './httpLayers/login.http.js';
 import LbToast from './components/LbToast.vue';
 
 export default {
@@ -26,12 +25,6 @@ export default {
   methods: {
     ...mapMutations(['setUser']),
     ...mapMutations('notifications', ['closeNotification'])
-  },
-  async mounted() {
-    let user = await refreshToken();
-    if (user && user.data.name && user.data.email && user.data.id) {
-      this.setUser(user.data);
-    }
   }
 };
 </script>

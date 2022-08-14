@@ -4,6 +4,9 @@
         <div class="lb-header__nav-left">
             <router-link class="lb-header__link" to="/">Home</router-link>
         </div>
+        <div class="lb-header__nav-center">
+            <router-view name="header"></router-view>
+        </div>
         <div class="lb-header__nav-right">
             <router-link class="lb-header__link lb-header__link--account" :to="setLink">
                 <span class="lb-header__account-text">{{ setAccountLinkText }}</span>
@@ -32,6 +35,7 @@ export default {
     },
     methods: {
         ...mapMutations(['clearUser']),
+        ...mapMutations('universe', ['clearUserUniverses', 'clearUniverse']),
         async logOut() {
             try {
                 await logoutUser();
@@ -40,6 +44,8 @@ export default {
                 console.error(err.message);
             } finally {
                 this.clearUser();
+                this.clearUserUniverses();
+                this.clearUniverse();
                 this.$router.push('/login');
             }
         }

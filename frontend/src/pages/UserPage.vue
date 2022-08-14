@@ -42,9 +42,9 @@
         </tr>
         <tr class="universes-table__row" v-for="uni in universes" :key="uni.id">
           <td class="universes-table__cell">
-            <router-link class="universes-table__link" to="/universe">
+            <span class="universes-table__link" @click="navigateToUniverse(uni.id)">
                 {{ uni.name }}
-            </router-link>
+            </span>
           </td>
           <td class="universes-table__cell">
             <span>{{ uni.elementCount }}</span>
@@ -77,9 +77,11 @@ export default {
   },
   computed: {
     ...mapGetters(["username", "email", "userID"]),
+    ...mapGetters('universe', ['userUniverses'])
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
+    ...mapMutations('universe', ['setUniverse', 'setUserUniverses', 'pushUserUniverse', 'removerUserUniverse']),
     openUniverseCreator() {
       this.isCreateUniverseOpen = true;
     },
@@ -89,6 +91,7 @@ export default {
     async fetchUserUniverses() {
       try {
         this.universes = await getUserUniverses(this.userID);
+        this.setUserUniverses(this.universes.map(uni => ({id: uni.id, name: uni.name})));
       } catch (error) {
         console.error(error.message);
       }
@@ -99,19 +102,27 @@ export default {
           const result = await removeUniverse(universeID);
           if (result) {
             this.universes = this.universes.filter((uni)=> uni.id !== universeID);
+            this.removerUserUniverse(universeID);
           }
         }
       } catch (err) {
-        console.error(err.message);
+        this.notify({type: 'negative', message: `Error: ${err.message}`});
       }
     },
     onCreateUniverse(result) {
       if(result) {
         this.notify({type: 'positive', message: 'Universe Created'});
         let createdUniverse = result;
+        this.pushUserUniverse({id: createdUniverse.id, name: createdUniverse.name});
         createdUniverse.elementCount = 0;
         this.universes.push(createdUniverse);
         this.isCreateUniverseOpen = false;
+      }
+    },
+    navigateToUniverse(universeID) {
+      const currentUniverse = this.userUniverses.find(uni => {return uni.id === universeID});
+      if(currentUniverse) {
+        this.$router.push(`/universe/${currentUniverse.id}`);
       }
     }
   },

@@ -1,15 +1,18 @@
 import { createStore } from 'vuex';
 import notificationsModule from './notifications.store';
+import universeModule from './universe.store';
 
 const store = createStore({
   modules: {
-    notifications: notificationsModule
+    notifications: notificationsModule,
+    universe: universeModule
   },
   state: {
     userID: null,
     username: null,
     email: null,
     isAuth: false,
+    tokenRefreshedFlag: false,
   },
   getters: {
     userID(state) {
@@ -24,8 +27,14 @@ const store = createStore({
     isAuth(state) {
       return state.isAuth;
     },
+    tokenRefreshedFlag(state) {
+      return state.wasTokenRefreshed;
+    }
   },
   mutations: {
+    setTokenRefreshedFlag(state, value) {
+      state.tokenRefreshedFlag = value;
+    },
     setUser(state, payload) {
       state.userID = payload.id;
       state.username = payload.name;
