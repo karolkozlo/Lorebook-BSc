@@ -1,3 +1,5 @@
+import { getUserUniverses } from "../httpLayers/universe.http";
+
 const initialCategories = [
     {
         id: 'Characters',
@@ -21,6 +23,7 @@ const universeModule = {
             universeName: null,
             categories: initialCategories,
             userUniverses: [],
+            universesFetchedFlag: false
         };
     },
     getters: {
@@ -41,6 +44,9 @@ const universeModule = {
                 return uni.id == payload.universeID;
             });
         },
+        universesFetchedFlag(state) {
+            return state.universesFetchedFlag;
+        }
     },
     mutations: {
         setUniverse(state, payload) {
@@ -58,6 +64,9 @@ const universeModule = {
         setUserUniverses(state, universes) {
             state.userUniverses = universes;
         },
+        setUniversesFetchedFlag(state, value) {
+            state.universesFetchedFlag = value;
+        },
         pushUserUniverse(state, payload) {
             state.userUniverses.push(payload);
         },
@@ -68,6 +77,19 @@ const universeModule = {
             state.userUniverses = [];
         }
     },
+    actions: {
+        async fetchUserUniverses(context) {
+            try {
+                if (context.rootGetters.userID) {
+                    const universes = await getUserUniverses(context.rootGetters.userID);
+                    context.commit('setUserUniverses', universes);
+                    context.commit('setUniversesFetchedFlag', true);
+                }
+            } catch (error) {
+                context.commit('notifications/notify', {type: 'negative', message: `${error.message}`}, { root: true });
+            }
+        }
+    }
 };
 
 export default universeModule;

@@ -24,7 +24,10 @@ const routes = [
       requiresAuth: true,
       universeRelated: true,
     },
-    beforeEnter(to, from, next) {
+    async beforeEnter(to, from, next) {
+      if(!store.getters['universe/universesFetchedFlag']) {
+        await store.dispatch('universe/fetchUserUniverses');
+      }
       if(store.getters['universe/checkIfUserOwnsUniverse']({ universeID: to.params.universeID })) {
         next();
       } else {

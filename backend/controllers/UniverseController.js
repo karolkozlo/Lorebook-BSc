@@ -2,14 +2,17 @@ import {
     createUniverse,
     findUniverse,
     findUserUniverses,
+    findUserUniverseList,
     updateUniverse,
     destroyUniverse,
 } from "../services/UniverseService.js";
 import { NotFoundException } from "../errors.js";
 
 async function getUniverse(req, res) {
-    if (req.params.id === undefined)
+    if (req.params.id === undefined) {
       res.status(400).send({ message: "ID must be defined" });
+      return;
+    }
     try {
       const Universe = await findUniverse(req.params.id);
       res.status(200).json(Universe);
@@ -19,15 +22,28 @@ async function getUniverse(req, res) {
 }
 
 async function getUserUniverses(req, res) {
+  if (req.params.userID === undefined) {
+    res.status(400).send({ message: "userID must be defined" });
+    return;
+  }
+  try {
+    const Universes = await findUserUniverses(req.params.userID);
+    res.status(200).json(Universes);
+  } catch (e) {
+    return res.status(400).json({ message: e.message });
+  }
+};
+
+async function getUserUniverseList(req, res) {
     if (req.params.userID === undefined)
       res.status(400).send({ message: "userID must be defined" });
     try {
-      const Universes = await findUserUniverses(req.params.userID);
+      const Universes = await findUserUniverseList(req.params.userID);
       res.status(200).json(Universes);
     } catch (e) {
       return res.status(400).json({ message: e.message });
     }
-}
+};
 
 async function postUniverse(req, res) {
     try {
@@ -66,4 +82,11 @@ async function patchUniverse(req, res) {
     }
   }
 
-  export { getUniverse, getUserUniverses, postUniverse, deleteUniverse, patchUniverse };
+  export {
+    getUniverse,
+    getUserUniverses,
+    getUserUniverseList,
+    postUniverse,
+    deleteUniverse,
+    patchUniverse
+  };
