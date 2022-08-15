@@ -2,7 +2,7 @@
   <header class="lb-header">
     <nav class="lb-header__nav">
         <div class="lb-header__nav-left">
-            <router-link class="lb-header__link" to="/">Home</router-link>
+            <router-link class="lb-header__link lb-header__link--main" to="/">Lorebook</router-link>
         </div>
         <div class="lb-header__nav-center">
             <router-view name="header"></router-view>
@@ -59,18 +59,21 @@ export default {
 .lb-header {
     display: flex;
     background-color: @primary-color;
-    padding: 5px;
+    padding: 0px 5px;
 
     .lb-header__nav {
         display: flex;
         gap: 10px;
         width: 100%;
-        padding: 0.5em;
 
         .lb-header__nav-left {
             display: flex;
             justify-content: flex-start;
             align-items: center;
+            padding: 0.5em;
+        }
+
+        .lb-header__nav-center {
             flex: 1;
         }
 
@@ -78,8 +81,8 @@ export default {
             display: flex;
             justify-content: flex-end;
             align-items: center;
-            flex: 1;
             gap: 15px;
+            padding: 0.5em 0.5em 0.5em 0em;
         }
 
         .lb-header__link {
@@ -92,6 +95,11 @@ export default {
                 align-items: center;
                 flex-wrap: nowrap;
                 gap: 10px;
+            }
+
+            &--main {
+                font-size: 2rem;
+                font-weight: bold;
             }
         }
     }

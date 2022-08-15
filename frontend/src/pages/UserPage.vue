@@ -42,15 +42,15 @@
         </tr>
         <tr class="universes-table__row" v-for="uni in universes" :key="uni.id">
           <td class="universes-table__cell">
-            <span class="universes-table__link" @click="navigateToUniverse(uni.id)">
+            <router-link class="universes-table__link" :to="`/universe/${uni.id}`">
                 {{ uni.name }}
-            </span>
+            </router-link>
           </td>
           <td class="universes-table__cell">
             <span>{{ uni.elementCount }}</span>
           </td>
           <td class="universes-table__cell universes-table__cell--button">
-            <lb-button variant="negative" icon="lb-cancel" @click="deleteUniverse(uni.id, uni.name)"></lb-button>
+            <lb-button variant="negative" icon="lb-trash" @click="deleteUniverse(uni.id, uni.name)"></lb-button>
           </td>
         </tr>
       </table>
@@ -116,12 +116,6 @@ export default {
         createdUniverse.elementCount = 0;
         this.universes.push(createdUniverse);
         this.isCreateUniverseOpen = false;
-      }
-    },
-    navigateToUniverse(universeID) {
-      const currentUniverse = this.userUniverses.find(uni => {return uni.id === universeID});
-      if(currentUniverse) {
-        this.$router.push(`/universe/${currentUniverse.id}`);
       }
     }
   },
