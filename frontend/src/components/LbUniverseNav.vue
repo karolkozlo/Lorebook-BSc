@@ -13,7 +13,7 @@
       <icon icon="lb-plus-square"></icon>
       <span class="lb-universe-nav__button-text">Create Element</span>
     </button>
-    <button class="lb-universe-nav__button">
+    <button class="lb-universe-nav__button" @click="openCategoriesPopup">
       <icon icon="lb-folder"></icon>
       <span class="lb-universe-nav__button-text">Categories</span>
     </button>
@@ -29,12 +29,16 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
     name: 'LbUniverseNav',
     computed: {
-      ...mapGetters('universe', ['universeName', 'universeID'])
+      ...mapGetters('universe', ['universeName', 'universeID']),
+      ...mapGetters('popups', ['isCategoriesPopupOpen'])
+    },
+    methods: {
+      ...mapMutations('popups', ['openCategoriesPopup']),
     }
 };
 </script>

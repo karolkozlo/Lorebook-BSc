@@ -1,11 +1,13 @@
 import { createStore } from 'vuex';
 import notificationsModule from './notifications.store';
 import universeModule from './universe.store';
+import popupModule from './popup.store';
 
 const store = createStore({
   modules: {
     notifications: notificationsModule,
-    universe: universeModule
+    universe: universeModule,
+    popups: popupModule
   },
   state: {
     userID: null,

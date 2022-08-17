@@ -1,15 +1,20 @@
 <template>
   <div class="universe-page">
     {{ `${universeID} : ${universeName}`}}
+    <categories-popup></categories-popup>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
+import CategoriesPopup from '../popups/CategoriesPopup.vue';
 import { getUniverse } from '../httpLayers/universe.http.js';
 
 export default {
     name: 'UniversePage',
+    components: {
+      CategoriesPopup
+    },
     computed: {
       ...mapGetters('universe', ['universeName', 'universeID'])
     },
