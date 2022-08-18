@@ -10,7 +10,8 @@
                 variant="positive"
                 icon="lb-plus"
                 @click="addCategory"
-                :disabled="disableFormButtons">Add new category</lb-button>
+                :disabled="disableFormButtons"
+                :loading="isAddCategoryLoading">Add new category</lb-button>
             <lb-button
                 v-if="selectedCategory !== null"
                 :size="1.2"
@@ -59,6 +60,12 @@
 <script>
 import { mapGetters, mapMutations } from 'vuex';
 import LbInput from '../components/LbInput.vue';
+import {
+  getUniverseCategoryList,
+  createCategory,
+  removeCategory,
+  updateCategory
+} from '../httpLayers/category.http.js';
 
 export default {
     name: 'CategoriesPopup',
@@ -74,38 +81,13 @@ export default {
           categoryNameError: '',
           loading: false,
           selectedCategory: null,
-          categoriesList: [
-            {
-              id: 'Characters',
-              name: 'Characters',
-              elementCount: 7
-            },
-            {
-              id: 'Locations',
-              name: 'Locations',
-              elementCount: 3
-            },
-            {
-              id: 'Events',
-              name: 'Events',
-              elementCount: 3
-            },
-            {
-              id: 1,
-              name: 'Creatures',
-              elementCount: 8
-            },
-            {
-              id: 2,
-              name: 'Religons',
-              elementCount: 2
-            },
-          ]
+          categoriesList: [],
+          isAddCategoryLoading: false,
       };
     },
     computed: {
       ...mapGetters('popups', ['isCategoriesPopupOpen']),
-      ...mapGetters('universe', ['universeCategories']),
+      ...mapGetters('universe', ['universeCategories', 'universeID']),
       setButtonsClass() {
         if(this.selectedCategory !== null) {
           return 'categories-popup__buttons--rename-mode';
@@ -124,6 +106,7 @@ export default {
     },
     methods: {
       ...mapMutations('popups', ['closeCategoriesPopup']),
+      ...mapMutations('notifications', ['notify']),
       close() {
         this.closeCategoriesPopup();
       },
@@ -154,26 +137,52 @@ export default {
         this.selectedCategory = null;
         this.categoryName = '';
       },
-      addCategory() {
+      async addCategory() {
         if( this.isCategoryNameValid ) {
-          this.categoriesList.push({id: 3, name: this.categoryName, elementCount: 0});
-          this.categoryName = '';
+          this.isAddCategoryLoading = true;
+          try {
+            const createdCategory = await createCategory({ name: this.categoryName, universeID: this.universeID });
+            this.categoriesList.push({id: createdCategory.id, name: this.categoryName, elementCount: 0});
+            this.categoryName = '';
+          } catch (error) {
+            this.notify({ type: 'negative', message: error.message });
+          } finally {
+            this.isAddCategoryLoading = false;
+          }
         } else {
           this.categoryNameError = 'Category with that name already exists';
         }
       },
-      renameCategory() {
+      async renameCategory() {
         if( this.isCategoryNameValid ) {
-          this.categoriesList.find(cat => cat.id == this.selectedCategory).name = this.categoryName;
-          this.cancelEdit();
+          try {
+            await updateCategory(this.selectedCategory, this.categoryName);
+            this.categoriesList.find(cat => cat.id == this.selectedCategory).name = this.categoryName;
+            this.selectedCategory = null;
+            this.categoryName = '';
+          } catch (error) {
+            this.notify({ type: 'negative', message: error.message });
+          }
         } else {
           this.categoryNameError = 'Category with that name already exists';
         }
       },
-      deleteCategory(id) {
+      async deleteCategory(id) {
         if(confirm('Do you really want to delete this category? You will lose all elements belonging in this category. It cannot be undone!')) {
-          this.categoriesList = this.categoriesList.filter(cat => cat.id !== id);
+          try {
+            await removeCategory(id);
+            this.categoriesList = this.categoriesList.filter(cat => cat.id !== id);
+          } catch (error) {
+            this.notify({ type: 'negative', message: error.message });
+          }
         }
+      }
+    },
+    async mounted() {
+      try {
+        this.categoriesList = await getUniverseCategoryList(this.universeID);
+      } catch(error) {
+        this.notify({ type: 'negative', message: error.message });
       }
     }
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="universe-page">
     {{ `${universeID} : ${universeName}`}}
-    <categories-popup></categories-popup>
+    <categories-popup v-if="isCategoriesPopupOpen"></categories-popup>
   </div>
 </template>
 
@@ -16,7 +16,8 @@ export default {
       CategoriesPopup
     },
     computed: {
-      ...mapGetters('universe', ['universeName', 'universeID'])
+      ...mapGetters('universe', ['universeName', 'universeID']),
+      ...mapGetters('popups',['isCategoriesPopupOpen'])
     },
     methods: {
       ...mapMutations('universe', ['setUniverse']),
