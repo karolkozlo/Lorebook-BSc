@@ -57,8 +57,8 @@ async function createCategory({name, universeID}) {
 async function updateCategory(categoryID, name) {
     return await LbAPI
     .patch(`/categories/${categoryID}`, {name})
-    .then((response) => {
-        return response.data;
+    .then(() => {
+        return true;
     })
     .catch((error) => {
         if (error.response && error.response.data.message) {
