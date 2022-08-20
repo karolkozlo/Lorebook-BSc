@@ -127,7 +127,7 @@ export default {
         display: block;
         align-items: center;
         color: @dark-text-color;
-        background-color: @canvas-white-color;
+        background-color: @light-text-color;
         padding: 0.3em;
         width: 100%;
         white-space: nowrap;
@@ -146,10 +146,12 @@ export default {
   .lb-select__dropdown {
     display: flex;
     flex-direction: column;
+    z-index: 9999;
 
     .lb-select__dropdown-content, .lb-select__no-content {
         position: absolute;
         box-shadow: 2px 2px 2px #727272;
+        width: 100%;
 
         .lb-select__item {
             display: flex;
@@ -158,6 +160,7 @@ export default {
             border-bottom: 1px solid @dark-text-color;
             max-height: min-content;
             padding: 0.2em;
+            color: @dark-text-color;
 
             .lb-select__item-icon {
                 padding-left: 0.4em;
