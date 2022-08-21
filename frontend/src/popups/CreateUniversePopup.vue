@@ -9,7 +9,7 @@
                           :error="title.errorMsg"></lb-input>
                 <lb-input name="Description" type="textarea" v-model:value="description"></lb-input>
             </div>
-            <div class="create-universe-popup--buttons">
+            <div class="create-universe-popup__buttons">
                 <lb-button variant="outline" :size="1.4" @click="close">Cancel</lb-button>
                 <lb-button variant="positive" :size="1.4" @click="create" :disabled="!isFormValid">Create</lb-button>
             </div>
@@ -107,7 +107,7 @@ export default {
         gap: 25px;
     }
 
-    .create-universe-popup--buttons {
+    .create-universe-popup__buttons {
         display: flex;
         justify-content: space-between;
         margin-top: 20px;

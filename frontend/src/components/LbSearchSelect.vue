@@ -169,6 +169,7 @@ export default {
             display: flex;
             flex-direction: row;
             background-color: @canvas-white-color;
+            color: @dark-text-color;
             border-bottom: 1px solid @dark-text-color;
             max-height: min-content;
             padding: 0.2em;

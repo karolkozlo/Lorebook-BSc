@@ -10,6 +10,7 @@
            :class="fieldClass"
            :maxlength="maxLength"
            @input="$emit('update:value', value)"
+           @change="$emit('change:value', value)"
            @focus="isFocused = true"
            @blur="isFocused = false" />
     <textarea v-else
@@ -29,7 +30,7 @@ import LbSmallError from './LbSmallError.vue'
 export default {
   components: { LbSmallError },
   name: 'LbInput',
-  emits: ['update:value'],
+  emits: ['update:value', 'change:value'],
   props: {
     name: {
       type: String
@@ -39,7 +40,7 @@ export default {
       default: 'text'
     },
     value: {
-      type: String,
+      type: [String, Number],
       required: true,
     },
     error: {

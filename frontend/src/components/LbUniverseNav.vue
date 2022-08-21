@@ -9,7 +9,7 @@
         {{ universeName }}
       </span>
     </router-link>
-    <button class="lb-universe-nav__button">
+    <button class="lb-universe-nav__button" @click="openUniverseElementPopup">
       <icon icon="lb-plus-square"></icon>
       <span class="lb-universe-nav__button-text">Create Element</span>
     </button>
@@ -35,10 +35,9 @@ export default {
     name: 'LbUniverseNav',
     computed: {
       ...mapGetters('universe', ['universeName', 'universeID']),
-      ...mapGetters('popups', ['isCategoriesPopupOpen'])
     },
     methods: {
-      ...mapMutations('popups', ['openCategoriesPopup']),
+      ...mapMutations('popups', ['openCategoriesPopup', 'openUniverseElementPopup']),
     }
 };
 </script>

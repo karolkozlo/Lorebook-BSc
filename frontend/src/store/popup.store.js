@@ -3,11 +3,15 @@ const popupModule = {
     state() {
         return {
             isCategoriesPopupOpen: false,
+            isUniverseElementPopupOpen: false,
         };
     },
     getters: {
         isCategoriesPopupOpen(state) {
             return state.isCategoriesPopupOpen;
+        },
+        isUniverseElementPopupOpen(state) {
+            return state.isUniverseElementPopupOpen;
         },
     },
     mutations: {
@@ -16,6 +20,12 @@ const popupModule = {
         },
         closeCategoriesPopup(state) {
             state.isCategoriesPopupOpen = false;
+        },
+        openUniverseElementPopup(state) {
+            state.isUniverseElementPopupOpen = true;
+        },
+        closeUniverseElementPopup(state) {
+            state.isUniverseElementPopupOpen = false;
         },
     },
 };

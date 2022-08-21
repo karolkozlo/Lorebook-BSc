@@ -5,6 +5,7 @@
       <lb-content-swapper :options="contentOptions" :activeOption="activeOption" @onSelect="changeContent"></lb-content-swapper>
     </div>
     <categories-popup v-if="isCategoriesPopupOpen"></categories-popup>
+    <universe-element-popup v-if="isUniverseElementPopupOpen"></universe-element-popup>
   </div>
 </template>
 
@@ -13,12 +14,14 @@ import { mapGetters, mapMutations, mapActions } from 'vuex';
 import CategoriesPopup from '../popups/CategoriesPopup.vue';
 import { getUniverse } from '../httpLayers/universe.http.js';
 import LbContentSwapper from '../components/LbContentSwapper.vue';
+import UniverseElementPopup from '../popups/UniverseElementPopup.vue';
 
 export default {
     name: 'UniversePage',
     components: {
       CategoriesPopup,
-      LbContentSwapper
+      LbContentSwapper,
+      UniverseElementPopup
     },
     data() {
       return {
@@ -37,7 +40,7 @@ export default {
     },
     computed: {
       ...mapGetters('universe', ['universeName', 'universeID']),
-      ...mapGetters('popups',['isCategoriesPopupOpen'])
+      ...mapGetters('popups',['isCategoriesPopupOpen', 'isUniverseElementPopupOpen'])
     },
     methods: {
       ...mapMutations('universe', ['setUniverse']),
