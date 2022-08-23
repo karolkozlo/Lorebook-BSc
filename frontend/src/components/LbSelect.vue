@@ -165,6 +165,10 @@ export default {
             .lb-select__item-icon {
                 padding-left: 0.4em;
             }
+
+            &:hover {
+                box-shadow: inset 0px 1px 8px rgba(0, 0, 0, 0.2);
+            }
         }
 
         .lb-select__item:last-child {

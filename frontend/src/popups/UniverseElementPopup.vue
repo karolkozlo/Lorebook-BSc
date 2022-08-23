@@ -21,7 +21,7 @@
         <lb-input name="Description" type="textarea" v-model:value="description" :maxLength="250"/>
         <div class="universe-element-popup__buttons">
             <lb-button variant="outline" :size="1.4" @click="closeUniverseElementPopup">Cancel</lb-button>
-            <lb-button variant="positive" :size="1.4" @click="createElement">Create Element</lb-button>
+            <lb-button variant="positive" :size="1.4" @click="createElement" :disabled="isCreateButtonDisabled" :loading="createLoading">Create Element</lb-button>
         </div>
     </div>
   </lb-popup-box>
@@ -33,6 +33,12 @@ import { mapGetters, mapMutations } from 'vuex';
 import LbInput from '../components/LbInput.vue';
 import LbSelect from '../components/LbSelect.vue';
 import LbSearchSelect from '../components/LbSearchSelect.vue';
+import { getUniverseCategories } from '../httpLayers/category.http.js';
+import { getUniverseLocations, createLocation } from '../httpLayers/location.http.js';
+import { createCharacter } from '../httpLayers/character.http.js';
+import { createEvent } from '../httpLayers/event.http.js';
+import { createEntry } from '../httpLayers/entry.http.js';
+
 
 export default {
     name: 'UniverseElementPopup',
@@ -48,20 +54,8 @@ export default {
             name: '',
             description: '',
             selectedCategory: null,
-            categories: [
-                {
-                    id: 'Characters',
-                    name: 'Characters'
-                },
-                {
-                    id: 'Locations',
-                    name: 'Locations'
-                },
-                {
-                    id: 'Events',
-                    name: 'Events'
-                }
-            ],
+            categories: [],
+            createLoading: false,
             //Data for Events
             eventDate: {
                 year: 0,
@@ -77,25 +71,66 @@ export default {
     },
     computed: {
         ...mapGetters('popups', ['isUniverseElementPopupOpen']),
+        ...mapGetters('universe', ['universeID']),
+        isCreateButtonDisabled() {
+            if(this.selectedCategory == null || this.name.length < 1) {
+                return true;
+            }
+            return false;
+        }
     },
     methods: {
         ...mapMutations('popups', ['closeUniverseElementPopup']),
+        ...mapMutations('notifications', ['notify']),
+        resetForm() {
+            this.name = '';
+            this.description = '';
+            this.selectedCategory = null;
+            this.eventDate = {
+                year: 0,
+                month: 1,
+                day: 1
+            };
+            this.parentLocation = null;
+        },
         async selectCategory(selection) {
             this.selectedCategory = selection.length ? selection[0].id : null;
-            if ( this.selectedCategory == 'Locations' && !this.fetchLocationsFlag) {
-                await this.fetchLocations();
-                this.fetchLocationsFlag = true;
+            if (this.selectedCategory == 'Locations') {
+                this.parentLocation = null;
+                if (!this.fetchLocationsFlag) {
+                    await this.fetchLocations();
+                    this.fetchLocationsFlag = true;
+                }
+            } else if(this.selectedCategory == 'Events') {
+                this.eventDate = {
+                    year: 0,
+                    month: 1,
+                    day: 1
+                };
             }
         },
-        createElement() {
-            console.log('name: ', this.name);
-            console.log('description: ', this.name);
-            console.log('type: ', this.selectedCategory);
-            if (this.selectedCategory == 'Events') {
-                console.log('eventDate: ', this.eventDate)
-            }
-            if (this.selectedCategory == 'Locations') {
-                console.log('parentLocation: ', this.parentLocation);
+        async createElement() {
+            this.createLoading = true;
+            try {
+                let result = null;
+                if (this.selectedCategory == 'Events') {
+                    result = await createEvent(this.name, this.description, this.eventDate, this.universeID);
+                } else if (this.selectedCategory == 'Locations') {
+                    result = await createLocation(this.name, this.description, this.universeID, this.parentLocation);
+                } else if (this.selectedCategory == 'Characters') {
+                    result = await createCharacter(this.name, this.description, this.universeID);
+                } else {
+                    result = await createEntry(this.name, this.description, this.selectedCategory);
+                }
+                if (result) {
+                    this.notify({ type: 'positive', message: `Successfully created ${result.name}` });
+                    this.$emit('onResult', { result, type: this.selectedCategory });
+                    this.resetForm();
+                }
+            } catch(error) {
+                this.notify({ type: 'negative', message: error.message });
+            } finally {
+                this.createLoading = false;
             }
         },
         // Methods for Events
@@ -120,27 +155,39 @@ export default {
         //Methods for Locations
         async fetchLocations() {
             this.areLocationsLoading = true;
-            setTimeout(() => {
-                this.locations = [
-                    {
-                        id: 1,
-                        name: 'Some Location'
-                    },
-                    {
-                        id: 2,
-                        name: 'Locatio'
-                    },
-                    {
-                        id: 3,
-                        name: 'Another Some Location'
-                    }
-                ];
+            try {
+                this.locations = await getUniverseLocations(this.universeID);
+            } catch(error) {
+                this.notify({ type: 'negative', message: error.message });
+            } finally {
                 this.areLocationsLoading = false;
-            }, 3000)
+            }
         },
         selectLocation(selection) {
             this.parentLocation = selection;
         }
+    },
+    async mounted() {
+      try {
+        const basicCategories = [
+                {
+                    id: 'Characters',
+                    name: 'Characters'
+                },
+                {
+                    id: 'Locations',
+                    name: 'Locations'
+                },
+                {
+                    id: 'Events',
+                    name: 'Events'
+                }
+        ];
+        const customCategories = await getUniverseCategories(this.universeID);
+        this.categories.push(...basicCategories, ...customCategories);
+      } catch(error) {
+        this.notify({ type: 'negative', message: error.message });
+      }
     }
 }
 </script>
