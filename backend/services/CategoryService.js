@@ -34,6 +34,7 @@ async function findCategory(id) {
 async function findUniverseCategories(universeID) {
     try {
         const categories = db.Category.findAll({
+            attributes: ['id', 'name'],
             where: {
                 Universe_id: universeID,
             },

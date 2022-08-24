@@ -34,22 +34,13 @@ async function findLocation(id) {
     }
 };
 
-async function findUniverseLocations(universeID, limit, offset) {
-    let findLimit = limit;
-    if(!limit) {
-        findLimit = 50;
-    }
-    let findOffset = offset;
-    if(!offset) {
-        findOffset = 0;
-    }
+async function findUniverseLocations(universeID) {
     try {
         const locations = await db.Location.findAll({
+            attributes: ['id', 'name', 'Location_id'],
             where: {
                 Universe_id: universeID,
             },
-            offset: findOffset,
-            limit: findLimit,
             order: [['last_modified', 'DESC']]
         });
         return locations;

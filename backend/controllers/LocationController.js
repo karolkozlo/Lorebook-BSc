@@ -29,7 +29,7 @@ async function getUniverseLocations(req, res) {
     return;
   }
   try {
-    const locations = await findUniverseLocations(req.params.universeID, parseInt(req.query.limit), parseInt(req.query.offset));
+    const locations = await findUniverseLocations(req.params.universeID);
     res.status(200).json(locations);
   } catch (e) {
     return res.status(400).json({ message: e.message });

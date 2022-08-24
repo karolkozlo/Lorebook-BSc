@@ -87,7 +87,7 @@ export default {
     },
     computed: {
       ...mapGetters('popups', ['isCategoriesPopupOpen']),
-      ...mapGetters('universe', ['universeCategories', 'universeID']),
+      ...mapGetters('universe', ['universeID']),
       setButtonsClass() {
         if(this.selectedCategory !== null) {
           return 'categories-popup__buttons--rename-mode';
