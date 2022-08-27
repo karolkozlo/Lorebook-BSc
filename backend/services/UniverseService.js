@@ -97,7 +97,7 @@ async function destroyUniverse(id) {
 
 async function updateUniverse(id, updatedFields) {
     try {
-        const modelKeys = Object.keys(db.Universe.getAttributes());
+        const modelKeys = Object.keys(db.Universe.getAttributes()).filter((key) => { return !['id', 'User_id'].includes(key); });
         let subsetFields = modelKeys
             .filter((key) => key in updatedFields)
             .reduce((subset, key) => {

@@ -91,12 +91,31 @@ async function getUniverse(universeID) {
                 throw new Error("Undefined error");
             }
         });
-}
+};
+
+async function updateUniverse(universeID, fields) {
+    return await LbAPI
+        .patch(`/universes/${universeID}`, fields)
+        .then(() => {
+            return true;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                const err = new Error(`${error.response.data.message}`);
+                throw err;
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
+};
 
 export {
     getUniverse,
     getUserUniverses,
     getUserUniverseList,
     createUniverse,
-    removeUniverse
+    removeUniverse,
+    updateUniverse
 };

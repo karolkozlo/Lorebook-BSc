@@ -107,7 +107,9 @@ export default {
             font-size: 1.22rem;
             margin: 0;
             font-family: 'Roboto';
-            white-space: normal;
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -o-pre-wrap;
 
             &--no-content {
                 font-style: italic;
