@@ -4,14 +4,14 @@
         <div class="lb-editable-text__cancel-button" v-if="active">
             <icon icon="lb-cancel-circled" :size="1.22" @click="deactivate"></icon>
         </div>
-            <pre v-if="!active" class="lb-editable-text__text" @click="activate">{{ value }}</pre>
+            <pre v-if="!active" class="lb-editable-text__text" :class="textClass" v-on:dblclick="activate">{{ value ? value : noContent }}</pre>
             <input v-if="active && type == 'input'"
                    class="lb-editable-text__input"
                    type="text"
                    v-model="editedValue"
                    :maxlength="maxLength">
             <textarea v-if="active && type == 'textarea'"
-                      class="lb-editable-text__textarea"
+                      class="lb-editable-text__input"
                       v-model="editedValue"
                       :maxlength="maxLength"
                       :style="`min-height: ${minHeight}px;`"/>
@@ -29,7 +29,7 @@ export default {
     props: {
         value: {
             type: String,
-            default: ''
+            default: '',
         },
         type: {
             type: String,
@@ -50,6 +50,9 @@ export default {
         minHeight: {
             type: Number,
             default: 150
+        },
+        noContent: {
+            type: String
         }
     },
     emits: ['onSave'],
@@ -59,21 +62,30 @@ export default {
             editedValue: this.value
         };
     },
+    computed: {
+        textClass() {
+            if(!this.value) {
+                return 'lb-editable-text__text--no-content';
+            }
+            return '';
+        }
+    },
     methods: {
         activate() {
             this.active = true;
         },
         deactivate() {
             this.active = false;
+            this.editedValue = this.value;
         },
         save() {
             this.$emit('onSave', this.editedValue);
+            this.active = false;
         }
     },
     watch: {
         value() {
             this.editedValue = this.value;
-            this.active = false;
         }
     }
 };
@@ -95,9 +107,19 @@ export default {
             font-size: 1.22rem;
             margin: 0;
             font-family: 'Roboto';
+            white-space: normal;
+
+            &--no-content {
+                font-style: italic;
+            }
+
+            &:hover {
+                box-shadow: inset 0px 0px 10px 12px fade(@canvas-white-color, 15);
+                border-radius: 10px;
+            }
         }
 
-        .lb-editable-text__input, .lb-editable-text__textarea {
+        .lb-editable-text__input {
             width: 100%;
             flex: 1;
             font-size: 1.22rem;
