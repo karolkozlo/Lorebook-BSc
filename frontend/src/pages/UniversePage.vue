@@ -10,7 +10,6 @@
                         @onSave="changeDescription"
                         noContent="No description"/>
     </div>
-    {{ `${universeID} : ${universeName}`}}
     <div class="universe-page__content-swapper">
       <lb-content-swapper :options="contentOptions" :activeOption="activeOption" @onSelect="changeContent"></lb-content-swapper>
     </div>
@@ -22,7 +21,7 @@
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
 import CategoriesPopup from '../popups/CategoriesPopup.vue';
-import { getUniverse } from '../httpLayers/universe.http.js';
+import { getUniverse, updateUniverse } from '../httpLayers/universe.http.js';
 import LbContentSwapper from '../components/LbContentSwapper.vue';
 import UniverseElementPopup from '../popups/UniverseElementPopup.vue';
 import LbEditableText from '../components/LbEditableText.vue';
@@ -62,10 +61,22 @@ export default {
         this.activeOption = contentKey;
       },
       async changeUniverseTitle(newTitle) {
-        this.setUniverseName(newTitle);
+        try {
+          await updateUniverse(this.universeID, { name: newTitle }).then(() => {
+            this.setUniverseName(newTitle);
+          });
+        } catch(error) {
+          this.notify({type: 'negative', message: `Error: ${err.message}`});
+        }
       },
       async changeDescription(newDescription) {
-        this.universeDescription = newDescription;
+        try {
+          await updateUniverse(this.universeID, { description: newDescription }).then(() => {
+            this.universeDescription = newDescription;
+          });
+        } catch(error) {
+          this.notify({type: 'negative', message: `Error: ${err.message}`});
+        }
       }
     },
     async mounted() {
@@ -94,6 +105,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-bottom: 20px;
 
     .universe-page__header-label {
       width: 100%;
