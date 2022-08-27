@@ -34,6 +34,9 @@ const universeModule = {
             state.universeID = payload.id;
             state.universeName = payload.name;
         },
+        setUniverseName(state, newName) {
+            state.universeName = newName;
+        },
         clearUniverse(state) {
             state.universeID = null;
             state.universeName = null;
