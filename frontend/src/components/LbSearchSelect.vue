@@ -106,7 +106,6 @@ export default {
     border: 1px solid @dark-text-color;
     border-radius: 10px;
     padding: 0em 0.4em;
-    height: 1.8rem;
 
     .lb-search-select__control-content {
       display: flex;
@@ -126,6 +125,7 @@ export default {
       font-size: 1.3rem;
       border: none;
       padding: 0px;
+      font-family: 'Roboto';
 
       &:focus {
         outline: none;
@@ -138,6 +138,7 @@ export default {
       align-items: center;
       gap: 0.4em;
       font-size: 1.3rem;
+      font-family: 'Roboto';
 
       .lb-search-select__remove-button:hover {
         color: @accent-darker-color;
