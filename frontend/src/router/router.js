@@ -5,7 +5,7 @@ import ChapterPage from "../pages/ChapterPage.vue";
 import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import UserPage from "../pages/UserPage.vue";
-import UniversePage from "../pages/UniversePage.vue";
+import UniversePage from "../pages/universePage/UniversePage.vue";
 import LbUniverseNav from "../components/LbUniverseNav.vue";
 import { refreshToken } from '../httpLayers/login.http.js';
 

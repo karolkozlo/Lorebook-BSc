@@ -13,6 +13,9 @@
     <div class="universe-page__content-swapper">
       <lb-content-swapper :options="contentOptions" :activeOption="activeOption" @onSelect="changeContent"></lb-content-swapper>
     </div>
+    <div class="universe-page__dynamic-content">
+      <component :is="activeOption"></component>
+    </div>
     <categories-popup v-if="isCategoriesPopupOpen"></categories-popup>
     <universe-element-popup v-if="isUniverseElementPopupOpen"></universe-element-popup>
   </div>
@@ -20,11 +23,12 @@
 
 <script>
 import { mapGetters, mapMutations, mapActions } from 'vuex';
-import CategoriesPopup from '../popups/CategoriesPopup.vue';
-import { getUniverse, updateUniverse } from '../httpLayers/universe.http.js';
-import LbContentSwapper from '../components/LbContentSwapper.vue';
-import UniverseElementPopup from '../popups/UniverseElementPopup.vue';
-import LbEditableText from '../components/LbEditableText.vue';
+import CategoriesPopup from '@/popups/CategoriesPopup.vue';
+import { getUniverse, updateUniverse } from '@/httpLayers/universe.http.js';
+import LbContentSwapper from '@/components/LbContentSwapper.vue';
+import UniverseElementPopup from '@/popups/UniverseElementPopup.vue';
+import LbEditableText from '@/components/LbEditableText.vue';
+import UniverseElements from './UniverseElements.vue';
 
 export default {
     name: 'UniversePage',
@@ -32,7 +36,8 @@ export default {
       CategoriesPopup,
       LbContentSwapper,
       UniverseElementPopup,
-      LbEditableText
+      LbEditableText,
+      UniverseElements
     },
     data() {
       return {
@@ -40,14 +45,14 @@ export default {
         contentOptions: [
           {
             name: 'Elements',
-            key: 'ElementsComponent',
+            key: 'universe-elements',
           },
           {
             name: 'Stories',
             key: 'StoriesComponent',
           }
         ],
-        activeOption: 'ElementsComponent'
+        activeOption: 'universe-elements'
       };
     },
     computed: {
@@ -93,7 +98,7 @@ export default {
 </script>
 
 <style lang="less">
-@import '../common.less';
+@import '../../common.less';
 
 .universe-page {
   display: flex;

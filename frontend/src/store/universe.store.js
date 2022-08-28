@@ -40,7 +40,7 @@ const universeModule = {
         clearUniverse(state) {
             state.universeID = null;
             state.universeName = null;
-            state.categories = initialCategories
+            state.categories = [];
         },
         setUserUniverses(state, universes) {
             state.userUniverses = universes;
