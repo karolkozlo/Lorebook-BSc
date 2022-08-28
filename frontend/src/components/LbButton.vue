@@ -86,6 +86,7 @@ export default {
   font-weight: 600;
   font-family: 'Roboto';
   position: relative;
+  cursor: pointer;
 
   .button__content {
     display: flex;
@@ -140,12 +141,15 @@ export default {
   &--disabled {
     background-color: @neutral-color;
     color: @neutral-secondary-color;
+    cursor: default;
+
     &:active {
       color: @neutral-secondary-color;
     }
   }
 
   &--loading {
+    cursor: default;
     .button__content {
       visibility: hidden;
     }
