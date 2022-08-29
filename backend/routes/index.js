@@ -20,6 +20,7 @@ import LinkRouter from "./LinkRouter.js";
 import TemplateRouter from "./TemplateRouter.js";
 import ContentRouter from "./ContentRouter.js";
 import LoginRouter from "./LoginRouter.js";
+import SearchRouter from "./SearchRouter.js";
 
 // define /api/* routers
 const mainRouter = new Router();
@@ -44,6 +45,7 @@ mainRouter.use(LinkRouter);
 mainRouter.use(TemplateRouter);
 mainRouter.use(ContentRouter);
 mainRouter.use(LoginRouter);
+mainRouter.use(SearchRouter);
 // define /api router
 const apiRouter = new Router();
 apiRouter.use("/api", mainRouter);
