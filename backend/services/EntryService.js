@@ -43,7 +43,7 @@ async function findCategoryEntries(categoryID, limit, offset) {
         findOffset = 0;
     }
     try {
-        const entries = db.Entry.findAll({
+        const entries = await db.Entry.findAll({
             where: {
                 Category_id: categoryID,
             },
