@@ -1,43 +1,78 @@
 <template>
   <div class="universe-elements">
-    <lb-universe-element-list :title="'Characters'" :elements="elements"></lb-universe-element-list>
+    <div class="universe-elements__loading">
+      <lb-spinner v-if="loading"></lb-spinner>
+    </div>
+    <div class="universe-elements__list" v-for="elementList in elementLists" :key="elementList.id">
+      <lb-universe-element-list
+            :title="elementList.name"
+            :elements="elementList.elements"
+            :elementCount="elementList.elementCount"
+            :footerLink="elementList.elementCount > 3">
+      </lb-universe-element-list>
+    </div>
   </div>
 </template>
 
 <script>
-import LbUniverseElementList from '@/components/LbUniverseElementList.vue'
+import LbUniverseElementList from '@/components/LbUniverseElementList.vue';
+import { getUniverseElementsShortLists } from '@/httpLayers/search.http.js';
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
   components: { LbUniverseElementList },
   name: 'UniverseElements',
   data() {
     return {
-        elements: [
-            {
-                id: 1,
-                name: 'Some Name',
-                description: 'Some description etc.',
-                lastModified: '24.08.2022 18:52'
-            },
-            {
-                id: 2,
-                name: 'Another Name',
-                description: '',
-                lastModified: '24.08.2022 12:30'
-            },
-            {
-                id: 3,
-                name: 'Some LOOOOONGEEEEEER Name. Seriously, it is longer',
-                description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitatio',
-                lastModified: '22.08.2022 15:30'
-            },
-        ]
+        elementLists: [],
+        loading: false
     };
+  },
+  computed: {
+    ...mapGetters('universe', ['universeID']),
+  },
+  methods: {
+    ...mapMutations('notifications', ['notify']),
+    async fetchElementLists() {
+      this.loading = true;
+      try {
+        this.elementLists =  await getUniverseElementsShortLists(this.universeID);
+        this.elementLists = this.elementLists.sort((el2, el1) => {
+          if (el1.elements[0].last_modified > el2.elements[0].last_modified) {
+            return 1;
+          }
+          if (el1.elements[0].last_modified < el2.elements[0].last_modified) {
+            return -1;
+          }
+          return 0;
+        });
+      } catch(error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.loading = false;
+      }
+    }
+  },
+  async mounted() {
+    await this.fetchElementLists();
   }
 }
 </script>
 
 <style lang="less">
 @import '../../common.less';
+
+.universe-elements {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.8em;
+  gap: 0.8em;
+  max-width: 100%;
+
+  .universe-elements__loading {
+    position: relative;
+    background-color: @secondary-color;
+  }
+}
 
 </style>

@@ -40,7 +40,7 @@ async function findShortLists(universeID) {
             FROM events e
             WHERE e.Universe_id = :universeID
             LIMIT 3)
-            ORDER BY last_modified;`,
+            ORDER BY last_modified DESC;`,
         {
             type: db.sequelize.QueryTypes.SELECT,
             replacements: {
