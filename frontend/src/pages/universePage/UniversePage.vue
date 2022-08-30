@@ -13,7 +13,7 @@
     <div class="universe-page__content-swapper">
       <lb-content-swapper :options="contentOptions" :activeOption="activeOption" @onSelect="changeContent"></lb-content-swapper>
     </div>
-    <div class="universe-page__dynamic-content">
+    <div class="universe-page__dynamic-content" v-if="universeID">
       <component :is="activeOption"></component>
     </div>
     <categories-popup v-if="isCategoriesPopupOpen"></categories-popup>
@@ -137,6 +137,10 @@ export default {
 
   .universe-page__content-swapper {
     width: 30%;
+  }
+
+  .universe-page__dynamic-content {
+    width: 80%;
   }
 }
 
