@@ -33,8 +33,8 @@ export default {
     },
     methods: {
         handleEnterPress(event) {
-            event.preventDefault();
             if(event.key == 'Enter') {
+                event.preventDefault();
                 this.$emit('search', this.value);
             }
         }
@@ -55,6 +55,7 @@ export default {
         border-bottom: 1px solid transparent;
         padding: 0.5em 0.5em 0.2em 0.5em;
         width: 100%;
+        font-size: 1.2rem;
 
         &::placeholder {
             color: @neutral-color;
@@ -68,10 +69,14 @@ export default {
     }
 
     .lb-search-bar__button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         background-color: @accent-color;
         color: @light-text-color;
         border: none;
         padding: 0.4em;
+        font-size: 1.2rem;
 
         &:hover {
             background-color: @accent-brighter-color;

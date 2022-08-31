@@ -58,15 +58,17 @@ export default {
         submitPageNumber() {
             if(this.pageNumber < 1) {
                 this.$emit('go', 1);
+                this.pageNumber = 1;
             } else if(this.pageNumber > this.totalPages) {
                 this.$emit('go', this.totalPages);
+                this.pageNumber = this.totalPages;
             } else {
                 this.$emit('go', this.pageNumber);
             }
         },
         submitOnKey(event) {
-             event.preventDefault();
             if (event.keyCode === 13) {
+                event.preventDefault();
                 this.submitPageNumber();
             }
         }

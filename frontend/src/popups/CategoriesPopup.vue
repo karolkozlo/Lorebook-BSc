@@ -36,7 +36,9 @@
             </thead>
             <tbody>
               <tr class="categories-table__row" :class="isRowEdited(cat.id)" v-for="cat in categoriesList" :key="cat.id">
-                <td class="categories-table__cell">{{ cat.name }}</td>
+                <td class="categories-table__cell">
+                  <span class="categories-table__link" @click="navigateToCategory(cat.id)">{{ cat.name }}</span>
+                </td>
                 <td class="categories-table__cell">{{ cat.elementCount }}</td>
                 <td class="categories-table__cell">
                   <div class="categories-table__buttons" v-if="isCategoryMutable(cat.id)">
@@ -124,6 +126,11 @@ export default {
           return '';
         }
       },
+      navigateToCategory(id) {
+        const route = { name: 'CategoryElements', params: { categoryID: id }};
+        this.$router.push(route);
+        this.close();
+      },
       editCategory(id) {
         if (this.selectedCategory == id) {
           this.selectedCategory = null;
@@ -172,6 +179,10 @@ export default {
           try {
             await removeCategory(id);
             this.categoriesList = this.categoriesList.filter(cat => cat.id !== id);
+            if ( this.$route.params.categoryID && this.$route.params.categoryID == id) {
+              this.$router.replace({ name: 'UniverseMainPage', params: { universeID: this.universeID }});
+              this.close();
+            }
           } catch (error) {
             this.notify({ type: 'negative', message: error.message });
           }
@@ -250,6 +261,14 @@ export default {
             display: flex;
             justify-content: flex-end;
             gap: 5px;
+          }
+        }
+
+        .categories-table__link {
+          cursor: pointer;
+
+          &:hover {
+            text-decoration: underline;
           }
         }
       }

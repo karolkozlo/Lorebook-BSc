@@ -6,19 +6,49 @@ import RegisterPage from "../pages/RegisterPage.vue";
 import LoginPage from "../pages/LoginPage.vue";
 import UserPage from "../pages/UserPage.vue";
 import UniversePage from "../pages/universePage/UniversePage.vue";
+import UniverseMainPage from '@/pages/universePage/UniverseMainPage.vue';
 import LbUniverseNav from "../components/LbUniverseNav.vue";
+import CategoryPage from '@/pages/universeElementPages/CategoryPage.vue';
+import CategoryElementsPage from '@/pages/universeElementPages/CategoryElementsPage.vue';
+
 import { refreshToken } from '../httpLayers/login.http.js';
+
+const categoryRoute = {
+  path: 'category/:categoryID/',
+  name: 'Category',
+  props: true,
+  components: {
+    default: CategoryPage
+  },
+  children: [
+    {
+      path: '',
+      name: 'CategoryElements',
+      component: CategoryElementsPage,
+      props: true,
+    },
+  ]
+};
+
+const universeMainRoute = {
+  path: '',
+  name: 'UniverseMainPage',
+  component: UniverseMainPage,
+  props: true
+}
+
+
 
 const routes = [
   { path: '/', name: 'Main', component: MainPage },
-  { path: '/chapter', name: 'Chapter', component: ChapterPage, meta: {requiresAuth: true} },
-  { path: '/register', name: 'Register', component: RegisterPage, meta: {requiresUnAuth: true} },
-  { path: '/login', name: 'Login', component: LoginPage, meta: {requiresUnAuth: true} },
-  { path: '/user', name: 'User', component: UserPage, meta: {requiresAuth: true} },
+  { path: '/chapter', name: 'Chapter', component: ChapterPage, meta: { requiresAuth: true}},
+  { path: '/register', name: 'Register', component: RegisterPage, meta: { requiresUnAuth: true }},
+  { path: '/login', name: 'Login', component: LoginPage, meta: { requiresUnAuth: true }},
+  { path: '/user', name: 'User', component: UserPage, meta: { requiresAuth: true }},
   { path: '/universe/:universeID', name: 'Universe',
     components: {
       default: UniversePage,
-      header: LbUniverseNav
+      header: LbUniverseNav,
     },
     meta: {
       requiresAuth: true,
@@ -33,7 +63,11 @@ const routes = [
       } else {
         next('/user');
       }
-    }
+    },
+    children: [
+      categoryRoute,
+      universeMainRoute
+    ]
   },
   { path: '/:notFound(.*)', redirect: `/` }
 ];
