@@ -1,7 +1,7 @@
 <template>
   <div class="category-elements-page">
     <div class="category-elements-page__search-section">
-      <lb-search-bar :placeholder="`Search elements in ${categoryName}`" @search="search"></lb-search-bar>
+      <lb-search-bar :placeholder="`Search elements in ${categoryName}`" @search="search" :text="searchText"></lb-search-bar>
     </div>
     <div class="category-elements-page__results">
       <lb-universe-element-list
@@ -20,9 +20,14 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
 import LbPageNav from '../../components/LbPageNav.vue';
 import LbSearchBar from '../../components/LbSearchBar.vue';
 import LbUniverseElementList from '../../components/LbUniverseElementList.vue';
+import { searchCharacters, deleteCharacter } from '@/httpLayers/character.http.js';
+import { searchEntries, deleteEntry } from '@/httpLayers/entry.http.js';
+import { searchLocations, deleteLocation } from '@/httpLayers/location.http.js';
+import { searchEvents, deleteEvent } from '@/httpLayers/event.http.js';
 
 export default {
   components: {
@@ -49,23 +54,95 @@ export default {
           last_modified: new Date()
         }
       ],
-      elementCount: 45,
+      elementCount: 0,
       currentPage: 1,
-      totalPages: 45,
-      loading: false
+      totalPages: 1,
+      loading: false,
+      searchText: '',
     };
   },
+  computed: {
+    ...mapGetters('universe', ['universeID']),
+  },
   methods: {
-    search(queryText) {
-      console.log(queryText);
+    ...mapMutations('notifications', ['notify']),
+    async fetchElements(queryText, page) {
+      this.searchText = queryText;
+      const elementsPerPage = 2;
+      this.loading = true;
+      try {
+        let result = null;
+        switch (this.categoryID) {
+          case 'Locations':
+            result = await searchLocations(this.universeID, queryText, elementsPerPage, page);
+            break;
+          case 'Characters':
+            result = await searchCharacters(this.universeID, queryText, elementsPerPage, page);
+            break;
+          case 'Events':
+            result = await searchEvents(this.universeID, queryText, elementsPerPage, page);
+            break;
+          default:
+            result = await searchEntries(this.categoryID, queryText, elementsPerPage, page);
+            break;
+        }
+        this.elementCount = result.count;
+        this.elements = result.rows;
+        this.totalPages = Math.ceil(this.elementCount / elementsPerPage);
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${err.message}`});
+      } finally {
+        this.loading = false;
+      }
     },
-    changePage(newPageNumber) {
+    async search(queryText) {
+      const page = this.currentPage == 1 ? 0 : this.currentPage;
+      await this.fetchElements(queryText, page);
+    },
+    async changePage(newPageNumber) {
       this.currentPage = newPageNumber;
+      await this.search(this.searchText);
     },
-    deleteElement({id, categoryID}) {
-      console.log('Delete '+id+' from '+categoryID);
+    async deleteElement({id, categoryID}) {
+      if (confirm('Are yo sure that you want delete this element?')) {
+        this.loading = true;
+      try {
+        let result = null;
+        switch (categoryID) {
+          case 'Locations':
+            result = await deleteLocation(id);
+            break;
+          case 'Characters':
+            result = await deleteCharacter(id);
+            break;
+          case 'Events':
+            result = await deleteEvent(id);
+            break;
+          default:
+            result = await deleteEntry(id);
+            break;
+        }
+        if (result) {
+          this.notify({type: 'positive', message: `Successfully deleted element`});
+          await this.search(this.searchText);
+        }
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${err.message}`});
+      } finally {
+        this.loading = false;
+      }
     }
-  }
+    }
+  },
+  watch: {
+    async categoryID() {
+      this.searchText = '';
+      await this.fetchElements('', 0);
+    }
+  },
+  async mounted() {
+    await this.fetchElements('', 0);
+  },
 };
 </script>
 

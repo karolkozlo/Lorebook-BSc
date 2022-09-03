@@ -69,7 +69,8 @@ async function searchEntries(categoryID, expr, limit, offset) {
     let searchLike = '.*'+expr+'.*';
     let Op = Sequelize.Op;
     try {
-        const entries = db.Entry.findAll({
+        const entries = db.Entry.findAndCountAll({
+            attributes: ['id', 'name', 'description', 'last_modified'],
             where: {
                 [Op.and]: [
                     {

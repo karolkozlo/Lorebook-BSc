@@ -24,11 +24,15 @@ export default {
         width: {
             type: String,
             default: "100%"
+        },
+        text: {
+            type: String,
+            default: ''
         }
     },
     data() {
         return {
-            value: "",
+            value: this.text,
         };
     },
     methods: {
@@ -37,6 +41,11 @@ export default {
                 event.preventDefault();
                 this.$emit('search', this.value);
             }
+        }
+    },
+    watch: {
+        text(newText) {
+            this.value = newText;
         }
     }
 };
