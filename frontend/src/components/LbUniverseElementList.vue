@@ -2,7 +2,7 @@
   <div class="lb-universe-element-list">
     <div class="lb-universe-element-list__body" :style="isContentVisible">
       <div class="lb-universe-element-list__header">
-        <h3 class="lb-universe-element-list__title">{{ title }}</h3>
+        <router-link :to="categoryLink" class="lb-universe-element-list__title">{{ title }}</router-link>
         <span class="lb-universe-element-list__vertical-line"></span>
         <span class="lb-universe-element-list__count">{{ elementCountText }}</span>
       </div>
@@ -11,6 +11,9 @@
         <div class="lb-universe-element-list__element-header">
           <h4 class="lb-universe-element-list__element-name">{{ el.name }}</h4>
           <span class="lb-universe-element-list__element-date"> {{ formatDate(el.last_modified) }}</span>
+          <div class="lb-universe-element-list__element-button" v-if="interactive">
+            <lb-button variant="negative" icon="lb-trash" :size="1" @click="deleteElement(el.id, el.catID)"></lb-button>
+          </div>
         </div>
         <p class="lb-universe-element-list__description" :class="!el.description.length ? 'lb-universe-element-list__description--empty' : ''">
           {{ el.description.length ? el.description : 'No description' }}
@@ -18,7 +21,7 @@
         <div class="util__horizontal-line--white"></div>
       </div>
       <div class="lb-universe-element-list__footer" v-if="footerLink">
-        <span class="lb-universe-element-list__link">see more elements...</span>
+        <router-link :to="categoryLink" class="lb-universe-element-list__link">see more elements...</router-link>
       </div>
     </div>
     <lb-spinner v-if="loading"></lb-spinner>
@@ -30,7 +33,12 @@ import { format } from 'date-fns';
 
 export default {
     name: 'LbUniverseElementList',
+    emits: ['onDelete'],
     props: {
+      categoryID: {
+        type: String,
+        required: true,
+      },
       title: {
         type: String,
         required: true,
@@ -49,6 +57,9 @@ export default {
       },
       elementCount: {
         type: Number,
+      },
+      interactive: {
+        type: Boolean
       }
     },
     computed: {
@@ -57,6 +68,9 @@ export default {
       },
       isContentVisible() {
         return this.loading ? 'visibility: hidden;' : 'visibility: visible;';
+      },
+      categoryLink() {
+        return { name: 'CategoryElements', params: { categoryID: this.categoryID }};
       }
     },
     methods: {
@@ -64,6 +78,9 @@ export default {
         const isoDate = new Date(date);
         const formattedDate = format(isoDate, 'dd.MM.yyyy hh:mm');
         return `Last modified: ${formattedDate}`;
+      },
+      deleteElement(id) {
+        this.$emit('onDelete', { id, categoryID: this.categoryID });
       }
     }
 };
@@ -103,6 +120,7 @@ export default {
       font-weight: 500;
       color: @green-light-color;
       cursor: pointer;
+      text-decoration: none;
 
       &:hover {
         color: @green-shrek-color;
@@ -123,6 +141,16 @@ export default {
       display: flex;
       align-items: flex-end;
       gap: 15px;
+
+      &:hover {
+        .lb-universe-element-list__element-button {
+          visibility: visible;
+        }
+      }
+
+      .lb-universe-element-list__element-button {
+        visibility: hidden;
+      }
 
       .lb-universe-element-list__element-name {
         margin: 0;
@@ -163,6 +191,7 @@ export default {
       font-style: italic;
       color: @light-text-color;
       cursor: pointer;
+      text-decoration: none;
 
       &:hover {
         text-decoration: underline;

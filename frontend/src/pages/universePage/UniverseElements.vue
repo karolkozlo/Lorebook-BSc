@@ -5,11 +5,15 @@
     </div>
     <div class="universe-elements__list" v-for="elementList in elementLists" :key="elementList.id">
       <lb-universe-element-list
+            :categoryID="elementList.id"
             :title="elementList.name"
             :elements="elementList.elements"
             :elementCount="elementList.elementCount"
             :footerLink="elementList.elementCount > 3">
       </lb-universe-element-list>
+    </div>
+    <div class="universe-elements__no-content" v-if="elementLists.length == 0">
+      No elements in this universe
     </div>
   </div>
 </template>
@@ -37,7 +41,7 @@ export default {
       this.loading = true;
       try {
         this.elementLists =  await getUniverseElementsShortLists(this.universeID);
-        this.elementLists = this.elementLists.sort((el2, el1) => {
+        this.elementLists = this.elementLists.filter(el => (el.elementCount)).sort((el2, el1) => {
           if (el1.elements[0].last_modified > el2.elements[0].last_modified) {
             return 1;
           }
@@ -68,6 +72,13 @@ export default {
   margin-top: 0.8em;
   gap: 0.8em;
   max-width: 100%;
+
+  .universe-elements__no-content {
+    display: flex;
+    justify-content: center;
+    font-style: italic;
+    font-size: 1.2rem;
+  }
 
   .universe-elements__loading {
     position: relative;
