@@ -16,7 +16,7 @@ export default {
     },
     data() {
       return {
-        loading: false,
+        loading: true,
         categoryName: '',
       };
     },
@@ -57,5 +57,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 }
 </style>

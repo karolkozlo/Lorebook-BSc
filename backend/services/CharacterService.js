@@ -69,7 +69,8 @@ async function searchCharacters(universeID, expr, limit, offset) {
     let searchLike = '.*'+expr+'.*';
     let Op = Sequelize.Op;
     try {
-        const characters = db.Character.findAll({
+        const characters = db.Character.findAndCountAll({
+            attributes: ['id', 'name', 'description', 'last_modified'],
             where: {
                 [Op.and]: [
                     {Universe_id: universeID},

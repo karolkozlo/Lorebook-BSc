@@ -97,6 +97,7 @@ export default {
   border-radius: 10px;
   gap: 5px;
   position: relative;
+  width: 100%;
 
   .lb-universe-element-list__body {
     display: flex;
@@ -137,16 +138,18 @@ export default {
     flex-direction: column;
     padding: 0.3em 0em;
 
-    .lb-universe-element-list__element-header {
-      display: flex;
-      align-items: flex-end;
-      gap: 15px;
-
-      &:hover {
+    &:hover {
+      .lb-universe-element-list__element-header {
         .lb-universe-element-list__element-button {
           visibility: visible;
         }
       }
+    }
+
+    .lb-universe-element-list__element-header {
+      display: flex;
+      align-items: flex-end;
+      gap: 15px;
 
       .lb-universe-element-list__element-button {
         visibility: hidden;

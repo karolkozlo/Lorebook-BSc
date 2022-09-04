@@ -138,7 +138,8 @@ async function searchEvents(universeID, expr, limit, offset) {
     let searchLike = '.*'+expr+'.*';
     let Op = Sequelize.Op;
     try {
-        const events = await db.Event.findAll({
+        const events = await db.Event.findAndCountAll({
+            attributes: ['id', 'name', 'description', 'last_modified'],
             where: {
                 [Op.and]: [
                     {Universe_id: universeID},
