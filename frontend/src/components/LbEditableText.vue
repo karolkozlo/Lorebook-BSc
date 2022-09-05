@@ -135,7 +135,8 @@ export default {
             border: none;
             background-color: fade(@canvas-white-color, 30);
             resize: vertical;
-            font-family: 'Roboto';
+            font-family: inherit;
+            color: inherit;
 
             &:focus {
                 outline: none;

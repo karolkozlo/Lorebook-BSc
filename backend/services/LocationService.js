@@ -28,6 +28,9 @@ async function findLocation(id) {
                 id: id
             }
         });
+        if (location == null) {
+            throw new Error();
+        }
         return location;
     } catch(err) {
         throw new NotFoundException("Location not found");

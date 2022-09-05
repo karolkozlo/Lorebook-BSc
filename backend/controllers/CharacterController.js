@@ -17,6 +17,9 @@ async function getCharacter(req, res) {
       const Character = await findCharacter(req.params.id);
       res.status(200).json(Character);
     } catch (e) {
+      if (e instanceof NotFoundException) {
+        return res.status(404).json({ message: e.message });
+      }
       return res.status(400).json({ message: e.message });
     }
 }

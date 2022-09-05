@@ -22,11 +22,14 @@ async function createCharacter(name, description, universeID) {
 
 async function findCharacter(id) {
     try {
-        const character = db.Character.findOne({
+        const character = await db.Character.findOne({
             where: {
                 id: id
             }
         });
+        if (character == null) {
+            throw new Error();
+        }
         return character;
     } catch(err) {
         throw new NotFoundException("Character not found");

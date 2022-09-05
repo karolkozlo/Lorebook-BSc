@@ -22,11 +22,14 @@ async function createEntry(name, description, categoryID) {
 
 async function findEntry(id) {
     try {
-        const entry = db.Entry.findOne({
+        const entry = await db.Entry.findOne({
             where: {
                 id: id
             }
         });
+        if (entry == null) {
+            throw new Error();
+        }
         return entry;
     } catch(err) {
         throw new NotFoundException("Entry not found");

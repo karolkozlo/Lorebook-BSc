@@ -12,12 +12,17 @@ import {
 import { NotFoundException } from "../errors.js";
 
 async function getEvent(req, res) {
-    if (req.params.id === undefined)
+    if (req.params.id === undefined) {
         res.status(400).send({ message: "ID must be defined" });
+        return;
+    }
     try {
         const event = await findEvent(req.params.id);
         res.status(200).json(event);
     } catch (e) {
+        if (e instanceof NotFoundException) {
+            return res.status(404).json({ message: e.message });
+        }
         return res.status(400).json({ message: e.message });
     }
 }

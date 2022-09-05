@@ -9,7 +9,7 @@
       <div class="util__horizontal-line--white"></div>
       <div class="lb-universe-element-list__element" v-for="el in elements" :key="el.id">
         <div class="lb-universe-element-list__element-header">
-          <h4 class="lb-universe-element-list__element-name">{{ el.name }}</h4>
+          <h4 @click="navigateToElement(el.id)" class="lb-universe-element-list__element-name">{{ el.name }}</h4>
           <span class="lb-universe-element-list__element-date"> {{ formatDate(el.last_modified) }}</span>
           <div class="lb-universe-element-list__element-button" v-if="interactive">
             <lb-button variant="negative" icon="lb-trash" :size="1" @click="deleteElement(el.id, el.catID)"></lb-button>
@@ -30,6 +30,7 @@
 
 <script>
 import { format } from 'date-fns';
+import { mapGetters } from 'vuex';
 
 export default {
     name: 'LbUniverseElementList',
@@ -63,6 +64,7 @@ export default {
       }
     },
     computed: {
+      ...mapGetters('universe', ['universeID']),
       elementCountText() {
         return this.elementCount == 1 ? `${this.elementCount} element` : `${this.elementCount} elements`;
       },
@@ -81,6 +83,13 @@ export default {
       },
       deleteElement(id) {
         this.$emit('onDelete', { id, categoryID: this.categoryID });
+      },
+      navigateToElement(id) {
+        this.$router.push({ name: 'ElementPage', params: {
+          universeID: this.universeID,
+          categoryID: this.categoryID,
+          elementID: id
+        }});
       }
     }
 };
@@ -161,6 +170,7 @@ export default {
         font-weight: 500;
         color: @light-text-color;
         cursor: pointer;
+        text-decoration: none;
 
         &:hover {
           text-decoration: underline;
