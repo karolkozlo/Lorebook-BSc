@@ -93,6 +93,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding: 1em;
 
   .universe-main-page__header {
     display: flex;
