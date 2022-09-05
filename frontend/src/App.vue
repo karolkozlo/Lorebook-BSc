@@ -65,7 +65,6 @@ main {
   }
 
   .main__content {
-    padding: 1em;
     position: relative;
   }
 }

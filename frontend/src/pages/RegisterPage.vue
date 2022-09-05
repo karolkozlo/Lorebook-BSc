@@ -181,6 +181,7 @@ export default {
   flex-direction: column;
   align-items: center;
   width: 100%;
+  padding: 1em;
 
   .register-page__form {
     display: flex;

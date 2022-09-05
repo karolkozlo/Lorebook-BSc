@@ -132,6 +132,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 1em;
 
   .user-page__account-section {
     display: flex;
