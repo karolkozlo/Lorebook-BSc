@@ -5,7 +5,7 @@
           :tabindex="disabled || loading ? -1 : 1"
           @click="onClick">
     <div class="button__content">
-      <icon v-if="this.icon" :icon="this.icon" :size="this.size" :class="this.getIconCss" />
+      <icon v-if="this.icon" :icon="this.icon" :size="this.size" />
       <!-- @slot content of the button -->
       <slot/>
     </div>
@@ -45,9 +45,6 @@ export default {
   },
   emits: ['click'],
   computed: {
-    getIconCss() {
-      return this.$slots.default ? "button__icon" : "";
-    },
     setStyleClass() {
         if(this.disabled) {
           return `button button--disabled`;
@@ -92,14 +89,13 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 0.5em;
   }
 
   &:active {
     color: @special-color;
   }
-  &__icon {
-    margin-right: 0.5rem;
-  }
+
   &--default {
     background-color: @accent-color;
     &:hover:not(.button--loading), &:focus-visible:not(.button--loading) {
