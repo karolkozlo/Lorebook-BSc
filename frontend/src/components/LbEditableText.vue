@@ -1,6 +1,6 @@
 <template>
   <div class="lb-editable-text">
-    <div class="lb-editable-text__content" :style="`width: ${width};`" :class="customClass">
+    <div class="lb-editable-text__content" :style="setWidth" :class="customClass">
         <div class="lb-editable-text__cancel-button" v-if="active">
             <icon icon="lb-cancel-circled" :size="1.22" @click="deactivate"></icon>
         </div>
@@ -68,6 +68,9 @@ export default {
                 return 'lb-editable-text__text--no-content';
             }
             return '';
+        },
+        setWidth() {
+            return this.width ? `width: ${this.width};` : '';
         }
     },
     methods: {
@@ -96,11 +99,13 @@ export default {
 
 .lb-editable-text {
     display: flex;
+    flex: 1;
 
     .lb-editable-text__content {
         display: flex;
         align-items: flex-start;
         position: relative;
+        gap: 5px;
 
         .lb-editable-text__text {
             flex: 1;
@@ -139,8 +144,6 @@ export default {
         }
 
         .lb-editable-text__save-button {
-            position: absolute;
-            left: calc(100% + 5px);
             color: @positive-color;
 
             &:hover {
@@ -149,8 +152,6 @@ export default {
         }
 
         .lb-editable-text__cancel-button {
-            position: absolute;
-            right: calc(100% + 5px);
             color: @negative-color;
 
             &:hover {

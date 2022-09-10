@@ -146,7 +146,7 @@ export default {
   .lb-select__dropdown {
     display: flex;
     flex-direction: column;
-    z-index: 9999;
+    z-index: 9998;
 
     .lb-select__dropdown-content, .lb-select__no-content {
         position: absolute;

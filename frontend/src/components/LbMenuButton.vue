@@ -78,7 +78,7 @@ export default {
     .lb-menu-button__dropdown {
         display: flex;
         flex-direction: column;
-        z-index: 9999;
+        z-index: 9998;
 
         .lb-menu-button__options {
             display: flex;

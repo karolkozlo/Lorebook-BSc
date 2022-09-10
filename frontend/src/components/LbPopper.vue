@@ -36,6 +36,7 @@ export default{
         -webkit-transform: translate(-50%, -50%);
         transform: translate(-50%, -50%);
         align-content: center;
+        z-index: 9999;
     }
 }
 

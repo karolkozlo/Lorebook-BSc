@@ -1,27 +1,41 @@
 <template>
     <div class="main-page">
         <h1>Test Main Page</h1>
-        <lb-editable-text :value="text" width="800px" type="textarea" @onSave="saveText"></lb-editable-text>
         <nav class="main-page__nav">
             <router-link to="/chapter"> Chapter </router-link>
         </nav>
         <lb-menu-button icon="lb-plus" :size="1.2" :options="options" @click="clickOnMenuBtn">
         </lb-menu-button>
+        <div class="main-page__content">
+            <lb-content-element :position="position"
+                                :isLast="true"
+                                :title="title"
+                                @moveElement="moveElement"
+                                @removeElement="removeElement"
+                                @changeTitle="changeTitle">
+                <lb-editable-text :value="text" width="800px" type="textarea" @onSave="saveText"></lb-editable-text>
+            </lb-content-element>
+        </div>
     </div>
 </template>
 
 <script>
+import LbContentElement from '../components/LbContentElement.vue';
 import LbEditableText from '../components/LbEditableText.vue';
 import LbMenuButton from '../components/LbMenuButton.vue';
+
 export default {
     name: "MainPage",
     components: {
       LbEditableText,
-    LbMenuButton
+      LbMenuButton,
+      LbContentElement
     },
     data() {
         return {
+            title: 'Title',
             text: 'Some text to edit',
+            position: 0,
             options: [
                 {
                     id: 1,
@@ -47,6 +61,16 @@ export default {
         };
     },
     methods: {
+        moveElement(newPosition) {
+            this.position = newPosition;
+            console.log(newPosition);
+        },
+        removeElement() {
+            console.log('Remove element');
+        },
+        changeTitle(newTitle) {
+            this.title = newTitle;
+        },
         saveText(newValue) {
             this.text = newValue;
         },
