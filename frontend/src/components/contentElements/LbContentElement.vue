@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import LbEditableText from './LbEditableText.vue';
+import LbEditableText from '@/components/LbEditableText.vue';
 
 export default {
     name: 'LbContentElement',
@@ -64,7 +64,7 @@ export default {
 </script>
 
 <style lang="less">
-@import '../common.less';
+@import '../../common.less';
 
 .lb-content-element {
     display: flex;
