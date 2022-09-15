@@ -74,7 +74,7 @@ async function patchListItem(req, res) {
   async function patchListItemPosition(req, res) {
     try {
       const id = req.params.id;
-      if(!req.body || !req.body.listID || !req.body.oldOrdinalNumber || !req.body.newOrdinalNumber) {
+      if(!req.body || !req.body.listID || req.body.oldOrdinalNumber == undefined || !req.body.newOrdinalNumber == undefined) {
           res.status(400).send({message: "Body of request should contain: listID, oldOrdinalNumber and newOrdinalNumber"});
       } else {
         if(req.body.oldOrdinalNumber != req.body.newOrdinalNumber) {

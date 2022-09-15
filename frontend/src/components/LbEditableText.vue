@@ -52,7 +52,8 @@ export default {
             default: 150
         },
         noContent: {
-            type: String
+            type: String,
+            default: 'No text'
         }
     },
     emits: ['onSave'],
