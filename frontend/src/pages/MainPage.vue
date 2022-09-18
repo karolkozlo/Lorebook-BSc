@@ -7,15 +7,16 @@
         <lb-menu-button icon="lb-plus" :size="1.2" :options="options" @click="clickOnMenuBtn">
         </lb-menu-button>
         <div class="main-page__content">
-            <lb-text-element v-for="(el, index) in contentElements"
-                             :key="el.id"
-                             :position="index"
-                             :isLast="isLast(index)"
-                             :contentID="contentID"
-                             v-bind="el"
-                             @moveElement="moveElement"
-                             @deleteElement="removeElement">
-            </lb-text-element>
+            <component v-for="(el, index) in contentElements"
+                       :is="componentType(el.type)"
+                       :key="{id: el.id, type: el.type}"
+                       :position="index"
+                       :isLast="isLast(index)"
+                       :contentID="contentID"
+                       v-bind="el"
+                       @moveElement="moveElement"
+                       @deleteElement="removeElement">
+            </component>
         </div>
     </div>
 </template>
@@ -25,6 +26,8 @@ import LbContentElement from '@/components/contentElements/LbContentElement.vue'
 import LbEditableText from '../components/LbEditableText.vue';
 import LbMenuButton from '../components/LbMenuButton.vue';
 import LbTextElement from '@/components/contentElements/LbTextElement.vue';
+import LbListElement from '../components/contentElements/LbListElement.vue';
+import contentElementType from '@/domain/contentElementTypes.js';
 
 export default {
     name: "MainPage",
@@ -32,7 +35,8 @@ export default {
       LbEditableText,
       LbMenuButton,
       LbContentElement,
-      LbTextElement
+      LbTextElement,
+      LbListElement
     },
     data() {
         return {
@@ -42,11 +46,32 @@ export default {
                   id: 1,
                   initTitle: 'Some Title',
                   initText: 'Some starting text to edit in TextElement',
+                  type: contentElementType.text
                 },
                 {
                   id: 2,
                   initTitle: 'Some Other Title',
                   initText: 'Some another starting text to edit in TextElement',
+                  type: contentElementType.text
+                },
+                {
+                  id: 1,
+                  initTitle: 'Some Initial Title of List',
+                  type: contentElementType.list,
+                  initItems: [
+                    {
+                      id: 2,
+                      initTitle: 'Another item with longer text',
+                      initText: '',
+                      ordinalNumber: 0
+                    },
+                    {
+                      id: 3,
+                      initTitle: 'item',
+                      initText: 'dsf',
+                      ordinalNumber: 1
+                    },
+                  ]
                 },
             ],
             text: 'Some text to edit',
@@ -80,7 +105,7 @@ export default {
             this.contentElements.splice(positions.newPosition, 0, el);
         },
         removeElement(elToDel) {
-            this.contentElements = this.contentElements.filter(el => { return el.id !== elToDel.id });
+            this.contentElements = this.contentElements.filter(el => { return !(el.id == elToDel.id && el.type == elToDel.type); });
             console.log('Remove element with id: '+elToDel.id+' and type of: '+elToDel.type);
         },
         saveText(newValue) {
@@ -93,10 +118,15 @@ export default {
                 id: 3,
                 initTitle: 'New Element',
                 initText: 'Some new Element',
+                type: contentElementType.text
             });
         },
         isLast(index) {
             return this.contentElements.length-1 == index;
+        },
+        componentType(type) {
+            if (type == contentElementType.text) return 'LbTextElement';
+            if (type == contentElementType.list) return 'LbListElement';
         }
     }
 };
