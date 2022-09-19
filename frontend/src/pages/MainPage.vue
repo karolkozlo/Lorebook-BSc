@@ -27,6 +27,7 @@ import LbEditableText from '../components/LbEditableText.vue';
 import LbMenuButton from '../components/LbMenuButton.vue';
 import LbTextElement from '@/components/contentElements/LbTextElement.vue';
 import LbListElement from '../components/contentElements/LbListElement.vue';
+import LbLinkGroupElement from '../components/contentElements/LbLinkGroupElement';
 import contentElementType from '@/domain/contentElementTypes.js';
 
 export default {
@@ -36,7 +37,8 @@ export default {
       LbMenuButton,
       LbContentElement,
       LbTextElement,
-      LbListElement
+      LbListElement,
+      LbLinkGroupElement
     },
     data() {
         return {
@@ -73,6 +75,29 @@ export default {
                     },
                   ]
                 },
+                {
+                    id: 1,
+                    initTitle: 'Jakaś grupa linków',
+                    type: contentElementType.linkGroup,
+                    initLinks: [
+                        {
+                            id: 1,
+                            initDescription: 'Some description',
+                            targetName: 'Link do Lokacji',
+                            targetID: 1,
+                            categoryName: 'Locations',
+                            categoryID: 'Locations'
+                        },
+                        {
+                            id: 2,
+                            initDescription: 'Ooopiss',
+                            targetName: 'Link do Stworzenia',
+                            targetID: 1,
+                            categoryName: 'Stworzenia',
+                            categoryID: 1
+                        },
+                    ]
+                }
             ],
             text: 'Some text to edit',
             options: [
@@ -127,6 +152,7 @@ export default {
         componentType(type) {
             if (type == contentElementType.text) return 'LbTextElement';
             if (type == contentElementType.list) return 'LbListElement';
+            if (type == contentElementType.linkGroup) return 'LbLinkGroupElement';
         }
     }
 };
@@ -138,6 +164,7 @@ export default {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 1em 0em;
 
     .main-page__nav {
         display: flex;

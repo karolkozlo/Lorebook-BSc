@@ -9,27 +9,39 @@ async function getTarget(link) {
         if (link.Character_id) {
             let targetCharacter = await db.Character.findByPk(link.Character_id, {
                 raw: true,
-                attributes: ['name', 'description']
+                attributes: ['name']
             });
             richLink.target = targetCharacter;
+            richLink.target.Category = {
+                id: 'Characters',
+                name: 'Characters'
+            }
         } else if (link.Location_id) {
             let targetLocation = await db.Location.findByPk(link.Location_id, {
                 raw: true,
-                attributes: ['name', 'description']
+                attributes: ['name']
             });
             richLink.target = targetLocation;
+            richLink.target.Category = {
+                id: 'Locations',
+                name: 'Locations'
+            }
         } else if (link.Event_id) {
             let targetEvent = await db.Event.findByPk(link.Event_id, {
                 raw: true,
-                attributes: ['name', 'description']
+                attributes: ['name']
             });
             richLink.target = targetEvent;
+            richLink.target.Category = {
+                id: 'Events',
+                name: 'Events'
+            }
         } else if (link.Entry_id) {
             let targetEntry = await db.Entry.findByPk(link.Entry_id, {
-                attributes: ['name', 'description'],
+                attributes: ['name'],
                 include: {
                     model: db.Category,
-                    attributes: ['name'],
+                    attributes: ['id', 'name'],
                 }
             });
             richLink.target = targetEntry;
