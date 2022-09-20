@@ -10,6 +10,8 @@ import UniverseMainPage from '@/pages/universePage/UniverseMainPage.vue';
 import LbUniverseNav from "../components/LbUniverseNav.vue";
 import CategoryPage from '@/pages/universeElementPages/CategoryPage.vue';
 import CategoryElementsPage from '@/pages/universeElementPages/CategoryElementsPage.vue';
+import ElementPage from '@/pages/ElementPage.vue';
+import ElementNotFoundPage from '@/pages/ElementNotFoundPage.vue';
 
 import { refreshToken } from '../httpLayers/login.http.js';
 
@@ -27,6 +29,12 @@ const categoryRoute = {
       component: CategoryElementsPage,
       props: true,
     },
+    {
+      path: 'element/:elementID',
+      name: 'ElementPage',
+      component: ElementPage,
+      props: true,
+    }
   ]
 };
 
@@ -35,7 +43,13 @@ const universeMainRoute = {
   name: 'UniverseMainPage',
   component: UniverseMainPage,
   props: true
-}
+};
+
+const elementNotFoundRoute = {
+  path: 'not-found',
+  name: 'ElementNotFoundPage',
+  component: ElementNotFoundPage,
+};
 
 
 
@@ -66,7 +80,8 @@ const routes = [
     },
     children: [
       categoryRoute,
-      universeMainRoute
+      universeMainRoute,
+      elementNotFoundRoute
     ]
   },
   { path: '/:notFound(.*)', redirect: `/` }

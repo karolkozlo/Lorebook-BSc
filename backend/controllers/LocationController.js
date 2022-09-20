@@ -19,6 +19,9 @@ async function getLocation(req, res) {
     const location = await findLocation(req.params.id);
     res.status(200).json(location);
   } catch (e) {
+    if (e instanceof NotFoundException) {
+      return res.status(404).json({ message: e.message });
+    }
     return res.status(400).json({ message: e.message });
   }
 };

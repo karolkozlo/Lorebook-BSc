@@ -8,7 +8,7 @@ async function createContent(id, type) {
         } else {
             throw new Error("Invalid type of content!");
         }
-        values.configuration = JSON.stringify([]);
+        values.configuration = [];
         let content = await db.Content.create(values);
         return content;
     } catch(err) {
@@ -43,7 +43,7 @@ async function findContent(id, type) {
         }
         content = await db.Content.findOne({
             where: where,
-            attributes: [["id", "contentID"], "configuration"]
+            attributes: ["id", "configuration"]
         });
         return content;
     } catch(err) {

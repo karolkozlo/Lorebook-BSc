@@ -12,8 +12,9 @@ async function getFullContent(req, res) {
         return;
     }
     try {
-        const contentID = req.params.ownerID;
-        const content = await findContent(contentID, req.params.type);
+        const contentOwnerID = parseInt(req.params.ownerID);
+        const content = await findContent(contentOwnerID, req.params.type);
+        const contentID = content.id;
         //Array of promises to get every element in chosen content
         const contentPromises = [
             new Promise(async (resolve, reject) => {

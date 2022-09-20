@@ -125,7 +125,15 @@ export default {
                 if (result) {
                     this.notify({ type: 'positive', message: `Successfully created ${result.name}` });
                     this.$emit('onResult', { result, type: this.selectedCategory });
-                    this.resetForm();
+                    this.$router.push({
+                        name: 'ElementPage',
+                        params: {
+                        universeID: this.universeID,
+                        categoryID: this.selectedCategory,
+                        elementID: result.id
+                        }
+                    });
+                    this.closeUniverseElementPopup();
                 }
             } catch(error) {
                 this.notify({ type: 'negative', message: error.message });

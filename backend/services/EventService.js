@@ -60,11 +60,14 @@ async function addEventToTimeline(eventID, timelineID) {
 
 async function findEvent(id) {
     try {
-        const event = db.Event.findOne({
+        const event = await db.Event.findOne({
             where: {
                 id: id
             }
         });
+        if (event == null) {
+            throw new Error();
+        }
         return event;
     } catch(err) {
         throw new NotFoundException("Event not found");
