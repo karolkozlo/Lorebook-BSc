@@ -4,7 +4,8 @@
                       :position="position"
                       @changeTitle="changeTitle"
                       @moveElement="moveContentElement"
-                      @removeElement="deleteElement">
+                      @removeElement="deleteElement"
+                      :buttonsLoading="buttonsLoading">
     <div class="lb-text-element">
       <lb-editable-text :value="text" type="textarea" width="100%" @onSave="saveText"></lb-editable-text>
     </div>
@@ -17,7 +18,7 @@ import LbEditableText from "@/components/LbEditableText.vue";
 import LbContentElementMixin from './ContentElement.mixin.js';
 import contentElementType from '@/domain/contentElementTypes.js';
 import { updateText } from '@/httpLayers/text.http.js';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 
 export default {
   name: 'LbTextElement',
@@ -27,7 +28,7 @@ export default {
     LbEditableText
   },
   props: {
-    initText: {
+    text: {
       type: String,
       default: ''
     }
@@ -35,9 +36,10 @@ export default {
   data() {
     return {
       elementType: contentElementType.text,
-      title: this.initTitle,
-      text: this.initText
     };
+  },
+  computed: {
+    ...mapGetters('element', ['getElementById']),
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
@@ -47,7 +49,8 @@ export default {
     async changeTitle(newTitle) {
       try {
         await updateText(this.id, { title: newTitle }, this.contentID);
-        this.title = newTitle;
+        const element = this.getElementById(this.id, this.elementType);
+        element.title = newTitle;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
@@ -55,7 +58,8 @@ export default {
     async saveText(newText) {
       try {
         await updateText(this.id, { text: newText }, this.contentID);
-        this.text = newText;
+        const element = this.getElementById(this.id, this.elementType);
+        element.text = newText;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }

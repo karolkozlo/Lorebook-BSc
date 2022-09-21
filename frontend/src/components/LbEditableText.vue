@@ -5,15 +5,17 @@
             <icon icon="lb-cancel-circled" :size="1.22" @click="deactivate"></icon>
         </div>
             <pre v-if="!active" class="lb-editable-text__text" :class="textClass" v-on:dblclick="activate">{{ value ? value : noContent }}</pre>
-            <input v-if="active && type == 'input'"
+            <input v-show="active && type == 'input'"
                    class="lb-editable-text__input"
                    type="text"
                    v-model="editedValue"
-                   :maxlength="maxLength">
-            <textarea v-if="active && type == 'textarea'"
+                   :maxlength="maxLength"
+                   ref="input">
+            <textarea v-show="active && type == 'textarea'"
                       class="lb-editable-text__input"
                       v-model="editedValue"
                       :maxlength="maxLength"
+                      ref="textarea"
                       :style="`min-height: ${minHeight}px;`"/>
         <div class="lb-editable-text__save-button" v-if="active">
             <icon icon="lb-ok-circle-fill" :size="1.22" @click="save"></icon>
@@ -77,6 +79,15 @@ export default {
     methods: {
         activate() {
             this.active = true;
+            if (this.type === 'input') {
+                this.$nextTick(() => {
+                    this.$refs.input.focus();
+                });
+            } else if (this.type === 'textarea') {
+                this.$nextTick(() => {
+                    this.$refs.textarea.focus();
+                });
+            }
         },
         deactivate() {
             this.active = false;

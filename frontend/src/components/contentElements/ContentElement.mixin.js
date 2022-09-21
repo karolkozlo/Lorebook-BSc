@@ -17,9 +17,13 @@ const LbContentElementMixin = {
         type: Boolean,
         default: false
     },
-    initTitle: {
+    title: {
         type: String,
         default: 'Title'
+    },
+    buttonsLoading: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {

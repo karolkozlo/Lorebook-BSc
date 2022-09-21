@@ -1,6 +1,7 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
-import { pingContentOwner } from "./utils.js"
+import { pingContentOwner, insertElementIntoConfig, removeElementFromConfig } from "./utils.js"
+import { contentElementType } from "../domainTypes.js";
 
 async function createText(title, textData, contentID) {
     try {
@@ -9,7 +10,8 @@ async function createText(title, textData, contentID) {
             text: textData,
             Content_id: contentID
         });
-        await pingContentOwner(contentID);
+        await insertElementIntoConfig(contentID, {id: text.id, type: contentElementType.text});
+        pingContentOwner(contentID);
         return text;
     } catch(err) {
         throw new Error(err.message);
@@ -31,7 +33,7 @@ async function findText(id) {
 
 async function findContentTexts(contentID) {
     try {
-        const texts = db.Text.findAll({
+        const texts = await db.Text.findAll({
             where: {
                 Content_id: contentID,
             },
@@ -47,7 +49,8 @@ async function destroyText(id, contentID) {
         await db.Text.destroy({
           where: { id: id },
         });
-        await pingContentOwner(contentID);
+        await removeElementFromConfig(contentID, id, contentElementType.text);
+        pingContentOwner(contentID);
       } catch (err) {
         throw new Error(err.message);
       }

@@ -6,8 +6,6 @@ import {
     destroyText,
 } from "../services/TextService.js";
 import { NotFoundException } from "../errors.js";
-import { insertIDintoConfig } from "../services/utils.js";
-import { updateContentConfig } from "../services/ContentService.js";
 
 async function getText(req, res) {
     if (req.params.id === undefined) {
@@ -42,8 +40,6 @@ async function postText(req, res) {
         req.body.text,
         req.body.contentID
       );
-      const newConfig = insertIDintoConfig(req.body.config, createdText.id);
-      await updateContentConfig(newConfig, req.body.contentID);
       res.status(201).json(createdText);
     } catch (e) {
       res.status(400).send({ message: e.message });

@@ -6,8 +6,6 @@ import {
     destroyImageGroup,
 } from "../services/ImageGroupService.js";
 import { NotFoundException } from "../errors.js";
-import { insertIDintoConfig } from "../services/utils.js";
-import { updateContentConfig } from "../services/ContentService.js";
 
 async function getImageGroup(req, res) {
     if (req.params.id === undefined) {
@@ -41,8 +39,6 @@ async function postImageGroup(req, res) {
         req.body.title,
         req.body.contentID
       );
-      const newConfig = insertIDintoConfig(req.body.config, createdImageGroup.id);
-      await updateContentConfig(newConfig, req.body.contentID);
       res.status(201).json(createdImageGroup);
     } catch (e) {
       res.status(400).send({ message: e.message });

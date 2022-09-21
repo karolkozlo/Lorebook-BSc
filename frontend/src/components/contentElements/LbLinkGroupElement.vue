@@ -4,18 +4,20 @@
                       :position="position"
                       @changeTitle="changeTitle"
                       @moveElement="moveContentElement"
-                      @removeElement="deleteElement">
+                      @removeElement="deleteElement"
+                      :buttonsLoading="buttonsLoading">
     <div class="lb-link-group-element">
       <div class="lb-link-group-element__items" v-if="links.length > 0">
         <div class="lb-link-group-element__item" v-for="link in links" :key="link.id">
           <lb-content-link
                    :id="link.id"
                    :contentID="contentID"
-                   :initDescription="link.initDescription"
+                   :description="link.description"
                    :targetID="link.targetID"
                    :targetName="link.targetName"
                    :categoryID="link.categoryID"
                    :categoryName="link.categoryName"
+                   :linkGroupID="id"
                    @removeLink="deleteLink"></lb-content-link>
           <div class="util__horizontal-line--black"></div>
         </div>
@@ -34,7 +36,7 @@
 import LbContentElement from "./LbContentElement.vue";
 import LbContentElementMixin from './ContentElement.mixin.js';
 import contentElementType from '@/domain/contentElementTypes.js';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 import LbContentLink from './LbContentLink.vue';
 import {
   updateLinkGroup,
@@ -49,7 +51,7 @@ export default {
     LbContentLink
   },
   props: {
-    initLinks: {
+    links: {
       type: Array,
       default: []
     }
@@ -57,9 +59,10 @@ export default {
   data() {
     return {
       elementType: contentElementType.linkGroup,
-      title: this.initTitle,
-      links: this.initLinks
     };
+  },
+  computed: {
+    ...mapGetters('element', ['getElementById']),
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
@@ -69,7 +72,8 @@ export default {
     async changeTitle(newTitle) {
       try {
         await updateLinkGroup(this.id, {title: newTitle}, this.contentID);
-        this.title = newTitle;
+        const element = this.getElementById(this.id, this.elementType);
+        element.title = newTitle;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
@@ -81,7 +85,8 @@ export default {
     async deleteLink(id) {
       try {
         await deleteContentLink(id, this.contentID);
-        this.links = this.links.filter(link => (link.id != id));
+        const element = this.getElementById(this.id, this.elementType);
+        element.links = element.links.filter(link => (link.id != id));
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }

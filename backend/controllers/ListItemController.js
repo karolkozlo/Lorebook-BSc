@@ -74,11 +74,13 @@ async function patchListItem(req, res) {
   async function patchListItemPosition(req, res) {
     try {
       const id = req.params.id;
-      if(!req.body || !req.body.listID || req.body.oldOrdinalNumber == undefined || !req.body.newOrdinalNumber == undefined) {
+      if (!req.body || !req.body.listID || req.body.oldOrdinalNumber == undefined || !req.body.newOrdinalNumber == undefined) {
           res.status(400).send({message: "Body of request should contain: listID, oldOrdinalNumber and newOrdinalNumber"});
       } else {
-        if(req.body.oldOrdinalNumber != req.body.newOrdinalNumber) {
-            await changeListItemPosition(id, req.body.listID, req.body.oldOrdinalNumber, req.body.newOrdinalNumber, req.params.contentID);
+        const oldOrdinalNumber = parseInt(req.body.oldOrdinalNumber);
+        const newOrdinalNumber = parseInt(req.body.newOrdinalNumber);
+        if (oldOrdinalNumber !== newOrdinalNumber) {
+          await changeListItemPosition(id, req.body.listID, oldOrdinalNumber, newOrdinalNumber, req.params.contentID);
         }
         res.status(200).send();
       }

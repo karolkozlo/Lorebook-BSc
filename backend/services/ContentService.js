@@ -51,8 +51,23 @@ async function findContent(id, type) {
     }
 };
 
+async function findContentById(id) {
+    try {
+        const content = await db.Content.findOne({
+            where: {
+                id: id
+            },
+            attributes: ["id", "configuration"]
+        });
+        return content;
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
 export {
     createContent,
     updateContentConfig,
-    findContent
+    findContent,
+    findContentById
 };
