@@ -49,7 +49,11 @@ export default {
       type: Number,
       required: true
     },
-    initDescription: {
+    linkGroupID: {
+      type: Number,
+      required: true
+    },
+    description: {
       type: String
     },
     targetID: {
@@ -69,20 +73,17 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      description: this.initDescription
-    };
-  },
   computed: {
     ...mapGetters('universe', ['universeID']),
+    ...mapGetters('element', ['getLinkById']),
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
     async saveDescription(newDesc) {
       try {
-        await updateContentLink(this.id,  {description: newDesc}, this.contentID)
-        this.description = newDesc;
+        await updateContentLink(this.id,  {description: newDesc}, this.contentID);
+        const link = this.getLinkById(this.linkGroupID, this.id);
+        link.description = newDesc;
       } catch(error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }

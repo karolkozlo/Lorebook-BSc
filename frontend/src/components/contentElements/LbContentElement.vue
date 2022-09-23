@@ -8,7 +8,7 @@
                           customClass="lb-content-element__title">
         </lb-editable-text>
         <div class="lb-content-element__header-buttons">
-            <lb-button variant="negative" icon="lb-trash" @click="$emit('removeElement')" :size="1.2"></lb-button>
+            <lb-button variant="negative" icon="lb-trash" @click="$emit('removeElement')" :size="1.2" :loading="buttonsLoading"></lb-button>
         </div>
     </div>
     <div class="util__horizontal-line--black"></div>
@@ -17,8 +17,8 @@
     </div>
     <div class="lb-content-element__footer">
         <div class="lb-content-element__footer-buttons">
-            <lb-button icon="lb-up" :disabled="isUpBtnDisabled" @click="moveContentElement(-1)" :size="1.1"></lb-button>
-            <lb-button icon="lb-down" :disabled="isLast" @click="moveContentElement(1)" :size="1.1"></lb-button>
+            <lb-button icon="lb-up" :disabled="isUpBtnDisabled" @click="moveContentElement(-1)" :size="1.1" :loading="buttonsLoading"></lb-button>
+            <lb-button icon="lb-down" :disabled="isLast" @click="moveContentElement(1)" :size="1.1" :loading="buttonsLoading"></lb-button>
         </div>
     </div>
   </div>
@@ -45,6 +45,10 @@ export default {
         title: {
             type: String,
             default: 'Title'
+        },
+        buttonsLoading: {
+            type: Boolean,
+            default: false
         }
     },
     computed: {

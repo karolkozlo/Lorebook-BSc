@@ -3,15 +3,33 @@ import { updateCharacter } from "./CharacterService.js";
 import { updateEntry } from "./EntryService.js";
 import { updateLocation } from "./LocationService.js";
 import { updateEvent } from "./EventService.js";
+import { findContentById, updateContentConfig } from './ContentService.js';
 
-function insertIDintoConfig(config, id) {
-    for(let i = 0; i < config.length; i++) {
-        if(config[i].id == null) {
-            config[i].id = id;
-            break;
-        }
+/**
+ *
+ * @param {Number} contentID
+ * @param {{id, type}} contentElement
+ */
+async function insertElementIntoConfig(contentID, contentElement) {
+    try {
+        const content = await findContentById(contentID);
+        let config = content.configuration;
+        config.push(contentElement);
+        await updateContentConfig(config, contentID);
+    } catch (error) {
+        throw new Error(error.message);
     }
-    return config;
+};
+
+async function removeElementFromConfig(contentID, idToDelete, typeToDelete) {
+    try {
+        const content = await findContentById(contentID);
+        let config = content.configuration;
+        config = config.filter(el => !(el.id == idToDelete && el.type == typeToDelete));
+        await updateContentConfig(config, contentID);
+    } catch (error) {
+        throw new Error(error.message);
+    }
 };
 
 async function pingContentOwner(contentID) {
@@ -52,5 +70,6 @@ function currentDateTimetoIsoString() {
 export {
     currentDateTimetoIsoString,
     pingContentOwner,
-    insertIDintoConfig
+    insertElementIntoConfig,
+    removeElementFromConfig
 };

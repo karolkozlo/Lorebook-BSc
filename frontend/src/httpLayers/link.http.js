@@ -1,5 +1,29 @@
 import LbAPI from "./LbAPI.js";
 
+/**
+ *
+ * @param {{ title: String }} fields
+ * @param { Number } contentID
+ */
+ async function createLinkGroup(fields, contentID) {
+    let fieldsToSend = fields;
+    fieldsToSend.contentID = contentID;
+    return await LbAPI
+        .post(`/link_groups/`, fieldsToSend)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                throw new Error(`${error.response.data.message}`);
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
+};
+
 async function updateContentLink(id, description, contentID) {
   return await LbAPI
       .patch(`/links/${id}/content/${contentID}`, description)
@@ -36,6 +60,23 @@ async function updateLinkGroup(id, title, contentID) {
       });
 };
 
+async function deleteLinkGroup(id, contentID) {
+    return await LbAPI
+        .delete(`/link_groups/${id}/content/${contentID}`)
+        .then(() => {
+            return true;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                throw new Error(`${error.response.data.message}`);
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
+};
+
 async function deleteContentLink(id, contentID) {
   return await LbAPI
       .delete(`/links/${id}/content/${contentID}`)
@@ -55,7 +96,9 @@ async function deleteContentLink(id, contentID) {
 };
 
 export {
+  createLinkGroup,
   updateLinkGroup,
+  deleteLinkGroup,
   deleteContentLink,
   updateContentLink
 };

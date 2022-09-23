@@ -1,6 +1,7 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
-import { pingContentOwner } from "./utils.js"
+import { pingContentOwner, insertElementIntoConfig, removeElementFromConfig } from "./utils.js";
+import { contentElementType } from "../domainTypes.js";
 
 async function createImageGroup(title, contentID) {
     try {
@@ -8,6 +9,7 @@ async function createImageGroup(title, contentID) {
             title: title,
             Content_id: contentID
         });
+        await insertElementIntoConfig(contentID, {id: imageGroup.id, type: contentElementType.imageGroup});
         pingContentOwner(contentID);
         return imageGroup;
     } catch(err) {
@@ -46,6 +48,7 @@ async function destroyImageGroup(id, contentID) {
         await db.ImageGroup.destroy({
           where: { id: id },
         });
+        await removeElementFromConfig(contentID, id, contentElementType.imageGroup);
         pingContentOwner(contentID);
       } catch (err) {
         throw new Error(err.message);

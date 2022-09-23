@@ -1,16 +1,21 @@
 import LbAPI from "./LbAPI.js";
 
-// fields {title, text, contentID, config}
-async function createText(fields) {
+/**
+ *
+ * @param {{ title: String, text: String }} fields
+ * @param { Number } contentID
+ */
+async function createText(fields, contentID) {
+  let fieldsToSend = fields;
+  fieldsToSend.contentID = contentID;
   return await LbAPI
-      .post(`/texts/`, fields)
+      .post(`/texts/`, fieldsToSend)
       .then((response) => {
           return response.data;
       })
       .catch((error) => {
           if (error.response && error.response.data.message) {
-              const err = new Error(`${error.response.data.message}`);
-              throw err;
+              throw new Error(`${error.response.data.message}`);
           } else if (error.request) {
               throw new Error("Service refused connection");
           } else {

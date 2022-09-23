@@ -1,5 +1,29 @@
 import LbAPI from "./LbAPI.js";
 
+/**
+ *
+ * @param {{ title: String }} fields
+ * @param { Number } contentID
+ */
+ async function createList(fields, contentID) {
+    let fieldsToSend = fields;
+    fieldsToSend.contentID = contentID;
+    return await LbAPI
+        .post(`/lists/`, fieldsToSend)
+        .then((response) => {
+            return response.data;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                throw new Error(`${error.response.data.message}`);
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
+  };
+
 async function updateList(id, fields, contentID) {
   return await LbAPI
       .patch(`/lists/${id}/content/${contentID}`, fields)
@@ -16,6 +40,23 @@ async function updateList(id, fields, contentID) {
               throw new Error("Undefined error");
           }
       });
+};
+
+async function deleteList(id, contentID) {
+    return await LbAPI
+        .delete(`/lists/${id}/content/${contentID}`)
+        .then(() => {
+            return true;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                throw new Error(`${error.response.data.message}`);
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
 };
 
 // fields {title, text, ordinalNumber, listID, contentID}
@@ -82,8 +123,7 @@ async function updateListItemPosition(id, fields, contentID) {
       })
       .catch((error) => {
           if (error.response && error.response.data.message) {
-              const err = new Error(`${error.response.data.message}`);
-              throw err;
+              throw new Error(`${error.response.data.message}`);
           } else if (error.request) {
               throw new Error("Service refused connection");
           } else {
@@ -93,7 +133,9 @@ async function updateListItemPosition(id, fields, contentID) {
 };
 
 export {
+  createList,
   updateList,
+  deleteList,
   createListItem,
   deleteListItem,
   updateListItem,

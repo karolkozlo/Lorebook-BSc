@@ -23,21 +23,26 @@
        </div>
     </div>
     <div class="element-page__content">
-        Content {{ `Element ${elementID} in category ${categoryID} ` }}
+        <lb-content v-if="!contentLoading"></lb-content>
+        <lb-spinner v-if="contentLoading"></lb-spinner>
     </div>
   </div>
 </template>
 
 <script>
 import LbEditableText from '@/components/LbEditableText.vue';
+import LbContent from '@/components/contentElements/LbContent.vue';
 import { mapMutations, mapGetters } from 'vuex';
-import { getElement, updateElement } from '@/httpLayers/interface.js'
+import { getElement, updateElement } from '@/httpLayers/universeElement.interface.js'
 import { NotFoundException } from '@/domain/errors.js';
+import { getFullContent } from '@/httpLayers/content.http.js'
+import contentElementType from '@/domain/contentElementTypes.js';
 
 export default {
     name: 'ElementPage',
     components: {
-        LbEditableText
+        LbEditableText,
+        LbContent
     },
     props: {
         elementID: {
@@ -54,6 +59,7 @@ export default {
             name: '',
             description: '',
             elementLoading: false,
+            contentLoading: true,
         };
     },
     computed: {
@@ -64,24 +70,52 @@ export default {
     },
     methods: {
         ...mapMutations('notifications', ['notify']),
-        async fetchElement() {
+        ...mapMutations('element', ['setContent', 'setContentID', 'clearContent']),
+        async fetchElement(categoryID, elementID) {
+            const catID = categoryID ? categoryID : this.categoryID;
+            const elID = elementID ? elementID : this.elementID;
             this.elementLoading = true;
             try {
-                const element = await getElement(this.elementID, this.categoryID);
+                const element = await getElement(elID, catID);
                 if (element) {
                   if (element.Universe_id != null && element.Universe_id != this.universeID) {
                     throw new NotFoundException("This element does not belong to this universe!");
                   }
                   this.name = element.name;
                   this.description = element.description;
+                  return true;
                 }
             } catch (error) {
                 this.notify({type: 'negative', message: `Error: ${error.message}`});
                 if (error instanceof NotFoundException) {
                     this.$router.replace({ name: 'ElementNotFoundPage', params: { universeID: this.universeID }});
                 }
+                return false;
             } finally {
                 this.elementLoading = false;
+            }
+        },
+        async fetchFullContent() {
+            this.contentLoading = true;
+            try {
+                this.clearContent();
+                const content = await getFullContent(this.elementID, this.categoryID);
+                this.setContentID(content.contentID);
+                const elements = content.configuration.map(el => {
+                    if (el.type == contentElementType.text) {
+                        return content.texts.find(t => (t.id == el.id));
+                    } else if (el.type == contentElementType.list) {
+                        return content.lists.find(t => (t.id == el.id));
+                    } else if (el.type == contentElementType.linkGroup) {
+                        return content.linkGroups.find(t => (t.id == el.id));
+                    } else if (el.type == contentElementType.imageGroup) {
+                        return content.imageGroups.find(t => (t.id == el.id));
+                    }
+                });
+                this.setContent(elements);
+                this.contentLoading = false;
+            } catch (error) {
+                this.notify({type: 'negative', message: `Error: ${error.message}`});
             }
         },
         async saveName(newName) {
@@ -103,20 +137,34 @@ export default {
                 this.notify({type: 'negative', message: `Error: ${error.message}`});
             }
         },
+        async init(categoryID, elementID) {
+            const success = await this.fetchElement(categoryID, elementID);
+            if (success) {
+                this.fetchFullContent(categoryID, elementID);
+            }
+        }
+    },
+    watch: {
+        async $route(newRoute) {
+            await this.init(newRoute.params.categoryID, newRoute.params.elementID);
+        }
     },
     async mounted() {
-        await this.fetchElement();
+       await this.init();
+    },
+    beforeRouteLeave(to, from) {
+        this.clearContent();
     }
 };
 </script>
 
 <style lang="less">
-@import "../common.less";
+@import "../../common.less";
 
 .element-page {
     display: flex;
     width: 100%;
-    height: 95vh;
+    min-height: 95vh;
 
     .element-page__side-panel {
         display: flex;
@@ -168,6 +216,7 @@ export default {
         align-items: center;
         flex: 1;
         padding: 1em;
+        position: relative;
     }
 }
 

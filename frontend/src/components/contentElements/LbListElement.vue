@@ -4,16 +4,18 @@
                       :position="position"
                       @changeTitle="changeTitle"
                       @moveElement="moveContentElement"
-                      @removeElement="deleteElement">
+                      @removeElement="deleteElement"
+                      :buttonsLoading="buttonsLoading">
     <div class="lb-list-element">
       <div class="lb-list-element__items" v-if="items.length > 0">
         <div class="lb-list-element__item" v-for="(item, index) in sortedItems" :key="item.id">
           <lb-list-item :id="item.id"
-                        :initTitle="item.initTitle"
-                        :initText="item.initText"
+                        :title="item.title"
+                        :text="item.text"
                         :ordinalNumber="item.ordinalNumber"
                         :isLast="isItemLast(index)"
                         :contentID="contentID"
+                        :listID="id"
                         @moveItem="moveItem"
                         @removeListItem="deleteItem">
           </lb-list-item>
@@ -34,7 +36,7 @@
 import LbContentElement from "./LbContentElement.vue";
 import LbContentElementMixin from './ContentElement.mixin.js';
 import contentElementType from '@/domain/contentElementTypes.js';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 import LbListItem from './LbListItem.vue';
 import {
   updateList,
@@ -51,7 +53,7 @@ export default {
     LbListItem
   },
   props: {
-    initItems: {
+    items: {
       type: Array,
       default: []
     }
@@ -59,11 +61,10 @@ export default {
   data() {
     return {
       elementType: contentElementType.list,
-      title: this.initTitle,
-      items: this.initItems
     };
   },
   computed: {
+    ...mapGetters('element', ['getElementById', 'getListItemByOrder']),
     sortedItems() {
       return this.items.sort((it1, it2) => {
         if (it1.ordinalNumber > it2.ordinalNumber) return 1;
@@ -83,7 +84,8 @@ export default {
     async changeTitle(newTitle) {
       try {
         await updateList(this.id, {title: newTitle}, this.contentID);
-        this.title = newTitle;
+        const element = this.getElementById(this.id, this.elementType);
+        element.title = newTitle;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
@@ -99,15 +101,16 @@ export default {
       const createdItem = await createListItem(newItem);
       newItem = {
         id: createdItem.id,
-        initTitle: newItem.title,
-        initText: newItem.text,
+        title: newItem.title,
+        text: newItem.text,
         ordinalNumber: newItem.ordinalNumber
       };
-      this.items.push(newItem);
+      const element = this.getElementById(this.id, this.elementType);
+      element.items.push(newItem)
     },
     async moveItem(order) {
-      const item1 = this.items.find(it => it.ordinalNumber == order.oldOrdinalNumber);
-      const item2 = this.items.find(it => it.ordinalNumber == order.newOrdinalNumber);
+      const item1 = this.getListItemByOrder(this.id, order.oldOrdinalNumber);
+      const item2 = this.getListItemByOrder(this.id, order.newOrdinalNumber);
       await updateListItemPosition(item1.id, {
         listID: this.id,
         oldOrdinalNumber: order.oldOrdinalNumber,
@@ -119,9 +122,10 @@ export default {
     async deleteItem(id) {
       try {
         await deleteListItem(id, this.contentID);
-        const position = this.items.find(it => (it.id == id)).ordinalNumber;
-        this.items = this.items.filter(it => { return it.id !== id });
-        this.items.filter(it => (it.ordinalNumber > position))
+        const element = this.getElementById(this.id, this.elementType);
+        const position = element.items.find(it => (it.id == id)).ordinalNumber;
+        element.items = this.items.filter(it => { return it.id !== id });
+        element.items.filter(it => (it.ordinalNumber > position))
                   .forEach(it => {it.ordinalNumber = it.ordinalNumber - 1});
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});

@@ -1,6 +1,7 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
-import { pingContentOwner } from "./utils.js"
+import { pingContentOwner, insertElementIntoConfig, removeElementFromConfig } from "./utils.js";
+import { contentElementType } from "../domainTypes.js";
 
 async function createLinkGroup(title, contentID) {
     try {
@@ -8,6 +9,7 @@ async function createLinkGroup(title, contentID) {
             title: title,
             Content_id: contentID
         });
+        await insertElementIntoConfig(contentID, {id: linkGroup.id, type: contentElementType.linkGroup});
         pingContentOwner(contentID);
         return linkGroup;
     } catch(err) {
@@ -46,6 +48,7 @@ async function destroyLinkGroup(id, contentID) {
         await db.LinkGroup.destroy({
           where: { id: id },
         });
+        await removeElementFromConfig(contentID, id, contentElementType.linkGroup);
         pingContentOwner(contentID);
       } catch (err) {
         throw new Error(err.message);

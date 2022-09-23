@@ -25,7 +25,8 @@
 
 <script>
 import LbEditableText from "@/components/LbEditableText.vue";
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
+import contentElementType from '@/domain/contentElementTypes.js';
 import {
   updateListItem
 } from '@/httpLayers/list.http.js';
@@ -41,6 +42,10 @@ export default {
       type: Number,
       required: true
     },
+    listID: {
+      type: Number,
+      required: true,
+    },
     ordinalNumber: {
       type: Number,
       required: true
@@ -49,10 +54,10 @@ export default {
       type: Number,
       required: true
     },
-    initTitle: {
+    title: {
       type: String,
     },
-    initText: {
+    text: {
       type: String
     },
     isLast: {
@@ -60,13 +65,8 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      title: this.initTitle,
-      text: this.initText
-    };
-  },
   computed: {
+    ...mapGetters('element', ['getElementById', 'getListItemById']),
     isUpBtnDisabled() {
       return this.ordinalNumber == 0;
     }
@@ -82,7 +82,8 @@ export default {
     async saveText(newText) {
       try {
         await updateListItem(this.id, {text: newText}, this.contentID);
-        this.text = newText;
+        const item = this.getListItemById(this.listID, this.id);
+        item.text = newText;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
@@ -90,7 +91,8 @@ export default {
     async saveTitle(newTitle) {
       try {
         await updateListItem(this.id, {title: newTitle}, this.contentID);
-        this.title = newTitle;
+        const item = this.getListItemById(this.listID, this.id);
+        item.title = newTitle;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }

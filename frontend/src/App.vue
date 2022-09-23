@@ -48,7 +48,7 @@ main {
   display: flex;
   flex-direction: column;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   font-family: 'Roboto';
   background-color: @tertiary-color;
 
@@ -66,6 +66,7 @@ main {
 
   .main__content {
     position: relative;
+    overflow-y: auto;
   }
 }
 </style>

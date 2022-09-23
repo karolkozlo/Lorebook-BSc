@@ -169,7 +169,7 @@ async function findLinksTo(targetID, targetType) {
         });
         return links;
     } catch (err) {
-        throw new NotFoundException("Links for this link group were not found");
+        throw new NotFoundException("Links for this target were not found");
     }
 };
 

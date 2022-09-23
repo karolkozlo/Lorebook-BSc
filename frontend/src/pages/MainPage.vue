@@ -46,43 +46,43 @@ export default {
             contentElements: [
                 {
                   id: 1,
-                  initTitle: 'Some Title',
-                  initText: 'Some starting text to edit in TextElement',
+                  title: 'Some Title',
+                  text: 'Some starting text to edit in TextElement',
                   type: contentElementType.text
                 },
                 {
                   id: 2,
-                  initTitle: 'Some Other Title',
-                  initText: 'Some another starting text to edit in TextElement',
+                  title: 'Some Other Title',
+                  text: 'Some another starting text to edit in TextElement',
                   type: contentElementType.text
                 },
                 {
                   id: 1,
-                  initTitle: 'Some Initial Title of List',
+                  title: 'Some Initial Title of List',
                   type: contentElementType.list,
-                  initItems: [
+                  items: [
                     {
                       id: 2,
-                      initTitle: 'Another item with longer text',
-                      initText: '',
+                      title: 'Another item with longer text',
+                      text: '',
                       ordinalNumber: 0
                     },
                     {
                       id: 3,
-                      initTitle: 'item',
-                      initText: 'dsf',
+                      title: 'item',
+                      text: 'dsf',
                       ordinalNumber: 1
                     },
                   ]
                 },
                 {
                     id: 1,
-                    initTitle: 'Jakaś grupa linków',
+                    title: 'Jakaś grupa linków',
                     type: contentElementType.linkGroup,
-                    initLinks: [
+                    links: [
                         {
                             id: 1,
-                            initDescription: 'Some description',
+                            description: 'Some description',
                             targetName: 'Link do Lokacji',
                             targetID: 1,
                             categoryName: 'Locations',
@@ -90,7 +90,7 @@ export default {
                         },
                         {
                             id: 2,
-                            initDescription: 'Ooopiss',
+                            description: 'Ooopiss',
                             targetName: 'Link do Stworzenia',
                             targetID: 1,
                             categoryName: 'Stworzenia',

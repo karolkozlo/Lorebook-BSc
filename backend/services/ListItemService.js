@@ -77,7 +77,8 @@ async function destroyListItem(id, contentID) {
             },
             raw: true,
         });
-        await updateListOrder(item.List_id, item.ordinal_number, -1);
+        const ordinalNumber = item.ordinal_number !== 0 ? item.ordinal_number : 1;
+        await updateListOrder(item.List_id, ordinalNumber, -1);
         await db.ListItem.destroy({
             where: { id: id },
         });
@@ -111,6 +112,7 @@ async function changeListItemPosition(id, listID, oldOrdinalNumber, newOrdinalNu
         start = oldOrdinalNumber;
         end = newOrdinalNumber;
         changeNumber = -1;
+        start = start !== 0 ? start : 1;
     } else {
         start = newOrdinalNumber;
         end = oldOrdinalNumber;

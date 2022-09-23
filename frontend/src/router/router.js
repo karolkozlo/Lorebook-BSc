@@ -10,7 +10,7 @@ import UniverseMainPage from '@/pages/universePage/UniverseMainPage.vue';
 import LbUniverseNav from "../components/LbUniverseNav.vue";
 import CategoryPage from '@/pages/universeElementPages/CategoryPage.vue';
 import CategoryElementsPage from '@/pages/universeElementPages/CategoryElementsPage.vue';
-import ElementPage from '@/pages/ElementPage.vue';
+import ElementPage from '@/pages/elementPage/ElementPage.vue';
 import ElementNotFoundPage from '@/pages/ElementNotFoundPage.vue';
 
 import { refreshToken } from '../httpLayers/login.http.js';

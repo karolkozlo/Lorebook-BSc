@@ -1,6 +1,7 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
-import { pingContentOwner } from "./utils.js"
+import { pingContentOwner, insertElementIntoConfig, removeElementFromConfig } from "./utils.js"
+import { contentElementType } from "../domainTypes.js";
 
 async function createList(title, contentID) {
     try {
@@ -8,6 +9,7 @@ async function createList(title, contentID) {
             title: title,
             Content_id: contentID
         });
+        await insertElementIntoConfig(contentID, {id: list.id, type: contentElementType.list});
         pingContentOwner(contentID);
         return list;
     } catch(err) {
@@ -52,6 +54,7 @@ async function destroyList(id, contentID) {
         await db.List.destroy({
           where: { id: id },
         });
+        await removeElementFromConfig(contentID, id, contentElementType.list);
         pingContentOwner(contentID);
       } catch (err) {
         throw new Error(err.message);
