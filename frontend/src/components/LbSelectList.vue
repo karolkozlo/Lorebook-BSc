@@ -4,7 +4,7 @@
       <h2 class="lb-select-list__header-text" :style="`font-size: ${size + 0.3}rem`">{{ headText }}</h2>
       <div class="util__horizontal-line--white"></div>
     </div>
-    <div class="lb-select-list__items" v-if="items.length" :style="loadingVisibility">
+    <div class="lb-select-list__items" v-if="items.length" :style="itemsStyle">
       <div class="lb-select-list__item" v-for="(item, index) in items" :key="index"
                                         :class="itemChecked(item.id).listItem"
                                         @click="selectItem(item.id)">
@@ -26,7 +26,7 @@
 
 export default {
   name: 'LbSelectList',
-  emits: ['go', 'onSelect'],
+  emits: ['onSelect'],
   props: {
     headText: {
       type: String,
@@ -51,11 +51,16 @@ export default {
     size: {
       type: Number,
       default: 1
+    },
+    maxHeight: {
+      type: String
     }
   },
   computed: {
-    loadingVisibility() {
-      return this.loading ? 'visibility: hidden;' : 'visibility: visible;';
+    itemsStyle() {
+      const maxHeight = this.maxHeight ? `max-height: ${this.maxHeight};` : '';
+      const visibility = this.loading ? 'visibility: hidden;' : 'visibility: visible;';
+      return `${maxHeight} ${visibility}`;
     }
   },
   methods: {
@@ -112,6 +117,7 @@ export default {
     flex-direction: column;
     gap: 8px;
     width: 100%;
+    overflow-y: auto;
 
     .lb-select-list__item {
       display: flex;

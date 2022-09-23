@@ -4,6 +4,7 @@ const popupModule = {
         return {
             isCategoriesPopupOpen: false,
             isUniverseElementPopupOpen: false,
+            isLinkPopupOpen: false
         };
     },
     getters: {
@@ -13,6 +14,9 @@ const popupModule = {
         isUniverseElementPopupOpen(state) {
             return state.isUniverseElementPopupOpen;
         },
+        isLinkPopupOpen(state) {
+            return state.isLinkPopupOpen;
+        }
     },
     mutations: {
         openCategoriesPopup(state) {
@@ -27,6 +31,12 @@ const popupModule = {
         closeUniverseElementPopup(state) {
             state.isUniverseElementPopupOpen = false;
         },
+        openLinkPopup(state) {
+            state.isLinkPopupOpen = true;
+        },
+        closeLinkPopup(state) {
+            state.isLinkPopupOpen = false;
+        }
     },
 };
 
