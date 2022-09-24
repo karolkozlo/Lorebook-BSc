@@ -1,12 +1,13 @@
 <template>
   <div class="lb-select" :style="setWidth">
-    <div class="lb-select__control" @click="toggleOpen">
+    <div class="lb-select__control" @click="toggleOpen" :class="setClass">
       <div class="lb-select__text-field">
         {{ setSelectText }}
       </div>
       <div class="lb-select__button">
         <icon :icon="setIcon"></icon>
       </div>
+      <lb-spinner v-if="loading" variant="dark" size="25px"></lb-spinner>
     </div>
     <div class="lb-select__dropdown" v-show="isOpen">
         <div class="lb-select__dropdown-content" v-if="itemsToSelect.length > 0">
@@ -45,6 +46,10 @@ export default {
     width: {
         type: String,
         default: "150px"
+    },
+    loading: {
+        type: Boolean,
+        default: false
     }
   },
   emits: ["handleSelection"],
@@ -56,6 +61,10 @@ export default {
     };
   },
   computed: {
+    setClass() {
+        if (this.loading) return 'lb-select__control--loading';
+        return '';
+    },
     setIcon() {
         return this.isOpen ? 'lb-up' : 'lb-down';
     },
@@ -76,7 +85,9 @@ export default {
   },
   methods: {
     toggleOpen() {
-        this.isOpen = !this.isOpen;
+        if (!this.loading) {
+            this.isOpen = !this.isOpen;
+        }
     },
     selectItem(index) {
         if(this.multiselect) {
@@ -139,6 +150,18 @@ export default {
     &:hover {
         .lb-select__button {
             background-color: @accent-brighter-color;
+        }
+    }
+
+    &--loading {
+        .lb-select__text-field {
+           color: @light-text-color;
+        }
+
+        &:hover {
+            .lb-select__button {
+                background-color: @accent-color;
+            }
         }
     }
   }

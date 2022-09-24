@@ -28,6 +28,7 @@ import { searchCharacters, deleteCharacter } from '@/httpLayers/character.http.j
 import { searchEntries, deleteEntry } from '@/httpLayers/entry.http.js';
 import { searchLocations, deleteLocation } from '@/httpLayers/location.http.js';
 import { searchEvents, deleteEvent } from '@/httpLayers/event.http.js';
+import { searchElements } from '@/httpLayers/universeElement.interface.js';
 
 export default {
   components: {
@@ -68,27 +69,13 @@ export default {
     ...mapMutations('notifications', ['notify']),
     async fetchElements(queryText, page) {
       this.searchText = queryText;
-      const elementsPerPage = 2;
+      const elementsPerPage = 50;
       this.loading = true;
       try {
-        let result = null;
-        switch (this.categoryID) {
-          case 'Locations':
-            result = await searchLocations(this.universeID, queryText, elementsPerPage, page);
-            break;
-          case 'Characters':
-            result = await searchCharacters(this.universeID, queryText, elementsPerPage, page);
-            break;
-          case 'Events':
-            result = await searchEvents(this.universeID, queryText, elementsPerPage, page);
-            break;
-          default:
-            result = await searchEntries(this.categoryID, queryText, elementsPerPage, page);
-            break;
-        }
-        this.elementCount = result.count;
-        this.elements = result.rows;
-        this.totalPages = Math.ceil(this.elementCount / elementsPerPage);
+        const result = await searchElements(this.universeID, queryText, elementsPerPage, page, this.categoryID)
+        this.elementCount = result.elementCount;
+        this.elements = result.elements;
+        this.totalPages = result.totalPages;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${err.message}`});
       } finally {

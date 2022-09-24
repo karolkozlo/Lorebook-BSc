@@ -17,6 +17,8 @@
                :isLast="isLast(index)"
                :contentID="contentID"
                :buttonsLoading="elementButtonsLoading"
+               :elementID="elementID"
+               :categoryID="categoryID"
                v-bind="el"
                @moveElement="moveElement"
                @deleteElement="removeElement">
@@ -47,6 +49,10 @@ export default {
     LbListElement,
     LbLinkGroupElement,
     LbImageGroupElement
+  },
+  props: {
+    elementID: Number,
+    categoryID: String
   },
   data() {
     return {

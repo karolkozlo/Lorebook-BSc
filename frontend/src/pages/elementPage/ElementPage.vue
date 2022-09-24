@@ -23,7 +23,7 @@
        </div>
     </div>
     <div class="element-page__content">
-        <lb-content v-if="!contentLoading"></lb-content>
+        <lb-content v-if="!contentLoading" :elementID="parseInt(elementID)" :categoryID="categoryID"></lb-content>
         <lb-spinner v-if="contentLoading"></lb-spinner>
     </div>
   </div>

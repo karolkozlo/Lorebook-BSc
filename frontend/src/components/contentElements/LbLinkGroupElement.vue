@@ -26,9 +26,10 @@
         No links
       </div>
       <div class="lb-link-group-element__button">
-        <lb-button icon="lb-plus" @click="addNewLink" :size="1.2">Add new link</lb-button>
+        <lb-button icon="lb-link" @click="addNewLink" :size="1.2">Add new link</lb-button>
       </div>
     </div>
+    <link-popup v-if="isLinkPopupOpen" :linkGroupID="id" :elementID="elementID" :elementCategoryID="categoryID"></link-popup>
   </lb-content-element>
 </template>
 
@@ -42,18 +43,26 @@ import {
   updateLinkGroup,
   deleteContentLink
 } from '@/httpLayers/link.http.js';
+import LinkPopup from '@/popups/LinkPopup.vue';
 
 export default {
   name: 'LbLinkGroupElement',
   mixins: [ LbContentElementMixin ],
   components: {
     LbContentElement,
-    LbContentLink
+    LbContentLink,
+    LinkPopup,
   },
   props: {
     links: {
       type: Array,
       default: []
+    },
+    elementID: {
+      type: Number,
+    },
+    categoryID: {
+      type: String
     }
   },
   data() {
@@ -63,9 +72,11 @@ export default {
   },
   computed: {
     ...mapGetters('element', ['getElementById']),
+    ...mapGetters('popups', ['isLinkPopupOpen']),
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
+    ...mapMutations('popups', ['openLinkPopup']),
     deleteElement() {
       this.$emit('deleteElement', { id: this.id, type: this.elementType });
     },
@@ -81,6 +92,8 @@ export default {
     async addNewLink() {
       // TODO: Integrate with popup for creating links
       console.log(`Create new link for linkGroup with id: ${this.id}`);
+      this.openLinkPopup();
+
     },
     async deleteLink(id) {
       try {
