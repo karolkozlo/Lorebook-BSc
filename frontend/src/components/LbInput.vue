@@ -1,7 +1,7 @@
 <template>
   <div class="lb-input">
     <div class="lb-input__header">
-      <h2 class="lb-input__title" v-if="name">{{ name}}</h2>
+      <h2 class="lb-input__title" :style="setSize.title" v-if="name">{{ name}}</h2>
       <lb-small-error v-if="error.length && !isFocused" :text="error" :size="1.5" />
     </div>
     <input v-if="type !== 'textarea'"
@@ -9,6 +9,7 @@
            :type="type"
            :class="fieldClass"
            :maxlength="maxLength"
+           :style="setSize.input"
            @input="$emit('update:value', value)"
            @change="$emit('change:value', value)"
            @focus="isFocused = true"
@@ -17,7 +18,7 @@
            v-model="value"
            :class="fieldClass"
            :maxlength="maxLength"
-           :style="`min-height: ${minHeight}px;`"
+           :style="setSize.textarea"
            @input="$emit('update:value', value)"
            @focus="isFocused = true"
            @blur="isFocused = false" />
@@ -53,6 +54,10 @@ export default {
     minHeight: {
         type: Number,
         default: 150
+    },
+    fontSize: {
+      type: Number,
+      default: 1.2
     }
   },
   data() {
@@ -63,6 +68,13 @@ export default {
   computed: {
     fieldClass() {
       return this.error.length && !this.isFocused ? 'lb-input__field lb-input__field--invalid' : 'lb-input__field';
+    },
+    setSize() {
+      return {
+        title: `font-size: ${this.fontSize + 0.2}rem;`,
+        input: `font-size: ${this.fontSize}rem;`,
+        textarea: `font-size: ${this.fontSize}rem; min-height: ${this.minHeight}px;`
+      }
     }
   }
 };
@@ -79,23 +91,25 @@ export default {
   .lb-input__header {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
+
+    &:has(.lb-input__title) {
+      margin-bottom: 5px;
+    }
 
     .lb-input__title {
       margin: 0;
       margin-right: 0.5em;
       font-weight: 500;
-      font-size: 1.4rem;
       color: @light-text-color;
     }
   }
 
   .lb-input__field {
     border: 2px solid transparent;
-    font-size: 1.2rem;
     padding: 0.2em;
     box-shadow: inset 0px 1px 8px rgba(0, 0, 0, 0.2);
     resize: vertical;
+    width: 100%;
 
     &:focus {
       background-color: @neutral-secondary-color;
