@@ -26,10 +26,14 @@
         No links
       </div>
       <div class="lb-link-group-element__button">
-        <lb-button icon="lb-link" @click="addNewLink" :size="1.2">Add new link</lb-button>
+        <lb-button icon="lb-link" @click="openLinkPopup" :size="1.2">Add new link</lb-button>
       </div>
     </div>
-    <link-popup v-if="isLinkPopupOpen" :linkGroupID="id" :elementID="elementID" :elementCategoryID="categoryID"></link-popup>
+    <link-popup v-if="isLinkPopupOpen"
+                :linkGroupID="id"
+                :elementID="elementID"
+                :elementCategoryID="categoryID"
+                @onResult="addNewLink"></link-popup>
   </lb-content-element>
 </template>
 
@@ -89,11 +93,9 @@ export default {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
     },
-    async addNewLink() {
-      // TODO: Integrate with popup for creating links
-      console.log(`Create new link for linkGroup with id: ${this.id}`);
-      this.openLinkPopup();
-
+    addNewLink(newLink) {
+      const element = this.getElementById(this.id, this.elementType);
+      element.links.push(newLink);
     },
     async deleteLink(id) {
       try {

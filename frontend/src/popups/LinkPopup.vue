@@ -42,6 +42,7 @@ import LbSearchBar from '@/components/LbSearchBar.vue';
 import LbPageNav from '@/components/LbPageNav.vue';
 import { getUniverseCategories } from '@/httpLayers/category.http.js';
 import { searchElements } from '@/httpLayers/universeElement.interface.js';
+import { createContentLink } from '@/httpLayers/link.http.js';
 
 
 export default {
@@ -171,13 +172,20 @@ export default {
     },
     async createLink() {
       try {
+        this.createLoading = true;
         const category = this.categories.find(cat => (cat.id == this.selectedCategory));
         const targetElement = this.elements.find(el => (el.id == this.targetElementID));
-        console.log('linkGroupID: ', this.linkGroupID);
-        console.log('targetElement: ', targetElement.id, targetElement.name);
-        console.log('targetCategory: ', category.id, category.name);
-        console.log('description: ', this.description);
-        this.createLoading = true;
+        const descriptionToSend = this.description;
+        const createdLink = await createContentLink(this.targetElementID, this.selectedCategory, descriptionToSend, this.linkGroupID);
+        this.$emit('onResult', {
+          id: createdLink.id,
+          description: descriptionToSend,
+          targetID: targetElement.id,
+          targetName: targetElement.name,
+          categoryID: category.id,
+          categoryName: category.name
+        });
+        this.closeLinkPopup();
       } catch (error) {
         this.notify({ type: 'negative', message: error.message });
       } finally {

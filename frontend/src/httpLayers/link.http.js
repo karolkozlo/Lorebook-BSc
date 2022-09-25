@@ -95,10 +95,50 @@ async function deleteContentLink(id, contentID) {
       });
 };
 
+async function createContentLink(targetID, categoryID, description, linkGroupID) {
+  let targetType;
+  switch (categoryID) {
+    case 'Locations':
+      targetType = 'Location';
+    break;
+    case 'Characters':
+      targetType = 'Character';
+    break;
+    case 'Events':
+      targetType = 'Events';
+    break;
+    default:
+      targetType = 'Entry';
+    break;
+  };
+  const bodyToSend = {
+    targetID,
+    targetType,
+    description,
+    linkGroupID
+  };
+  return await LbAPI
+    .post(`/links`, bodyToSend)
+    .then((response) => {
+        return response.data;
+    })
+    .catch((error) => {
+      if (error.response && error.response.data.message) {
+        const err = new Error(`${error.response.data.message}`);
+        throw err;
+      } else if (error.request) {
+            throw new Error("Service refused connection");
+      } else {
+          throw new Error("Undefined error");
+      }
+  });
+};
+
 export {
   createLinkGroup,
   updateLinkGroup,
   deleteLinkGroup,
   deleteContentLink,
-  updateContentLink
+  updateContentLink,
+  createContentLink
 };
