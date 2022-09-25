@@ -18,6 +18,16 @@
                             customClass="side-panel__description"
                             noContent="No description">
             </lb-editable-text>
+            <h3 class="side-panel__header-text">
+                <icon icon="lb-tags"></icon>
+                Tags
+            </h3>
+            <lb-tag-container :tags="tags"
+                              @addTag="addTag"
+                              @removeTag="removeTag"
+                              :loading="contentLoading"
+                              :buttonLoading="tagLoading">
+            </lb-tag-container>
         </div>
         <lb-spinner v-if="elementLoading"></lb-spinner>
        </div>
@@ -37,12 +47,14 @@ import { getElement, updateElement } from '@/httpLayers/universeElement.interfac
 import { NotFoundException } from '@/domain/errors.js';
 import { getFullContent } from '@/httpLayers/content.http.js'
 import contentElementType from '@/domain/contentElementTypes.js';
+import LbTagContainer from '@/components/LbTagContainer.vue';
 
 export default {
     name: 'ElementPage',
     components: {
         LbEditableText,
-        LbContent
+        LbContent,
+        LbTagContainer
     },
     props: {
         elementID: {
@@ -60,6 +72,8 @@ export default {
             description: '',
             elementLoading: false,
             contentLoading: true,
+            tags: [],
+            tagLoading: false
         };
     },
     computed: {
@@ -112,6 +126,7 @@ export default {
                         return content.imageGroups.find(t => (t.id == el.id));
                     }
                 });
+                this.tags = content.tags;
                 this.setContent(elements);
                 this.contentLoading = false;
             } catch (error) {
@@ -135,6 +150,30 @@ export default {
                 this.description = newDescription;
             } catch (error) {
                 this.notify({type: 'negative', message: `Error: ${error.message}`});
+            }
+        },
+        async addTag(tagName) {
+            try {
+              this.tagLoading = true;
+              const newTag = {
+                id: Math.random(),
+                name: tagName
+              }
+              this.tags.push(newTag);
+            } catch (error) {
+              this.notify({type: 'negative', message: `Error: ${error.message}`});
+            } finally {
+                this.tagLoading = false;
+            }
+        },
+        async removeTag(id) {
+            try {
+                this.tagLoading = true;
+                this.tags = this.tags.filter(t => (t.id !== id));
+            } catch (error) {
+                this.notify({type: 'negative', message: `Error: ${error.message}`});
+            } finally {
+                this.tagLoading = false;
             }
         },
         async init(categoryID, elementID) {
@@ -195,6 +234,16 @@ export default {
                 color: @dark-text-color;
             }
 
+            .side-panel__header-text {
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                margin: 0;
+                width: 100%;
+                font-size: 1.1rem;
+                font-weight: 600;
+            }
+
             .side-panel__title {
                 .lb-editable-text__text, .lb-editable-text__input {
                     text-align: center;
@@ -205,6 +254,7 @@ export default {
             }
 
             .side-panel__description {
+                padding-bottom: 2em;
                 .lb-editable-text__text, .lb-editable-text__input {
                     font-size: 1rem;
                 }
