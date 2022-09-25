@@ -146,7 +146,9 @@ export default {
     },
     watch: {
         async $route(newRoute) {
+          if (newRoute.name === 'ElementPage') {
             await this.init(newRoute.params.categoryID, newRoute.params.elementID);
+          }
         }
     },
     async mounted() {
