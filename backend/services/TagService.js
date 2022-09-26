@@ -38,6 +38,7 @@ async function createTagInContent(name, contentID, universeID) {
             await Content.addTag(tag);
         });
         pingContentOwner(contentID);
+        return tag;
     } catch(err) {
         throw new Error(err.message);
     }

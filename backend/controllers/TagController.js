@@ -81,8 +81,8 @@ async function postTagToContent(req, res) {
             await addTagToContent(body.tagID, body.contentID);
             res.status(201).send("Added Tag to Content of Universe's Item");
         } else if(body.name && body.contentID && body.universeID) {
-            await createTagInContent(body.name, body.contentID, body.universeID);
-            res.status(201).send("Added Tag to Content of Universe's Item");
+            const createdTag = await createTagInContent(body.name, body.contentID, body.universeID);
+            res.status(201).send(createdTag);
         } else {
             res.status(400).send({message: "Body of request should contain tagID and contentID OR name, contentID and universeID"});
         }
