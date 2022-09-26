@@ -46,6 +46,7 @@ import { mapMutations, mapGetters } from 'vuex';
 import { getElement, updateElement } from '@/httpLayers/universeElement.interface.js'
 import { NotFoundException } from '@/domain/errors.js';
 import { getFullContent } from '@/httpLayers/content.http.js'
+import { createTagInContent, deleteTagFromContent } from '@/httpLayers/tag.http.js';
 import contentElementType from '@/domain/contentElementTypes.js';
 import LbTagContainer from '@/components/LbTagContainer.vue';
 
@@ -78,6 +79,7 @@ export default {
     },
     computed: {
         ...mapGetters('universe', ['universeID']),
+         ...mapGetters('element', ['contentID']),
         sideInfoVisibility() {
             return this.elementLoading ? 'visibility: hidden;' : 'visibility: visible;';
         }
@@ -155,11 +157,8 @@ export default {
         async addTag(tagName) {
             try {
               this.tagLoading = true;
-              const newTag = {
-                id: Math.random(),
-                name: tagName
-              }
-              this.tags.push(newTag);
+              const newTag = await createTagInContent(tagName, this.contentID, this.universeID);
+              this.tags.push({id: newTag.id, name: tagName});
             } catch (error) {
               this.notify({type: 'negative', message: `Error: ${error.message}`});
             } finally {
@@ -169,6 +168,7 @@ export default {
         async removeTag(id) {
             try {
                 this.tagLoading = true;
+                await deleteTagFromContent(id, this.contentID);
                 this.tags = this.tags.filter(t => (t.id !== id));
             } catch (error) {
                 this.notify({type: 'negative', message: `Error: ${error.message}`});
