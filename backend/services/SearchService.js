@@ -1,6 +1,7 @@
 import { db } from '../models/index.js';
 import { findCategoryEntries } from './EntryService.js';
 import { findUniverseCategoryList } from './CategoryService.js';
+import { hardcodedTablesType, hardcodedTablesArray } from '../domainTypes.js';
 
 async function findShortLists(universeID) {
     try {
@@ -8,7 +9,7 @@ async function findShortLists(universeID) {
         const filteredCategories = categories.filter(c => {
             return !['Characters', 'Events', 'Locations'].includes(c.id) && c.elementCount != 0;
         });
-        const entriesPromises = filteredCategories.map( c => {
+        const entriesPromises = filteredCategories.map(c => {
             return new Promise(async (resolve, reject) => {
                 try {
                     let categoryEntries = await findCategoryEntries(c.id, 3);
@@ -41,12 +42,12 @@ async function findShortLists(universeID) {
             WHERE e.Universe_id = :universeID
             LIMIT 3)
             ORDER BY last_modified DESC;`,
-        {
-            type: db.sequelize.QueryTypes.SELECT,
-            replacements: {
-                universeID: universeID
-            }
-        });
+            {
+                type: db.sequelize.QueryTypes.SELECT,
+                replacements: {
+                    universeID: universeID
+                }
+            });
         const hardcodedTables = ['Characters', 'Locations', 'Events'];
         const groupedHardcodedElements = [];
 
@@ -66,11 +67,95 @@ async function findShortLists(universeID) {
         const results = [];
         results.push(...groupedHardcodedElements, ...groupedEntries);
         return results;
-    } catch(err) {
+    } catch (err) {
+        throw new Error(err.message);
+    }
+};
+
+//Helper functions
+function mapCategoryToID (category) {
+  if (category == hardcodedTablesType.characters) return 'Character_id';
+  if (category == hardcodedTablesType.locations) return 'Location_id';
+  if (category == hardcodedTablesType.events) return 'Event_id';
+  return 'Entry_id';
+};
+
+function concatTags(tags) {
+  const preparedTags = tags.map(t => (`"${t}"`));
+  const concatedTags = String.prototype.concat(preparedTags);
+  return concatedTags;
+};
+
+function queryTags(tags, elementIdField) {
+  if (tags && tags.length > 0) {
+    return `JOIN contents c ON e.id = c.${elementIdField}
+            JOIN tag_content tc ON c.id = tc.Content_id
+            JOIN tags t ON tc.Tag_id = t.id AND t.name IN(${concatTags(tags)})`;
+  } else {
+    return '';
+  }
+};
+
+async function findSearchedElements(universeID, queryText, categories, tags, limit, offset) {
+    try {
+        let regexAND = '';
+        let regexWHERE = '';
+        if (queryText && queryText.length > 0) {
+            regexAND = `AND e.name REGEXP(".*${queryText}.*")`;
+            regexWHERE = `WHERE e.name REGEXP(".*${queryText}.*")`;
+        }
+
+        const subQueries
+        = categories.filter(c => (hardcodedTablesArray.includes(c)))
+                    .map(cat => {
+                        const id = mapCategoryToID(cat);
+                        return `(SELECT DISTINCT e.id, e.name, e.last_modified, "${cat}" as Category_id, "${cat}" as categoryName
+                        FROM ${cat} e
+                        ${queryTags(tags, id)}
+                        WHERE e.Universe_id = :universeID ${regexAND})`
+                    });
+        const customCategories = categories.filter(c => { return !hardcodedTablesArray.includes(c);});
+        if (customCategories.length !== 0) {
+            const id = 'Entry_id';
+            const categoryIDs = String.prototype.concat(customCategories);
+            const subQuery =
+                `(SELECT DISTINCT e.id, e.name, e.last_modified, e.Category_id, cat.name as categoryName
+                FROM entries e
+                JOIN categories cat ON e.Category_id = cat.id AND cat.id IN (${categoryIDs})
+                ${queryTags(tags, id)}
+                ${regexWHERE})`;
+            subQueries.push(subQuery);
+        }
+
+        let query = '';
+        for (let i = 0; i < subQueries.length; i++) {
+            let subQuery = subQueries[i];
+            if (i < subQueries.length - 1) {
+                subQuery = `${subQuery} UNION ALL \n`;
+            }
+            query = query +` ${subQuery}`;
+        }
+        const queryTotalCount = `SELECT COUNT(searched.id) AS "totalCount" FROM(${query}) searched;`;
+        const resultQuery = `${query} ORDER BY last_modified LIMIT ${limit} OFFSET ${offset};`;
+        const totalCountResult = await db.sequelize.query(queryTotalCount, {
+            type: db.sequelize.QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID
+            }
+        });
+        const rows = await db.sequelize.query(resultQuery, {
+            type: db.sequelize.QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID
+            }
+        });
+        return {count: totalCountResult[0].totalCount, rows};
+    } catch (err) {
         throw new Error(err.message);
     }
 };
 
 export {
-    findShortLists
+    findShortLists,
+    findSearchedElements
 };

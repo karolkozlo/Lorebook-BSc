@@ -170,6 +170,24 @@ async function updateTag(id, name) {
     }
 };
 
+async function checkTags(universeID, tagNames) {
+    let Op = Sequelize.Op;
+    try {
+        const tags = db.Tag.findAll({
+            where: {
+                [Op.and]: [
+                    {Universe_id: universeID},
+                    {name: tagNames}
+                ]
+            },
+            raw: true
+        });
+        return tags;
+    } catch(err) {
+        throw new Error(err.message);
+    }
+};
+
 export {
     createTag,
     addTagToContent,
@@ -180,5 +198,6 @@ export {
     searchTags,
     findContentTags,
     destroyTag,
-    destroyTagContent
+    destroyTagContent,
+    checkTags
  };

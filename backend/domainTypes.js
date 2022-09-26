@@ -5,6 +5,16 @@ const contentElementType = {
   linkGroup: 'LINK_GROUP',
 };
 
+const hardcodedTablesType = {
+  locations: 'Locations',
+  characters: 'Characters',
+  events: 'Events'
+};
+
+const hardcodedTablesArray = [hardcodedTablesType.locations, hardcodedTablesType.characters, hardcodedTablesType.events];
+
 export {
-  contentElementType
+  contentElementType,
+  hardcodedTablesType,
+  hardcodedTablesArray
 };
