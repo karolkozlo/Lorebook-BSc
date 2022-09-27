@@ -14,7 +14,7 @@
             :loading="loading"
             @onDelete="deleteElement">
       </lb-universe-element-list>
-      <lb-page-nav :currentPage="currentPage" :totalPages="totalPages" @go="changePage" v-if="!loading"></lb-page-nav>
+      <lb-page-nav :currentPage="currentPage" :totalPages="totalPages" @go="changePage" v-if="isPageNavNeeded"></lb-page-nav>
     </div>
   </div>
 </template>
@@ -64,20 +64,29 @@ export default {
   },
   computed: {
     ...mapGetters('universe', ['universeID']),
+    isPageNavNeeded() {
+      return !this.loading && this.totalPages > 1;
+    }
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
     async fetchElements(queryText, page) {
+      let newPage = page;
+      if (this.searchText !== queryText) {
+        this.currentPage = 1;
+        newPage = 1;
+      }
       this.searchText = queryText;
       const elementsPerPage = 50;
       this.loading = true;
       try {
-        const result = await searchElements(this.universeID, queryText, elementsPerPage, page, this.categoryID)
+        const offset = newPage !== 0 ? (newPage * elementsPerPage) - elementsPerPage : 0;
+        const result = await searchElements(this.universeID, queryText, elementsPerPage, offset, this.categoryID)
         this.elementCount = result.elementCount;
         this.elements = result.elements;
         this.totalPages = result.totalPages;
       } catch (error) {
-        this.notify({type: 'negative', message: `Error: ${err.message}`});
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
       } finally {
         this.loading = false;
       }
@@ -114,7 +123,7 @@ export default {
           await this.search(this.searchText);
         }
       } catch (error) {
-        this.notify({type: 'negative', message: `Error: ${err.message}`});
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
       } finally {
         this.loading = false;
       }
@@ -124,6 +133,7 @@ export default {
   watch: {
     async categoryID() {
       this.searchText = '';
+      this.currentPage = 1;
       await this.fetchElements('', 0);
     }
   },
