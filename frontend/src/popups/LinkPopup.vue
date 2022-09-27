@@ -22,7 +22,7 @@
                      :totalPages="totalPages"
                      @go="changePage"
                      class="link-popup__page-nav"
-                     v-if="!areElementsLoading && currentPage != 1"></lb-page-nav>
+                     v-if="totalPages != 1"></lb-page-nav>
       </div>
       <lb-input name="Description" type="textarea" v-model:value="description" :maxLength="250"/>
       <div class="link-popup__buttons">
@@ -136,11 +136,18 @@ export default {
       }
     },
     async fetchElements(queryText, page) {
+      let newPage = page;
+      if (this.searchText !== queryText) {
+        this.currentPage = 1;
+        newPage = 1;
+      }
+      this.searchText = queryText;
       this.searchText = queryText;
       const elementsPerPage = 25;
       this.areElementsLoading = true;
       try {
-        const result = await searchElements(this.universeID, queryText, elementsPerPage, page, this.selectedCategory)
+        const offset = newPage !== 0 ? (newPage * elementsPerPage) - elementsPerPage : 0;
+        const result = await searchElements(this.universeID, queryText, elementsPerPage, offset, this.selectedCategory)
         this.elementCount = result.elementCount;
         this.elements = result.elements;
         this.totalPages = result.totalPages;
