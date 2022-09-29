@@ -67,6 +67,7 @@ main {
   .main__content {
     position: relative;
     overflow-y: auto;
+    height: 100%;
   }
 }
 </style>

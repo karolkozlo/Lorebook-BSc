@@ -12,6 +12,7 @@ import CategoryPage from '@/pages/universeElementPages/CategoryPage.vue';
 import CategoryElementsPage from '@/pages/universeElementPages/CategoryElementsPage.vue';
 import ElementPage from '@/pages/elementPage/ElementPage.vue';
 import ElementNotFoundPage from '@/pages/ElementNotFoundPage.vue';
+import SearchPage from '@/pages/SearchPage.vue';
 
 import { refreshToken } from '../httpLayers/login.http.js';
 
@@ -51,6 +52,12 @@ const elementNotFoundRoute = {
   component: ElementNotFoundPage,
 };
 
+const searchRoute = {
+  path: 'search/',
+  name: 'SearchPage',
+  component: SearchPage
+};
+
 
 
 const routes = [
@@ -81,7 +88,8 @@ const routes = [
     children: [
       categoryRoute,
       universeMainRoute,
-      elementNotFoundRoute
+      elementNotFoundRoute,
+      searchRoute
     ]
   },
   { path: '/:notFound(.*)', redirect: `/` }
