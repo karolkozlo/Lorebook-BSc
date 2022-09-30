@@ -47,14 +47,7 @@ export default {
   },
   data() {
     return {
-      elements: [
-        {
-          id: 1,
-          name: 'Name',
-          description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat null',
-          last_modified: new Date()
-        }
-      ],
+      elements: [],
       elementCount: 0,
       currentPage: 1,
       totalPages: 1,

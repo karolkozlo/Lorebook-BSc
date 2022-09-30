@@ -15,7 +15,7 @@
         </lb-tag-container>
       </div>
     </div>
-    <div class="search-page__result-section">
+    <div class="search-page__result-section" :style="loadingVisibility">
       <h2 class="search-page__result-section-header">Results</h2>
       <table class="search-page__element-table">
         <tr class="element-table__row element-table__row--header">
@@ -31,7 +31,9 @@
               <span> Category </span>
             </div>
           </th>
-          <th class="element-table__cell">Last modified</th>
+          <th class="element-table__cell element-table__cell--shrink">
+            Last modified
+          </th>
         </tr>
         <tr class="element-table__row" v-for="(el, index) in elements" :key="index">
           <td class="element-table__cell">
@@ -43,14 +45,13 @@
             <span>{{ el.categoryName }}</span>
           </td>
           <td class="element-table__cell element-table__cell--shrink">
-            {{ formatDate(el.last_modified) }}
+            {{ formatDate(el.lastModified) }}
           </td>
         </tr>
       </table>
-      <div class="search-page__no-results">
-
-      </div>
+      <lb-page-nav :currentPage="currentPage" :totalPages="totalPages" @go="changePage" v-if="isPageNavNeeded"></lb-page-nav>
     </div>
+    <lb-spinner v-if="elementsLoading"></lb-spinner>
   </div>
 </template>
 
@@ -58,17 +59,20 @@
 import LbSearchBar from '@/components/LbSearchBar.vue';
 import LbSelect from '@/components/LbSelect.vue';
 import LbTagContainer from '@/components/LbTagContainer.vue';
+import LbPageNav from '@/components/LbPageNav.vue';
 import { v4 } from 'uuid';
 import { mapGetters, mapMutations } from 'vuex';
 import { getUniverseCategories } from '@/httpLayers/category.http.js';
 import { format } from 'date-fns';
+import { getSearchedUniverseElements } from '@/httpLayers/search.http.js';
 
 export default {
   name: 'SearchPage',
   components: {
     LbSearchBar,
     LbSelect,
-    LbTagContainer
+    LbTagContainer,
+    LbPageNav
   },
   data() {
     return {
@@ -76,29 +80,10 @@ export default {
       tags: [],
       categories: [],
       categoriesLoading: false,
-      elements: [
-        {
-          id: 1,
-          name: 'Jakaś Lokacja',
-          categoryID: 'Locations',
-          categoryName: 'Locations',
-          last_modified: '2022-08-24T19:25:54.000Z'
-        },
-        {
-          id: 4,
-          name: 'Jeszcze inna postać do wywalenia',
-          categoryID: 'Characters',
-          categoryName: 'Characters',
-          last_modified: '2022-08-24T19:25:54.000Z'
-        },
-        {
-          id: 5,
-          name: 'Inne coś',
-          categoryID: 1,
-          categoryName: 'Stworzenia',
-          last_modified: '2022-08-24T19:25:54.000Z'
-        },
-      ]
+      elementsLoading: false,
+      elements: [],
+      currentPage: 1,
+      totalPages: 1
     };
   },
   computed: {
@@ -106,6 +91,12 @@ export default {
     selectedCategories() {
       return this.categories.filter(cat => (cat.selected))
                             .map(cat => (cat.id));
+    },
+    loadingVisibility() {
+      return this.elementsLoading ? 'visibility: hidden;' : 'visibility: visible;';
+    },
+    isPageNavNeeded() {
+      return this.totalPages > 1;
     }
   },
   methods: {
@@ -125,12 +116,13 @@ export default {
         }
       })
     },
-    async search(query) {
-      this.searchText = query;
-      console.log("Search");
-      console.log("searchText: ", query);
-      console.log('tags: ', this.tags);
-      console.log('categories: ', this.selectedCategories);
+    async search(queryText) {
+      const page = this.currentPage == 1 ? 0 : this.currentPage;
+      await this.fetchElements(queryText, page);
+    },
+    async changePage(newPageNumber) {
+      this.currentPage = newPageNumber;
+      await this.search(this.searchText);
     },
     addTag(tagName) {
       this.tags.push({
@@ -140,6 +132,27 @@ export default {
     },
     removeTag(id) {
       this.tags = this.tags.filter(t => (t.id !== id));
+    },
+    async fetchElements(queryText, page) {
+      let newPage = page;
+      if (this.searchText !== queryText) {
+        this.currentPage = 1;
+        newPage = 1;
+      }
+      this.searchText = queryText;
+      const elementsPerPage = 50;
+      this.loading = true;
+      try {
+        const offset = newPage !== 0 ? (newPage * elementsPerPage) - elementsPerPage : 0;
+        const tagsToSend = this.tags.map(tag => (tag.name));
+        const result = await getSearchedUniverseElements(this.universeID, queryText, this.selectedCategories, tagsToSend, elementsPerPage, offset)
+        this.elements = result.elements;
+        this.totalPages = result.totalPages;
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.loading = false;
+      }
     },
     async fetchCategories() {
       try {
@@ -199,6 +212,9 @@ export default {
   }
 
   .search-page__result-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: 80%;
 
     .search-page__result-section-header {
@@ -213,6 +229,7 @@ export default {
       width: 100%;
       padding: 0.5em;
       border-radius: 10px;
+      margin-bottom: 1.5em;
 
       .element-table__row {
         font-size: 1.2rem;
