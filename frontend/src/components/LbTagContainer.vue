@@ -56,11 +56,13 @@ export default {
   },
   methods: {
     addTag() {
-      const tagExists = this.tags.find(t => (t.name === this.name));
-      if (tagExists == undefined) {
-        this.$emit('addTag', this.name);
+      if (this.name.length !== 0) {
+        const tagExists = this.tags.find(t => (t.name === this.name));
+        if (tagExists == undefined) {
+          this.$emit('addTag', this.name);
+        }
+        this.name = '';
       }
-      this.name = '';
     }
   }
 };
@@ -121,6 +123,7 @@ export default {
       width: 100%;
       padding-bottom: 0.5em;
       font-style: italic;
+      color: @light-text-color;
     }
   }
 

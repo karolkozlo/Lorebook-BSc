@@ -21,7 +21,7 @@
       <icon icon="lb-tags"></icon>
       <span class="lb-universe-nav__button-text">Tags</span>
     </button>
-    <button class="lb-universe-nav__button">
+    <button class="lb-universe-nav__button" @click="navigateToSearch">
       <icon icon="lb-search"></icon>
       <span class="lb-universe-nav__button-text">Search</span>
     </button>
@@ -38,6 +38,14 @@ export default {
     },
     methods: {
       ...mapMutations('popups', ['openCategoriesPopup', 'openUniverseElementPopup']),
+      navigateToSearch() {
+        this.$router.push({
+          name: 'SearchPage',
+          params: {
+            universeID: this.universeID
+          }
+        });
+      }
     }
 };
 </script>
