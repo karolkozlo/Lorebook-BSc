@@ -31,6 +31,9 @@
         </div>
         <lb-spinner v-if="elementLoading"></lb-spinner>
        </div>
+       <div class="side-panel__bottom-button">
+         <lb-button variant="negative" icon="lb-trash" :size="1.2" @click="deleteCurrentElement" :loading="deleteLoading">Delete Element</lb-button>
+       </div>
     </div>
     <div class="element-page__content">
         <lb-content v-if="!contentLoading" :elementID="parseInt(elementID)" :categoryID="categoryID"></lb-content>
@@ -43,7 +46,7 @@
 import LbEditableText from '@/components/LbEditableText.vue';
 import LbContent from '@/components/contentElements/LbContent.vue';
 import { mapMutations, mapGetters } from 'vuex';
-import { getElement, updateElement } from '@/httpLayers/universeElement.interface.js'
+import { getElement, updateElement, deleteElement } from '@/httpLayers/universeElement.interface.js'
 import { NotFoundException } from '@/domain/errors.js';
 import { getFullContent } from '@/httpLayers/content.http.js'
 import { createTagInContent, deleteTagFromContent } from '@/httpLayers/tag.http.js';
@@ -73,6 +76,7 @@ export default {
             description: '',
             elementLoading: false,
             contentLoading: true,
+            deleteLoading: false,
             tags: [],
             tagLoading: false
         };
@@ -176,6 +180,25 @@ export default {
                 this.tagLoading = false;
             }
         },
+        async deleteCurrentElement() {
+            try {
+                this.deleteLoading = true;
+                if (confirm('Do you want delete this element? It cannot be undone!')) {
+                    await deleteElement(this.elementID, this.categoryID);
+                    this.$router.replace({
+                        name: 'UniverseMainPage',
+                        params: {
+                            universeID: this.universeID
+                        }
+                    });
+                    this.clearContent();
+                }
+            } catch (error) {
+                this.notify({type: 'negative', message: `Error: ${error.message}`});
+            } finally {
+                this.deleteLoading = false;
+            }
+        },
         async init(categoryID, elementID) {
             const success = await this.fetchElement(categoryID, elementID);
             if (success) {
@@ -259,6 +282,11 @@ export default {
                     font-size: 1rem;
                 }
             }
+        }
+
+        .side-panel__bottom-button {
+            position: fixed;
+            bottom: 1em;
         }
     }
 

@@ -15,7 +15,7 @@
     </div>
     <lb-spinner v-if="loading"></lb-spinner>
     <div class="lb-tage-container__input-field" v-if="!loading">
-      <lb-input :maxLength="60" v-model:value="name" :fontSize="1"></lb-input>
+      <lb-input :maxLength="60" v-model:value="name" :fontSize="1" @keydown="handleEnterPress"></lb-input>
       <lb-button variant="positive" icon="lb-plus" :size="1" @click="addTag" :loading="buttonLoading"></lb-button>
     </div>
   </div>
@@ -62,6 +62,12 @@ export default {
           this.$emit('addTag', this.name);
         }
         this.name = '';
+      }
+    },
+    handleEnterPress(event) {
+      if (event.key == 'Enter') {
+        event.preventDefault();
+        this.addTag();
       }
     }
   }
