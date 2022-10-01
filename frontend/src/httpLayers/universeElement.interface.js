@@ -1,7 +1,7 @@
-import { getCharacter, updateCharacter, searchCharacters } from './character.http.js';
-import { getEntry, updateEntry, searchEntries } from './entry.http.js';
-import { getLocation, updateLocation, searchLocations } from './location.http.js';
-import { getEvent, updateEvent, searchEvents } from './event.http.js';
+import { getCharacter, updateCharacter, searchCharacters, deleteCharacter } from './character.http.js';
+import { getEntry, updateEntry, searchEntries, deleteEntry } from './entry.http.js';
+import { getLocation, updateLocation, searchLocations, deleteLocation } from './location.http.js';
+import { getEvent, updateEvent, searchEvents, deleteEvent } from './event.http.js';
 
 async function getElement(id, categoryID) {
   let element = null;
@@ -53,8 +53,21 @@ async function searchElements(universeID, queryText, elementsPerPage, page, cate
   return searchResult;
 };
 
+async function deleteElement(id, categoryID) {
+  if (categoryID == 'Characters') {
+    await deleteCharacter(id);
+  } else if (categoryID == 'Locations') {
+    await deleteLocation(id);
+  } else if (categoryID == 'Events') {
+    await deleteEvent(id);
+  } else {
+    await deleteEntry(id);
+  }
+}
+
 export {
   getElement,
   updateElement,
-  searchElements
+  searchElements,
+  deleteElement
 };
