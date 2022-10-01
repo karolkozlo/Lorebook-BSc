@@ -18,6 +18,7 @@
                             customClass="side-panel__description"
                             noContent="No description">
             </lb-editable-text>
+            <component v-if="element !== null" :is="specificElement" :element="element"></component>
             <h3 class="side-panel__header-text">
                 <icon icon="lb-tags"></icon>
                 Tags
@@ -52,13 +53,16 @@ import { getFullContent } from '@/httpLayers/content.http.js'
 import { createTagInContent, deleteTagFromContent } from '@/httpLayers/tag.http.js';
 import contentElementType from '@/domain/contentElementTypes.js';
 import LbTagContainer from '@/components/LbTagContainer.vue';
+import EventDateSection from './EventDateSection.vue';
+import DummyComponent from './DummyComponent.vue';
 
 export default {
     name: 'ElementPage',
     components: {
         LbEditableText,
         LbContent,
-        LbTagContainer
+        LbTagContainer,
+        EventDateSection
     },
     props: {
         elementID: {
@@ -74,6 +78,7 @@ export default {
         return {
             name: '',
             description: '',
+            element: null,
             elementLoading: false,
             contentLoading: true,
             deleteLoading: false,
@@ -83,9 +88,13 @@ export default {
     },
     computed: {
         ...mapGetters('universe', ['universeID']),
-         ...mapGetters('element', ['contentID']),
+        ...mapGetters('element', ['contentID']),
         sideInfoVisibility() {
             return this.elementLoading ? 'visibility: hidden;' : 'visibility: visible;';
+        },
+        specificElement() {
+            if (this.categoryID == 'Events') return 'EventDateSection';
+            return 'DummyComponent';
         }
     },
     methods: {
@@ -103,6 +112,7 @@ export default {
                   }
                   this.name = element.name;
                   this.description = element.description;
+                  this.element = element;
                   return true;
                 }
             } catch (error) {
@@ -134,9 +144,10 @@ export default {
                 });
                 this.tags = content.tags;
                 this.setContent(elements);
-                this.contentLoading = false;
             } catch (error) {
                 this.notify({type: 'negative', message: `Error: ${error.message}`});
+            } finally {
+                this.contentLoading = false;
             }
         },
         async saveName(newName) {

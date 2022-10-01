@@ -78,7 +78,7 @@ export default {
   align-items: center;
   display: flex;
   border-radius: 10px;
-  padding: 0.2rem 0.4rem;
+  padding: 0.2em 0.4em;
   color: @light-text-color;
   font-weight: 600;
   font-family: 'Roboto';
