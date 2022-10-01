@@ -136,7 +136,7 @@ async function findSearchedElements(universeID, queryText, categories, tags, lim
             query = query +` ${subQuery}`;
         }
         const queryTotalCount = `SELECT COUNT(searched.id) AS "totalCount" FROM(${query}) searched;`;
-        const resultQuery = `${query} ORDER BY last_modified LIMIT ${limit} OFFSET ${offset};`;
+        const resultQuery = `${query} ORDER BY last_modified DESC LIMIT ${limit} OFFSET ${offset};`;
         const totalCountResult = await db.sequelize.query(queryTotalCount, {
             type: db.sequelize.QueryTypes.SELECT,
             replacements: {
