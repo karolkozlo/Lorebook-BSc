@@ -1,11 +1,22 @@
 import LbAPI from "./LbAPI.js";
 import { NotFoundException } from '@/domain/errors.js';
 
+function locationMapper(location) {
+    return {
+        id: location.id,
+        name: location.name,
+        description: location.description,
+        parentID: location.Location_id,
+        Universe_id: location.Universe_id,
+        parentName: location.parentName
+    };
+}
+
 async function getLocation(id) {
     return await LbAPI
         .get(`/locations/${id}`)
         .then((response) => {
-            return response.data;
+            return locationMapper(response.data);
         })
         .catch((error) => {
             if (error.response && error.response.data.message) {

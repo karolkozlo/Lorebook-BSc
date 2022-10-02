@@ -23,13 +23,25 @@ async function createLocation(name, description, universeID, parentLocationID = 
 
 async function findLocation(id) {
     try {
-        const location = await db.Location.findOne({
+        let location = await db.Location.findOne({
             where: {
                 id: id
-            }
+            },
+            raw: true
         });
         if (location == null) {
             throw new Error();
+        }
+        const parentID = location.Location_id;
+        if (parentID !== null) {
+            let parentLocation = await db.Location.findOne({
+                where: {
+                    id: parentID
+                },
+                attributes: ["id", "name"],
+                raw: true
+            });
+            location.parentName = parentLocation.name;
         }
         return location;
     } catch(err) {
