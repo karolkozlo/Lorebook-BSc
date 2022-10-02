@@ -54,6 +54,7 @@ import { createTagInContent, deleteTagFromContent } from '@/httpLayers/tag.http.
 import contentElementType from '@/domain/contentElementTypes.js';
 import LbTagContainer from '@/components/LbTagContainer.vue';
 import EventDateSection from './EventDateSection.vue';
+import LocationParentSection from './LocationParentSection.vue';
 import DummyComponent from './DummyComponent.vue';
 
 export default {
@@ -62,7 +63,9 @@ export default {
         LbEditableText,
         LbContent,
         LbTagContainer,
-        EventDateSection
+        EventDateSection,
+        DummyComponent,
+        LocationParentSection
     },
     props: {
         elementID: {
@@ -94,6 +97,7 @@ export default {
         },
         specificElement() {
             if (this.categoryID == 'Events') return 'EventDateSection';
+            if (this.categoryID == 'Locations') return 'LocationParentSection';
             return 'DummyComponent';
         }
     },
@@ -101,6 +105,7 @@ export default {
         ...mapMutations('notifications', ['notify']),
         ...mapMutations('element', ['setContent', 'setContentID', 'clearContent']),
         async fetchElement(categoryID, elementID) {
+            this.element = null;
             const catID = categoryID ? categoryID : this.categoryID;
             const elID = elementID ? elementID : this.elementID;
             this.elementLoading = true;
