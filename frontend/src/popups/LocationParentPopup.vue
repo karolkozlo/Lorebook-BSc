@@ -38,7 +38,9 @@
 import LbSearchBar from '@/components/LbSearchBar.vue';
 import LbSelectList from '@/components/LbSelectList.vue';
 import LbPageNav from '@/components/LbPageNav.vue';
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
+import { searchElements } from '@/httpLayers/universeElement.interface.js';
+import { updateLocation } from '@/httpLayers/location.http.js';
 
 export default {
   name: 'LocationParentPopup',
@@ -79,13 +81,34 @@ export default {
     ...mapGetters('universe', ['universeID']),
     filteredLocations() {
       return this.locations.filter(l => {
-        return l.id !== locationID && l.Location_id !== locationID;
+        return l.id !== this.locationID && l.Location_id !== this.locationID;
       });
     }
   },
   methods: {
+    ...mapMutations('notifications', ['notify']),
     close() {
       this.$emit('close');
+    },
+    async fetchLocations(queryText, page) {
+      let newPage = page;
+      if (this.searchText !== queryText) {
+        this.currentPage = 1;
+        newPage = 1;
+      }
+      this.searchText = queryText;
+      const elementsPerPage = 25;
+      this.locationsLoading = true;
+      try {
+        const offset = newPage !== 0 ? (newPage * elementsPerPage) - elementsPerPage : 0;
+        const result = await searchElements(this.universeID, queryText, elementsPerPage, offset, 'Locations')
+        this.locations = result.elements;
+        this.totalPages = result.totalPages;
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.locationsLoading = false;
+      }
     },
     selectParent(selection) {
       this.parentID = this.parentID !== selection ? selection : null;
@@ -97,19 +120,32 @@ export default {
     },
     async search(queryText) {
       const page = this.currentPage == 1 ? 0 : this.currentPage;
-      console.log(queryText);
+      await this.fetchLocations(queryText, page);
     },
     async changePage(newPageNumber) {
       this.currentPage = newPageNumber;
       await this.search(this.searchText);
     },
     async setParent() {
-      this.$emit('onResult', {
-        id: this.parentID,
-        name: this.parentName
-      });
-      this.close();
+      try {
+        this.setParentLoading = true;
+        await updateLocation(this.locationID, {
+          Location_id: this.parentID
+        });
+        this.$emit('onResult', {
+          id: this.parentID,
+          name: this.parentName
+        });
+        this.close();
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.setParentLoading = false;
+      }
     }
+  },
+  async mounted() {
+    await this.fetchLocations('', 1);
   }
 };
 </script>
