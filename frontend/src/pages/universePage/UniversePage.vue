@@ -4,6 +4,7 @@
     <lb-spinner v-if="loading" size="40px"></lb-spinner>
     <categories-popup v-if="isCategoriesPopupOpen"></categories-popup>
     <universe-element-popup v-if="isUniverseElementPopupOpen"></universe-element-popup>
+    <tags-popup v-if="isTagsPopupOpen"></tags-popup>
   </div>
 </template>
 
@@ -12,12 +13,14 @@ import { mapGetters, mapMutations } from 'vuex';
 import CategoriesPopup from '@/popups/CategoriesPopup.vue';
 import { getUniverse } from '@/httpLayers/universe.http.js';
 import UniverseElementPopup from '@/popups/UniverseElementPopup.vue';
+import TagsPopup from '@/popups/TagsPopup.vue';
 
 export default {
     name: 'UniversePage',
     components: {
       CategoriesPopup,
       UniverseElementPopup,
+      TagsPopup
     },
     data() {
       return {
@@ -27,7 +30,7 @@ export default {
     },
     computed: {
       ...mapGetters('universe', ['universeID']),
-      ...mapGetters('popups', ['isCategoriesPopupOpen', 'isUniverseElementPopupOpen'])
+      ...mapGetters('popups', ['isCategoriesPopupOpen', 'isUniverseElementPopupOpen', 'isTagsPopupOpen'])
     },
     methods: {
       ...mapMutations('universe', ['setUniverse', 'setUniverseName']),
