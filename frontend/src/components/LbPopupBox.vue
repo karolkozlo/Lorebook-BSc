@@ -85,9 +85,15 @@ export default {
             font-family: 'Roboto';
             width: 100%;
         }
-        .lb-popup-box__close-window-block{
+
+        .lb-popup-box__close-window-block {
             order: 2;
             padding: 0.2em;
+            cursor: pointer;
+
+            &:hover {
+                color: @neutral-color;
+            }
         }
 
     }

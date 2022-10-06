@@ -17,7 +17,7 @@
       <icon icon="lb-folder"></icon>
       <span class="lb-universe-nav__button-text">Categories</span>
     </button>
-    <button class="lb-universe-nav__button">
+    <button class="lb-universe-nav__button" @click="openTagsPopup">
       <icon icon="lb-tags"></icon>
       <span class="lb-universe-nav__button-text">Tags</span>
     </button>
@@ -37,7 +37,7 @@ export default {
       ...mapGetters('universe', ['universeName', 'universeID']),
     },
     methods: {
-      ...mapMutations('popups', ['openCategoriesPopup', 'openUniverseElementPopup']),
+      ...mapMutations('popups', ['openCategoriesPopup', 'openUniverseElementPopup', 'openTagsPopup']),
       navigateToSearch() {
         this.$router.push({
           name: 'SearchPage',
