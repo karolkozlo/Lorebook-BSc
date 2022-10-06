@@ -2,6 +2,7 @@ import { db } from '../models/index.js';
 import { findCategoryEntries } from './EntryService.js';
 import { findUniverseCategoryList } from './CategoryService.js';
 import { hardcodedTablesType, hardcodedTablesArray } from '../domainTypes.js';
+import { QueryTypes } from "sequelize";
 
 async function findShortLists(universeID) {
     try {
@@ -43,7 +44,7 @@ async function findShortLists(universeID) {
             LIMIT 3)
             ORDER BY last_modified DESC;`,
             {
-                type: db.sequelize.QueryTypes.SELECT,
+                type: QueryTypes.SELECT,
                 replacements: {
                     universeID: universeID
                 }
@@ -138,13 +139,13 @@ async function findSearchedElements(universeID, queryText, categories, tags, lim
         const queryTotalCount = `SELECT COUNT(searched.id) AS "totalCount" FROM(${query}) searched;`;
         const resultQuery = `${query} ORDER BY last_modified DESC LIMIT ${limit} OFFSET ${offset};`;
         const totalCountResult = await db.sequelize.query(queryTotalCount, {
-            type: db.sequelize.QueryTypes.SELECT,
+            type: QueryTypes.SELECT,
             replacements: {
                 universeID: universeID
             }
         });
         const rows = await db.sequelize.query(resultQuery, {
-            type: db.sequelize.QueryTypes.SELECT,
+            type: QueryTypes.SELECT,
             replacements: {
                 universeID: universeID
             }

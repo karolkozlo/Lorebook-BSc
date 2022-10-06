@@ -3,6 +3,7 @@ import {
     getUniverseTags,
     getContentTags,
     getSearchedTags,
+    getSearchedTagList,
     postTag,
     postTagToContent,
     deleteTag,
@@ -20,6 +21,7 @@ TagRouter.route('/tags/:id').get(getTag);
 TagRouter.route('/tags/universe/:universeID').get(getUniverseTags);
 TagRouter.route('/tags/content/:contentID').get(getContentTags);
 TagRouter.route('/tags/search/:universeID').get(getSearchedTags);
+TagRouter.route('/tags/search/list/:universeID').get(getSearchedTagList);
 TagRouter.route('/tags/:id').delete(deleteTag);
 TagRouter.route('/tags/:id/content/:contentID').delete(deleteTagFromContent);
 TagRouter.route('/tags/:id').patch(patchTag);

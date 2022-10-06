@@ -6,6 +6,7 @@ import {
     findTag,
     findUniverseTags,
     searchTags,
+    searchTagList,
     findContentTags,
     destroyTag,
     destroyTagContent
@@ -60,7 +61,23 @@ async function getSearchedTags(req, res) {
     } catch (e) {
         return res.status(400).json({ message: e.message });
     }
-}
+};
+
+async function getSearchedTagList(req, res) {
+    if (req.params.universeID === undefined) {
+        res.status(400).send({ message: "universeID must be defined" });
+        return;
+    }
+    try {
+        let q = req.query.q;
+        let limit = parseInt(req.query.limit);
+        let offset = parseInt(req.query.offset);
+        const tags = await searchTagList(req.params.universeID, q, limit, offset);
+        res.status(200).json(tags);
+    } catch (e) {
+        return res.status(400).json({ message: e.message });
+    }
+};
 
 async function postTag(req, res) {
     try {
@@ -129,6 +146,7 @@ export {
     getUniverseTags,
     getContentTags,
     getSearchedTags,
+    getSearchedTagList,
     postTag,
     postTagToContent,
     deleteTag,

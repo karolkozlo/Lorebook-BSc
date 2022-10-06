@@ -142,7 +142,6 @@ export default {
         newPage = 1;
       }
       this.searchText = queryText;
-      this.searchText = queryText;
       const elementsPerPage = 25;
       this.areElementsLoading = true;
       try {
