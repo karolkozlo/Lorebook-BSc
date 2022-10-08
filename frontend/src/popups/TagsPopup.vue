@@ -2,7 +2,7 @@
   <lb-popup-box :isOpen="isTagsPopupOpen" title="Tags in current universe" @close="close">
     <div class="tags-popup">
       <div class="tags-popup__content" :style="tagsLoadingVisibility">
-        <div class="tags-popup__row" v-if="tagList.length !== 0">
+        <div class="tags-popup__row">
           <div class="tags-popup__edit-form" v-if="selectedTag">
             <lb-input name="Tag Name" :value="tagName" @update:value="setTagName" :error="tagNameError" :maxLength="60"></lb-input>
             <div class="tags-popup__form-buttons">
@@ -43,7 +43,7 @@
                           :size="1.2"
                           icon="lb-trash"
                           variant="negative"
-                          @click="deleteTag(tag.id)"
+                          @click="removeTag(tag.id)"
                           :disabled="selectedTag == tag.id"></lb-button>
                     </div>
                   </td>
@@ -52,15 +52,15 @@
             </table>
           </div>
         </div>
-        <div class="tags-popup__row" v-if="totalPages !== 1 && selectedTag === null">
+        <div class="tags-popup__no-content" v-if="tagList.length == 0">
+          <h3 class="tags-popup__no-content-header">No results</h3>
+          <span>If you want to see searched tags here, you should add them to universe elements</span>
+        </div>
+        <div class="tags-popup__row" v-if="selectedTag === null">
           <lb-page-nav :currentPage="currentPage"
                      :totalPages="totalPages"
                      @go="changePage"
                      class="tags-popup__page-nav"></lb-page-nav>
-        </div>
-        <div class="tags-popup__no-content" v-if="tagList.length == 0">
-          <h3 class="tags-popup__no-content-header">No tags in this universe</h3>
-          <span>If you want to see tags here, you should add them to universe elements</span>
         </div>
       </div>
       <lb-spinner v-if="tagsLoading"></lb-spinner>
@@ -73,6 +73,7 @@ import { mapGetters, mapMutations } from 'vuex';
 import LbSearchBar from '@/components/LbSearchBar.vue';
 import LbInput from '@/components/LbInput.vue';
 import LbPageNav from '@/components/LbPageNav.vue';
+import { searchTagList, updateTag, deleteTag } from '@/httpLayers/tag.http.js';
 
 export default {
   name: 'TagsPopup',
@@ -83,73 +84,7 @@ export default {
   },
   data() {
     return {
-      tagList: [
-        {
-          id: 1,
-          name: 'Taag',
-          elementCount: 12
-        },
-        {
-          id: 2,
-          name: 'Some other tag',
-          elementCount: 8
-        },
-        {
-          id: 3,
-          name: 'Another',
-          elementCount: 7
-        },
-        {
-          id: 4,
-          name: 'Jeszcze inny tag',
-          elementCount: 6
-        },
-        {
-          id: 6,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 7,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 8,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 9,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 10,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 11,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 12,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 13,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-        {
-          id: 14,
-          name: 'Wincyj Tagów',
-          elementCount: 6
-        },
-      ],
+      tagList: [],
       tagsLoading: false,
       renameLoading: false,
       searchText: '',
@@ -195,9 +130,30 @@ export default {
         this.tagName = this.tagList.find(tag => tag.id == id).name;
       }
     },
-    async search(queryText) {
+    async fetchTagList(queryText, page) {
+      let newPage = page;
+      if (this.searchText !== queryText) {
+        this.currentPage = 1;
+        newPage = 1;
+      }
       this.searchText = queryText;
-      console.log(this.searchText);
+      this.searchText = queryText;
+      const elementsPerPage = 25;
+      this.tagsLoading = true;
+      try {
+        const offset = newPage !== 0 ? (newPage * elementsPerPage) - elementsPerPage : 0;
+        const result = await searchTagList(this.universeID, queryText, elementsPerPage, offset);
+        this.tagList = result.elements;
+        this.totalPages = result.totalPages;
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${err.message}`});
+      } finally {
+        this.tagsLoading = false;
+      }
+    },
+    async search(queryText) {
+     const page = this.currentPage == 1 ? 0 : this.currentPage;
+     await this.fetchTagList(queryText, page);
     },
     async changePage(newPageNumber) {
       this.currentPage = newPageNumber;
@@ -215,23 +171,29 @@ export default {
     async renameTag() {
       try {
         this.renameLoading = true;
+        await updateTag(this.selectedTag, this.tagName);
         this.tagList.find(t => t.id == this.selectedTag).name = this.tagName;
         this.selectedTag = null;
         this.tagName = '';
       } catch (erorr) {
-        this.notify({ type: 'negative', message: error.message });
+        this.tagNameError = error.message;
       } finally {
         this.renameLoading = false;
       }
     },
-    async deleteTag(id) {
+    async removeTag(id) {
       try {
+        await deleteTag(id);
         this.tagList = this.tagList.filter(t => (t.id !== id));
+        await this.fetchTagList(this.searchText, this.currentPage);
       } catch (erorr) {
         this.notify({ type: 'negative', message: error.message });
       }
     }
   },
+  async mounted() {
+    await this.fetchTagList('', 1);
+  }
 }
 </script>
 
@@ -242,6 +204,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 800px;
+  height: 80vh;
   position: relative;
 
   .tags-popup__content {

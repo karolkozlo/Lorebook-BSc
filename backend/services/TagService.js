@@ -97,11 +97,60 @@ async function findContentTags(contentID) {
         });
         return tags;
     } catch(err) {
-        console.log(err.message);
         throw new NotFoundException("Tags for this Content were not found");
     }
 }
 
+
+async function searchTagList(universeID, expr, limit, offset) {
+    let findLimit = limit;
+    if(!limit) {
+        findLimit = 50;
+    }
+    let findOffset = offset;
+    if(!offset) {
+        findOffset = 0;
+    }
+    const regExpr = `.*${expr}.*`;
+    try {
+        const totalCountResult = await db.sequelize.query(`
+        SELECT COUNT(id) as totalCount FROM
+        (SELECT t.id
+        FROM tags t
+        LEFT JOIN tag_content tc ON t.id = tc.Tag_id AND t.Universe_id = :universeID
+        WHERE t.name REGEXP(:expr)
+        GROUP BY t.id) searchCount;`,
+        {
+            type: QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID,
+                expr: regExpr
+            }
+        });
+
+        const rows = await db.sequelize.query(`
+        SELECT t.id, t.name, COUNT(tc.Tag_id) as elementCount
+        FROM tags t
+        LEFT JOIN tag_content tc ON t.id = tc.Tag_id AND t.Universe_id = :universeID
+        WHERE t.name REGEXP(:expr)
+        GROUP BY t.id
+        ORDER BY elementCount DESC
+        LIMIT :limit
+        OFFSET :offset;`,
+        {
+            type: QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID,
+                limit: findLimit,
+                offset: findOffset,
+                expr: regExpr
+            }
+        });
+        return {count: totalCountResult[0].totalCount, rows};
+    } catch(err) {
+        throw new Error(err.message);
+    }
+};
 
 async function searchTags(universeID, expr, limit, offset) {
     let findLimit = limit;
@@ -131,7 +180,7 @@ async function searchTags(universeID, expr, limit, offset) {
     } catch(err) {
         throw new Error(err.message);
     }
-}
+};
 
 async function destroyTagContent(contentID, tagID) {
     try {
@@ -196,6 +245,7 @@ export {
     findTag,
     findUniverseTags,
     searchTags,
+    searchTagList,
     findContentTags,
     destroyTag,
     destroyTagContent,
