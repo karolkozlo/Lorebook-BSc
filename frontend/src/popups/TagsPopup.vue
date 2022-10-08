@@ -21,23 +21,23 @@
           <lb-search-bar placeholder="Search tag by name..." @search="search" :text="searchText" v-if="!selectedTag"></lb-search-bar>
         </div>
         <div class="tags-popup__row" v-if="tagList.length !== 0">
-          <div class="tags-popup__tag_table">
-            <table class="tag_table">
+          <div class="tags-popup__tag-table">
+            <table class="tag-table">
               <thead>
-                <tr class="tag_table__row tag_table__row--header">
-                  <th class="tag_table__cell tag_table__cell--header">Tag Name</th>
-                  <th class="tag_table__cell tag_table__cell--header">Tagged Elements</th>
-                  <th class="tag_table__cell tag_table__cell--header"></th>
+                <tr class="tag-table__row tag-table__row--header">
+                  <th class="tag-table__cell tag-table__cell--header">Tag Name</th>
+                  <th class="tag-table__cell tag-table__cell--header">Tagged Elements</th>
+                  <th class="tag-table__cell tag-table__cell--header"></th>
                 </tr>
               </thead>
               <tbody>
-                <tr class="tag_table__row" :class="isRowEdited(tag.id)" v-for="tag in tagList" :key="tag.id">
-                  <td class="tag_table__cell">
-                    <span class="tag_table__tag-name">{{ tag.name }}</span>
+                <tr class="tag-table__row" :class="isRowEdited(tag.id)" v-for="tag in tagList" :key="tag.id">
+                  <td class="tag-table__cell">
+                    <span class="tag-table__tag-name">{{ tag.name }}</span>
                   </td>
-                  <td class="tag_table__cell">{{ tag.elementCount }}</td>
-                  <td class="tag_table__cell">
-                    <div class="tag_table__buttons">
+                  <td class="tag-table__cell">{{ tag.elementCount }}</td>
+                  <td class="tag-table__cell">
+                    <div class="tag-table__buttons">
                       <lb-button :size="1.2" icon="lb-edit" @click="editTag(tag.id)"></lb-button>
                       <lb-button
                           :size="1.2"
@@ -233,16 +233,16 @@ export default {
       }
     }
 
-    .tags-popup__tag_table {
+    .tags-popup__tag-table {
       display: flex;
       flex-direction: column;
       max-height: 60vh;
       overflow-y: auto;
 
-      .tag_table {
+      .tag-table {
         border-spacing: 0;
 
-        .tag_table__row {
+        .tag-table__row {
           background-color: @element-color;
           padding: 0.5em;
 
@@ -255,7 +255,7 @@ export default {
             box-shadow: inset 0px 3px 15px rgba(0, 0, 0, 0.3);
           }
 
-          .tag_table__cell {
+          .tag-table__cell {
             border-bottom: 1px solid @dark-text-color;
             padding: 0.5em;
             font-weight: 600;
@@ -267,7 +267,7 @@ export default {
                 font-weight: 700;
             }
 
-            .tag_table__buttons {
+            .tag-table__buttons {
               display: flex;
               justify-content: flex-end;
               gap: 5px;

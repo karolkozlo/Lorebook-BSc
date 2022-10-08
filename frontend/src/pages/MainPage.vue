@@ -5,38 +5,36 @@
             <router-link to="/chapter"> Chapter </router-link>
         </nav>
         <div class="main-page__content">
+            <lb-accordion :title="title"
+                          :isTitleEditable="true"
+                          :maxLength="10"
+                          :subtext="'5 Chapters'"
+                          @changeTitle="changeTitle">
+                <div class="accordion-content">
+                    Hello, it's content
+                </div>
+            </lb-accordion>
         </div>
     </div>
 </template>
 
 <script>
-import LbContentElement from '@/components/contentElements/LbContentElement.vue';
-import LbEditableText from '../components/LbEditableText.vue';
-import LbMenuButton from '../components/LbMenuButton.vue';
-import LbTextElement from '@/components/contentElements/LbTextElement.vue';
-import LbListElement from '../components/contentElements/LbListElement.vue';
-import LbLinkGroupElement from '../components/contentElements/LbLinkGroupElement';
-import contentElementType from '@/domain/contentElementTypes.js';
+import LbAccordion from '../components/LbAccordion.vue';
 
 export default {
     name: "MainPage",
     components: {
-      LbEditableText,
-      LbMenuButton,
-      LbContentElement,
-      LbTextElement,
-      LbListElement,
-      LbLinkGroupElement
+      LbAccordion
     },
     data() {
         return {
-            text: 'Some text to edit',
+            title: 'Story Name'
         };
     },
     methods: {
-        saveText(newValue) {
-            this.text = newValue;
-        },
+        changeTitle(newTitle) {
+            this.title = newTitle;
+        }
     }
 };
 </script>

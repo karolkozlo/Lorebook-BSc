@@ -147,6 +147,7 @@ export default {
             background-color: fade(@canvas-white-color, 30);
             resize: vertical;
             font-family: inherit;
+            font-weight: inherit;
             color: inherit;
 
             &:focus {
