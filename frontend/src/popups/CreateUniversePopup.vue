@@ -72,6 +72,7 @@ export default {
         try {
             const createdUniverse = await createUniverse({name: this.title.value, description: this.description, userID: this.userID});
             this.$emit('onResult', createdUniverse);
+            this.close();
         } catch (error) {
             this.notify({type: 'negative', message: error.message});
             this.$emit('onResult', false);

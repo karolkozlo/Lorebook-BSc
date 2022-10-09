@@ -55,7 +55,7 @@
         </tr>
       </table>
     </section>
-    <create-universe-popup :isOpen="isCreateUniverseOpen" @close="closeUniverseCreator" @onResult="onCreateUniverse"></create-universe-popup>
+    <create-universe-popup v-if="isCreateUniverseOpen" :isOpen="isCreateUniverseOpen" @close="closeUniverseCreator" @onResult="onCreateUniverse"></create-universe-popup>
   </div>
 </template>
 

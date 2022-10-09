@@ -6,7 +6,7 @@
         Your Stories
       </div>
       <div class="universe-stories__header-part">
-        <lb-button icon="lb-plus" :size="1.2">Create new Story</lb-button>
+        <lb-button icon="lb-plus" :size="1.2" @click="openPopup">Create new Story</lb-button>
       </div>
     </div>
     <div class="universe-stories__list">
@@ -18,21 +18,39 @@
       </div>
       <lb-spinner v-if="loading"></lb-spinner>
     </div>
+    <create-story-popup v-if="isPopupOpen" :isOpen="isPopupOpen" @close="closePopup" @onResult="addStory"></create-story-popup>
   </div>
 </template>
 
 <script>
+import CreateStoryPopup from '@/popups/CreateStoryPopup.vue';
+
 export default {
   name: 'UniverseStories',
+  components: {
+    CreateStoryPopup
+  },
   data() {
     return {
       loading: false,
       storiesList: [],
+      isPopupOpen: false
     };
   },
   computed: {
     storiesListVisibility() {
       return this.loading ? 'visibility: hidden;' : '';
+    }
+  },
+  methods: {
+    openPopup() {
+      this.isPopupOpen = true;
+    },
+    closePopup() {
+      this.isPopupOpen = false;
+    },
+    addStory(newStory) {
+      console.log('Created Story', newStory);
     }
   }
 }

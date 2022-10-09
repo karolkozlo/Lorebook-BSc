@@ -1,14 +1,21 @@
 <template>
-    <div class="lb-popper" v-if="this.isOpen">
-        <div class="lb-popper__content">
-            <slot></slot>
+    <focus-trap :active="isOpen">
+        <div class="lb-popper" v-if="this.isOpen" :tabindex="-1">
+            <div class="lb-popper__content">
+                <slot></slot>
+            </div>
         </div>
-    </div>
+    </focus-trap>
 </template>
 
 <script>
+import {FocusTrap} from 'focus-trap-vue';
+
 export default{
     name: "LbPopper",
+    components: {
+        FocusTrap
+    },
     props: {
         isOpen:{
             type: Boolean,
