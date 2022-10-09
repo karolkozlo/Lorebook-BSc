@@ -25,13 +25,15 @@ import { updateUniverse } from '@/httpLayers/universe.http.js';
 import LbContentSwapper from '@/components/LbContentSwapper.vue';
 import LbEditableText from '@/components/LbEditableText.vue';
 import UniverseElements from './UniverseElements.vue';
+import UniverseStories from './UniverseStories.vue';
 
 export default {
   name: "UnivereseMainPage",
   components: {
       LbContentSwapper,
       LbEditableText,
-      UniverseElements
+      UniverseElements,
+      UniverseStories
   },
   props: {
     universeDescriptionProp: {
@@ -48,7 +50,7 @@ export default {
           },
           {
             name: 'Stories',
-            key: 'StoriesComponent',
+            key: 'universe-stories',
           }
         ],
         activeOption: 'universe-elements'

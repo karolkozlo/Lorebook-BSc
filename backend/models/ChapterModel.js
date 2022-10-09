@@ -31,10 +31,7 @@ const Chapter = (sequelize, DataTypes) => {
             text: {
                 type: DataTypes.JSON,
                 allowNull: false
-            },
-            description: {
-                type: DataTypes.STRING,
-            },
+            }
         },
         {
             sequelize,
