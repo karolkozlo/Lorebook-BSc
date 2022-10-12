@@ -13,6 +13,7 @@ import CategoryElementsPage from '@/pages/universeElementPages/CategoryElementsP
 import ElementPage from '@/pages/elementPage/ElementPage.vue';
 import ElementNotFoundPage from '@/pages/ElementNotFoundPage.vue';
 import SearchPage from '@/pages/SearchPage.vue';
+import StoryPage from '@/pages/StoryPage.vue';
 
 import { refreshToken } from '../httpLayers/login.http.js';
 
@@ -58,6 +59,12 @@ const searchRoute = {
   component: SearchPage
 };
 
+const storyPage = {
+  path: 'story/:storyID',
+  name: 'StoryPage',
+  component: StoryPage
+};
+
 
 
 const routes = [
@@ -89,7 +96,8 @@ const routes = [
       categoryRoute,
       universeMainRoute,
       elementNotFoundRoute,
-      searchRoute
+      searchRoute,
+      storyPage
     ]
   },
   { path: '/:notFound(.*)', redirect: `/` }
