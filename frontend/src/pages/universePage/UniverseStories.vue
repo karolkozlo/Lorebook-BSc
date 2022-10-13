@@ -12,6 +12,13 @@
     <div class="universe-stories__list">
       <div class="util__horizontal-line--black"></div>
       <div class="universe-stories__list-elements" :style="storiesListVisibility">
+        <lb-story-element v-for="(story, index) in storiesList" :key="index"
+                          :id="story.id"
+                          :title="story.title"
+                          :initDescription="story.description"
+                          :chapterCount="story.chapterCount"
+                          @onDelete="deleteStory">
+        </lb-story-element>
         <div class="universe-stories__list--no-content" v-if="storiesList.length == 0">
           No Stories in this Universe
         </div>
@@ -24,16 +31,32 @@
 
 <script>
 import CreateStoryPopup from '@/popups/CreateStoryPopup.vue';
+import LbStoryElement from '@/components/LbStoryElement.vue';
+import { mapMutations } from 'vuex';
 
 export default {
   name: 'UniverseStories',
   components: {
-    CreateStoryPopup
+    CreateStoryPopup,
+    LbStoryElement
   },
   data() {
     return {
       loading: false,
-      storiesList: [],
+      storiesList: [
+        {
+          id: 1,
+          title: 'Some story with this title',
+          description: 'Description of this story',
+          chapterCount: 5
+        },
+        {
+          id: 2,
+          title: 'Another story with this title',
+          description: '',
+          chapterCount: 5
+        },
+      ],
       isPopupOpen: false
     };
   },
@@ -43,6 +66,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('notifications', ['notify']),
     openPopup() {
       this.isPopupOpen = true;
     },
@@ -50,7 +74,23 @@ export default {
       this.isPopupOpen = false;
     },
     addStory(newStory) {
-      console.log('Created Story', newStory);
+      const storyToAdd = {...newStory};
+      storyToAdd.chapterCount = 0;
+      this.storiesList.push(storyToAdd);
+    },
+    deleteStory(id) {
+      const chapterCount = this.storiesList.find(s => (s.id === id)).chapterCount;
+      try {
+        if (chapterCount > 0) {
+          if (confirm('Do you really want delete this story? This cannot be undone.')) {
+            this.storiesList = this.storiesList.filter(s => (s.id !== id));
+          }
+        } else {
+          this.storiesList = this.storiesList.filter(s => (s.id !== id));
+        }
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      }
     }
   }
 }
@@ -70,7 +110,7 @@ export default {
   .universe-stories__header {
     display: flex;
     align-items: center;
-    width: 80%;
+    width: 90%;
 
     .universe-stories__header-part {
       display: flex;
@@ -88,7 +128,7 @@ export default {
   .universe-stories__list {
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 90%;
     position: relative;
 
     .universe-stories__list-elements {
@@ -97,6 +137,7 @@ export default {
       align-items: center;
       width: 100%;
       padding: 0.2em;
+      gap: 0.7em;
 
       .universe-stories__list--no-content {
         display: flex;
