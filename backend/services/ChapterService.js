@@ -26,13 +26,14 @@ async function updateStoryOrder(storyID, ordinalNumber, changeNumber) {
     }
 }
 
-async function createChapter(title, text, ordinalNumber, storyID) {
+async function createChapter(title, text, description, ordinalNumber, storyID) {
     try {
         await updateStoryOrder(storyID, ordinalNumber, 1);
         const chapter = await db.Chapter.create({
             title: title,
             text: text,
             ordinal_number: ordinalNumber,
+            description: description,
             Story_id: storyID
         });
         return chapter;
