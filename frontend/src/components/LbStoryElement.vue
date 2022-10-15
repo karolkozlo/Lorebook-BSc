@@ -7,7 +7,7 @@
         <span class="lb-story-element__count">{{ chapterCountText }}</span>
       </div>
       <div class="lb-story-element__header-part">
-        <lb-button variant="negative" icon="lb-trash" :size="1.05" @click="deleteStory"></lb-button>
+        <lb-button variant="negative" icon="lb-trash" :size="1.05" @click="deleteStory" class="lb-story-element__delete-btn"></lb-button>
       </div>
     </div>
     <div class="util__horizontal-line--white"></div>
@@ -29,6 +29,7 @@
 <script>
 import LbEditableText from './LbEditableText.vue';
 import { mapMutations, mapGetters } from 'vuex';
+import { updateStory } from '@/httpLayers/story.http.js';
 
 export default {
   name: 'LbStoryElement',
@@ -76,8 +77,9 @@ export default {
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
-    changeDescription(newDescription) {
+    async changeDescription(newDescription) {
       try {
+        await updateStory(this.id, { description: newDescription });
         this.description = newDescription;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
@@ -100,6 +102,12 @@ export default {
   background-color: @secondary-color;
   padding: 0.5em;
   border-radius: 10px;
+
+  &:hover {
+    .lb-story-element__delete-btn {
+      visibility: visible;
+    }
+  }
 
   .lb-story-element__header {
     display: flex;
@@ -132,6 +140,10 @@ export default {
         color: @neutral-color;
       }
     }
+  }
+
+  .lb-story-element__delete-btn {
+    visibility: hidden;
   }
 
   .lb-story-element__content {
