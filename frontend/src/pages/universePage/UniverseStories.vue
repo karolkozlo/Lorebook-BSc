@@ -17,7 +17,7 @@
                           :title="story.title"
                           :initDescription="story.description"
                           :chapterCount="story.chapterCount"
-                          @onDelete="deleteStory">
+                          @onDelete="removeStory">
         </lb-story-element>
         <div class="universe-stories__list--no-content" v-if="storiesList.length == 0">
           No Stories in this Universe
@@ -32,7 +32,8 @@
 <script>
 import CreateStoryPopup from '@/popups/CreateStoryPopup.vue';
 import LbStoryElement from '@/components/LbStoryElement.vue';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
+import { getUniverseStoryList, deleteStory } from '@/httpLayers/story.http.js';
 
 export default {
   name: 'UniverseStories',
@@ -43,24 +44,12 @@ export default {
   data() {
     return {
       loading: false,
-      storiesList: [
-        {
-          id: 1,
-          title: 'Some story with this title',
-          description: 'Description of this story',
-          chapterCount: 5
-        },
-        {
-          id: 2,
-          title: 'Another story with this title',
-          description: '',
-          chapterCount: 5
-        },
-      ],
+      storiesList: [],
       isPopupOpen: false
     };
   },
   computed: {
+    ...mapGetters('universe', ['universeID']),
     storiesListVisibility() {
       return this.loading ? 'visibility: hidden;' : '';
     }
@@ -78,20 +67,35 @@ export default {
       storyToAdd.chapterCount = 0;
       this.storiesList.push(storyToAdd);
     },
-    deleteStory(id) {
+    async removeStory(id) {
       const chapterCount = this.storiesList.find(s => (s.id === id)).chapterCount;
       try {
         if (chapterCount > 0) {
           if (confirm('Do you really want delete this story? This cannot be undone.')) {
+            await deleteStory(id);
             this.storiesList = this.storiesList.filter(s => (s.id !== id));
           }
         } else {
+          await deleteStory(id);
           this.storiesList = this.storiesList.filter(s => (s.id !== id));
         }
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
+    },
+    async fetchListOfStories() {
+      try {
+        this.loading = true;
+        this.storiesList = await getUniverseStoryList(this.universeID);
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.loading = false;
+      }
     }
+  },
+  async mounted() {
+    await this.fetchListOfStories();
   }
 }
 </script>

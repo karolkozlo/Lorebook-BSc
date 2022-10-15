@@ -2,6 +2,7 @@ import {
     createStory,
     findStory,
     findUniverseStories,
+    findUniverseStoryList,
     updateStory,
     destroyStory,
 } from "../services/StoryService.js";
@@ -29,6 +30,19 @@ async function getUniverseStories(req, res) {
       return res.status(400).json({ message: e.message });
     }
 }
+
+async function getUniverseStoryList(req, res) {
+  if (req.params.universeID === undefined) {
+    res.status(400).send({ message: "universeID must be defined" });
+    return;
+  }
+  try {
+    const storyList = await findUniverseStoryList(req.params.universeID);
+    res.status(200).json(storyList);
+  } catch (e) {
+    return res.status(400).json({ message: e.message });
+  }
+};
 
 async function postStory(req, res) {
     try {
@@ -65,6 +79,13 @@ async function patchStory(req, res) {
       }
       res.send({ message: e.message });
     }
-  }
+}
 
-  export { getStory, getUniverseStories, postStory, deleteStory, patchStory };
+export {
+  getStory,
+  getUniverseStories,
+  getUniverseStoryList,
+  postStory,
+  deleteStory,
+  patchStory
+};

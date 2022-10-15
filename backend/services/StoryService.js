@@ -40,6 +40,25 @@ async function findUniverseStories(universeID) {
     }
 };
 
+async function findUniverseStoryList(universeID) {
+    try {
+        const storyList = await db.sequelize.query(`
+        SELECT s.id, s.title, s.description, COUNT(c.id) as chapterCount
+        FROM stories s
+        LEFT JOIN chapters c ON c.Story_id = s.id AND s.Universe_id = :universeID
+        GROUP BY s.id;`,
+        {
+            type: db.sequelize.QueryTypes.SELECT,
+            replacements: {
+                universeID: universeID
+            }
+        });
+        return storyList;
+    } catch(err) {
+        throw new NotFoundException("Categories for this universe were not found");
+    }
+};
+
 async function destroyStory(id) {
     try {
         await db.Story.destroy({
@@ -65,4 +84,11 @@ async function updateStory(id, updatedFields) {
     }
 };
 
-export { createStory, updateStory, findStory, findUniverseStories, destroyStory };
+export {
+  createStory,
+  updateStory,
+  findStory,
+  findUniverseStories,
+  findUniverseStoryList,
+  destroyStory
+};
