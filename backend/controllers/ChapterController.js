@@ -52,6 +52,7 @@ async function postChapter(req, res) {
         const createdChapter = await createChapter(
             req.body.title,
             req.body.text,
+            req.body.description,
             req.body.ordinalNumber,
             req.body.storyID
         );

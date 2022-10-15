@@ -62,7 +62,8 @@ const searchRoute = {
 const storyPage = {
   path: 'story/:storyID',
   name: 'StoryPage',
-  component: StoryPage
+  component: StoryPage,
+  props: true,
 };
 
 
