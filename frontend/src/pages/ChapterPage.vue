@@ -69,7 +69,7 @@ export default {
     },
     async getCurrentChapter() {
       try {
-        this.chapter = await getChapter(6);
+        this.chapter = await getChapter(1);
         this.oldChapterText = this.chapter.text;
       } catch(err) {
         console.log(err.message);

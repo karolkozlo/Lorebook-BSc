@@ -2,6 +2,15 @@ import LbAPI from "./LbAPI";
 
 const url = "/chapters";
 
+const defaultChapterText = {
+  type: "doc",
+  content: [
+    {
+      type: "paragraph",
+    },
+  ],
+};
+
 async function getChapter(id) {
     return LbAPI.get(`${url}/${id}`)
     .then((response) => {
@@ -26,16 +35,16 @@ async function getChapter(id) {
     });
 }
 
-async function createChapter(chapter) {
-    let chapterToPost =  {
-        title: chapter.title,
-        description: chapter.description,
-        text: chapter.text,
-        ordinalNumber: chapter.ordinalNumber,
-        storyID: chapter.Story_id || chapter.storyID
+async function createChapter(title, description, ordinalNumber, storyID) {
+    const chapterToPost =  {
+        title: title,
+        description: description,
+        text: defaultChapterText,
+        ordinalNumber: ordinalNumber,
+        storyID: storyID
     };
     return LbAPI
-    .post(url, chapterToPost)
+    .post('/chapters', chapterToPost)
     .then((response) => {
       return response.data;
     })

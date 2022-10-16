@@ -35,7 +35,12 @@ async function createChapter(title, text, description, ordinalNumber, storyID) {
             ordinal_number: ordinalNumber,
             description: description,
             Story_id: storyID
+        }).then((result) => {
+          const resultToReturn = result.get({plain: true});
+          delete resultToReturn.text;
+          return resultToReturn;
         });
+
         return chapter;
     } catch(err) {
         throw new Error(err.message);
@@ -55,22 +60,15 @@ async function findChapter(id) {
     }
 };
 
-async function findStoryChapters(storyID, limit, offset) {
-    let findLimit = limit;
-    if(!limit) {
-        findLimit = 50;
-    }
-    let findOffset = offset;
-    if(!offset) {
-        findOffset = 0;
-    }
+async function findStoryChapters(storyID) {
     try {
         const chapters = db.Chapter.findAll({
             where: {
                 Story_id: storyID,
             },
-            offset: findOffset,
-            limit: findLimit,
+            attributes: {
+                exclude: ['text']
+            }
         });
         return chapters;
     } catch(err) {
