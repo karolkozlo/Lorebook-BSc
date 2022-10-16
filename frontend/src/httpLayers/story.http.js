@@ -70,7 +70,7 @@ async function deleteStory(id) {
           throw new Error("Undefined error");
         }
     });
-  };
+};
 
 export {
   createStory,
