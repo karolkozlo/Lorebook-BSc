@@ -21,6 +21,7 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import LbInput from '@/components/LbInput.vue';
+import { createChapter } from '@/httpLayers/chapter.http.js';
 
 export default {
   name: 'CreateChapterPopup',
@@ -34,6 +35,10 @@ export default {
     },
     storyID: {
       type: String,
+      required: true
+    },
+    ordinalNumber: {
+      type: Number,
       required: true
     }
   },
@@ -71,7 +76,8 @@ export default {
     async create() {
       try {
         this.loading = true;
-        console.log('Create', this.title, this.description);
+        const createdChapter = await createChapter(this.title, this.description, this.ordinalNumber, this.storyID);
+        this.$emit('onResult', createdChapter);
         this.$emit('close');
       } catch (error) {
         this.notify({type: 'negative', message: error.message});

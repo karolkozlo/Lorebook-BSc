@@ -2,7 +2,13 @@
   <div class="story-page">
     It's story page {{ storyID }}
     <lb-button @click="openPopup">Create new chapter</lb-button>
-    <create-chapter-popup v-if="isPopupOpen" :isOpen="isPopupOpen" @close="closePopup" :storyID="storyID"></create-chapter-popup>
+    <create-chapter-popup v-if="isPopupOpen"
+                          :isOpen="isPopupOpen"
+                          @close="closePopup"
+                          :storyID="storyID"
+                          :ordinalNumber="newChapterOrdinalNumber"
+                          @onResult="addNewChapter">
+    </create-chapter-popup>
   </div>
 </template>
 
@@ -21,8 +27,14 @@ export default {
   },
   data() {
     return {
-      isPopupOpen: false
+      isPopupOpen: false,
+      chapters: [],
     };
+  },
+  computed: {
+    newChapterOrdinalNumber() {
+      return this.chapters.length;
+    }
   },
   methods: {
     closePopup() {
@@ -30,6 +42,9 @@ export default {
     },
     openPopup() {
       this.isPopupOpen = true;
+    },
+    addNewChapter(newChapter) {
+      console.log('Created new Chapter: ', newChapter);
     }
   }
 }

@@ -10,8 +10,10 @@ import {
 import { NotFoundException } from "../errors.js";
 
 async function getChapter(req, res) {
-    if (req.params.id === undefined)
+    if (req.params.id === undefined) {
         res.status(400).send({ message: "ID must be defined" });
+        return;
+    }
     try {
         const chapter = await findChapter(req.params.id);
         res.status(200).json(chapter);
@@ -23,9 +25,10 @@ async function getChapter(req, res) {
 async function getStoryChapters(req, res) {
     if (req.params.storyID === undefined) {
         res.status(400).send({ message: "storyID must be defined" });
+        return;
     }
     try {
-        const chapters = await findStoryChapters(req.params.storyID, parseInt(req.query.limit), parseInt(req.query.offset));
+        const chapters = await findStoryChapters(req.params.storyID);
         res.status(200).json(chapters);
     } catch (e) {
         return res.status(400).json({ message: e.message });
@@ -35,6 +38,7 @@ async function getStoryChapters(req, res) {
 async function getSearchedChapters(req, res) {
     if (req.params.storyID === undefined) {
         res.status(400).send({ message: "storyID must be defined" });
+        return;
     }
     try {
         let q = req.query.q;
