@@ -71,7 +71,7 @@ export default {
             this.setUniverseName(newTitle);
           });
         } catch(error) {
-          this.notify({type: 'negative', message: `Error: ${err.message}`});
+          this.notify({type: 'negative', message: `Error: ${error.message}`});
         }
       },
       async changeDescription(newDescription) {
@@ -80,7 +80,7 @@ export default {
             this.universeDescription = newDescription;
           });
         } catch(error) {
-          this.notify({type: 'negative', message: `Error: ${err.message}`});
+          this.notify({type: 'negative', message: `Error: ${error.message}`});
         }
       }
   },

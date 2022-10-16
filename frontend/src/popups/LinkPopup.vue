@@ -151,7 +151,7 @@ export default {
         this.elements = result.elements;
         this.totalPages = result.totalPages;
       } catch (error) {
-        this.notify({type: 'negative', message: `Error: ${err.message}`});
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
       } finally {
         this.areElementsLoading = false;
       }
