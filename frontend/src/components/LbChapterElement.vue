@@ -2,7 +2,7 @@
   <div class="lb-chapter-element">
     <div class="lb-chapter-element__header">
       <div class="lb-chapter-element__header-part">
-        <div class="lb-chapter-element__title">
+        <div class="lb-chapter-element__title" @click="navigateToChapter">
           {{ title }}
         </div>
       </div>
@@ -34,6 +34,7 @@
 
 <script>
 import LbEditableText from './LbEditableText.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'LbChapterElement',
@@ -43,8 +44,11 @@ export default {
   emits: ['changeDescription', 'moveChapter', 'deleteChapter'],
   props: {
     id: {
-      type: String,
+      type: Number,
       require: true
+    },
+    storyID: {
+      type: String
     },
     title: {
       type: String,
@@ -59,6 +63,9 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  computed: {
+    ...mapGetters('universe', ['universeID'])
   },
   methods: {
     changeDescription(newValue) {
@@ -75,6 +82,16 @@ export default {
     },
     deleteChapter() {
       this.$emit('deleteChapter', this.id);
+    },
+    navigateToChapter() {
+      this.$router.push({
+        name: 'ChapterPage',
+        params: {
+          chapterID: this.id,
+          storyID: this.storyID,
+          universeID: this.universeID
+        }
+      })
     }
   }
 }
@@ -91,6 +108,14 @@ export default {
   border-radius: 10px;
   padding: 0.5em;
   color: @light-text-color;
+
+  &:hover {
+    .lb-chapter-element__header {
+      .lb-chapter-element__buttons {
+        visibility: visible;
+      }
+    }
+  }
 
   .lb-chapter-element__header {
     display: flex;
@@ -117,6 +142,7 @@ export default {
     .lb-chapter-element__buttons {
       display: flex;
       gap: 10px;
+      visibility: hidden;
 
       .lb-chapter-element__position-buttons {
         display: flex;

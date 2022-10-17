@@ -93,11 +93,13 @@ async function patchChapter(req, res) {
 async function patchChapterPosition(req, res) {
     try {
         const id = req.params.id;
-        if (!req.body || !req.body.storyID || !req.body.oldOrdinalNumber || !req.body.newOrdinalNumber) {
+        if (!req.body || !req.body.storyID || req.body.oldOrdinalNumber === undefined || req.body.newOrdinalNumber === undefined) {
             res.status(400).send({ message: "Body of request should contain: storyID, oldOrdinalNumber and newOrdinalNumber" });
         } else {
-            if (req.body.oldOrdinalNumber != req.body.newOrdinalNumber) {
-                await changeChapterPosition(id, req.body.storyID, req.body.oldOrdinalNumber, req.body.newOrdinalNumber);
+            const oldOrdinalNumber = parseInt(req.body.oldOrdinalNumber);
+            const newOrdinalNumber = parseInt(req.body.newOrdinalNumber);
+            if (oldOrdinalNumber != newOrdinalNumber) {
+                await changeChapterPosition(id, req.body.storyID, oldOrdinalNumber, newOrdinalNumber);
             }
             res.status(200).send();
         }

@@ -114,7 +114,8 @@ async function destroyChapter(id) {
             },
             raw: true,
         });
-        await updateStoryOrder(chapter.Story_id, chapter.ordinal_number, -1);
+        const ordinalNumber = chapter.ordinal_number !== 0 ? chapter.ordinal_number : 1;
+        await updateStoryOrder(chapter.Story_id, ordinalNumber, -1);
         await db.Chapter.destroy({
           where: { id: id },
         });
@@ -153,6 +154,7 @@ async function changeChapterPosition(id, storyID, oldOrdinalNumber, newOrdinalNu
         start = oldOrdinalNumber;
         end = newOrdinalNumber;
         changeNumber = -1;
+        start = start !== 0 ? start : 1;
     } else {
         start = newOrdinalNumber;
         end = oldOrdinalNumber;

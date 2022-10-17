@@ -12,7 +12,7 @@
         </div>
       </div>
       <div class="lb-content-link__header-buttons">
-        <lb-button variant="negative" icon="lb-trash" @click="$emit('removeLink', id)" :size="1">
+        <lb-button variant="negative" icon="lb-unlink" @click="$emit('removeLink', id)" :size="1">
         </lb-button>
       </div>
     </div>
