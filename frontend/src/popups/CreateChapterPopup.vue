@@ -77,6 +77,8 @@ export default {
       try {
         this.loading = true;
         const createdChapter = await createChapter(this.title, this.description, this.ordinalNumber, this.storyID);
+        createdChapter.ordinalNumber = createdChapter.ordinal_number;
+        delete createdChapter.ordinal_number;
         this.$emit('onResult', createdChapter);
         this.$emit('close');
       } catch (error) {

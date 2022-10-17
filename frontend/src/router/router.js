@@ -14,6 +14,7 @@ import ElementPage from '@/pages/elementPage/ElementPage.vue';
 import ElementNotFoundPage from '@/pages/ElementNotFoundPage.vue';
 import SearchPage from '@/pages/SearchPage.vue';
 import StoryPage from '@/pages/storyPage/StoryPage.vue';
+import StoryChaptersPage from '@/pages/storyPage/StoryChaptersPage.vue';
 
 import { refreshToken } from '../httpLayers/login.http.js';
 
@@ -64,13 +65,26 @@ const storyPage = {
   name: 'StoryPage',
   component: StoryPage,
   props: true,
+  children: [
+    {
+      path: 'chapter/:chapterID',
+      name: 'ChapterPage',
+      component: ChapterPage,
+      props: true
+    },
+    {
+      path: '',
+      name: 'StoryChaptersPage',
+      component: StoryChaptersPage,
+      props: true
+    }
+  ]
 };
 
 
 
 const routes = [
   { path: '/', name: 'Main', component: MainPage },
-  { path: '/chapter', name: 'Chapter', component: ChapterPage, meta: { requiresAuth: true}},
   { path: '/register', name: 'Register', component: RegisterPage, meta: { requiresUnAuth: true }},
   { path: '/login', name: 'Login', component: LoginPage, meta: { requiresUnAuth: true }},
   { path: '/user', name: 'User', component: UserPage, meta: { requiresAuth: true }},

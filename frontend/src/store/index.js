@@ -32,7 +32,7 @@ const store = createStore({
       return state.isAuth;
     },
     tokenRefreshedFlag(state) {
-      return state.wasTokenRefreshed;
+      return state.tokenRefreshedFlag;
     }
   },
   mutations: {

@@ -11,6 +11,17 @@ const defaultChapterText = {
   ],
 };
 
+function chaptersMapper(chapters) {
+  return chapters.map(ch => {
+    return {
+      id: ch.id,
+      title: ch.title,
+      description: ch.description,
+      ordinalNumber: ch.ordinal_number
+    };
+  });
+};
+
 async function getChapter(id) {
     return LbAPI.get(`${url}/${id}`)
     .then((response) => {
@@ -33,7 +44,25 @@ async function getChapter(id) {
         throw new Error("Undefined error");
       }
     });
-}
+};
+
+async function getStoryChapters(storyID) {
+  return await LbAPI
+  .get(`/chapters/story/${storyID}`)
+  .then((response) => {
+    return chaptersMapper(response.data);
+  })
+  .catch((error) => {
+    if (error.response && error.response.data.message) {
+      const err = new Error(`${error.response.data.message}`);
+      throw err;
+    } else if (error.request) {
+      throw new Error("Service refused connection");
+    } else {
+      throw new Error("Undefined error");
+    }
+  });
+};
 
 async function createChapter(title, description, ordinalNumber, storyID) {
     const chapterToPost =  {
@@ -59,13 +88,14 @@ async function createChapter(title, description, ordinalNumber, storyID) {
     });
 }
 
-async function updateChapter(id, chapterTextPatch) {
-  let chapterToPatch =  {
-    textPatch: chapterTextPatch,
-  };
-  await LbAPI.patch(`${url}/${id}`, chapterToPatch)
+// If you want to patch text, add field named "textPatch"
+async function updateChapter(id, fields) {
+  if (fields.text) {
+    throw new Error('Cannot update text directly. You should use "textPatch" field.');
+  }
+  return await LbAPI.patch(`/chapters/${id}`, fields)
   .then((response) => {
-    console.log("Chapter patched");
+    return true;
   }).catch((err) => {
     if (err.response) {
       throw new Error(`${err.response.data.message}`);
@@ -75,7 +105,49 @@ async function updateChapter(id, chapterTextPatch) {
       throw new Error("Undefined error");
     }
   });
+};
 
-}
+// fields {storyID, oldOrdinalNumber, newOrdinalNumber}
+async function updateChapterPosition(id, fields,) {
+  return await LbAPI
+      .patch(`/chapters/position/${id}`, fields)
+      .then(() => {
+          return true;
+      })
+      .catch((error) => {
+          if (error.response && error.response.data.message) {
+              throw new Error(`${error.response.data.message}`);
+          } else if (error.request) {
+              throw new Error("Service refused connection");
+          } else {
+              throw new Error("Undefined error");
+          }
+      });
+};
 
-export { updateChapter, createChapter, getChapter };
+async function deleteChapter(chapterID) {
+  return await LbAPI
+  .delete(`/chapters/${chapterID}`)
+  .then((response) => {
+    return true;
+  })
+  .catch((error) => {
+    if (error.response && error.response.data.message) {
+      const err = new Error(`${error.response.data.message}`);
+      throw err;
+    } else if (error.request) {
+      throw new Error("Service refused connection");
+    } else {
+      throw new Error("Undefined error");
+    }
+  });
+};
+
+export {
+  updateChapter,
+  createChapter,
+  getChapter,
+  getStoryChapters,
+  updateChapterPosition,
+  deleteChapter
+};

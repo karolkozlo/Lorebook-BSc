@@ -7,8 +7,9 @@
                           :description="chapter.description"
                           :ordinalNumber="chapter.ordinalNumber"
                           :isLast="chapter.ordinalNumber == chapters.length-1"
+                          :storyID="storyID"
                           @changeDescription="changeDescription"
-                          @deleteChapter="deleteChapter"
+                          @deleteChapter="removeChapter"
                           @moveChapter="moveChapter">
 
       </lb-chapter-element>
@@ -34,6 +35,7 @@
 import CreateChapterPopup from '@/popups/CreateChapterPopup.vue';
 import LbChapterElement from '@/components/LbChapterElement.vue';
 import { mapMutations } from 'vuex';
+import { getStoryChapters, updateChapter, updateChapterPosition, deleteChapter } from '@/httpLayers/chapter.http.js';
 
 export default {
   name: 'StoryChapters',
@@ -42,14 +44,6 @@ export default {
     LbChapterElement
   },
   props: {
-    loading: {
-      type: Boolean,
-      default: false
-    },
-    initChapters: {
-      type: Array,
-      default: []
-    },
     storyID: {
       type: String,
     }
@@ -57,7 +51,8 @@ export default {
   data() {
     return {
       isPopupOpen: false,
-      chapters: this.initChapters
+      chapters: [],
+      loading: false
     };
   },
   computed: {
@@ -82,33 +77,57 @@ export default {
     },
     async changeDescription(change) {
       const {id, newValue} = change;
-      const chapter = this.chapters.find(ch => ch.id == id);
-      chapter.description = newValue;
+      try {
+        const chapter = this.chapters.find(ch => ch.id == id);
+        await updateChapter(chapter.id, {description: newValue});
+        chapter.description = newValue;
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      }
     },
-    async addNewChapter(newChapter) {
-      console.log('Created new Chapter: ', newChapter);
+    addNewChapter(newChapter) {
+      this.chapters.push(newChapter);
     },
     async moveChapter(order) {
       try {
         const chapter1 = this.chapters.find(ch => ch.ordinalNumber == order.oldOrdinalNumber);
         const chapter2 = this.chapters.find(ch => ch.ordinalNumber == order.newOrdinalNumber);
+        await updateChapterPosition(chapter1.id, {
+          storyID: this.storyID,
+          oldOrdinalNumber: order.oldOrdinalNumber,
+          newOrdinalNumber: order.newOrdinalNumber
+        });
         chapter1.ordinalNumber = order.newOrdinalNumber;
         chapter2.ordinalNumber = order.oldOrdinalNumber;
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
     },
-    async deleteChapter(id) {
+    async removeChapter(id) {
       try {
         const chapter = this.chapters.find(ch => ch.id == id);
         const position = chapter.ordinalNumber;
+        await deleteChapter(chapter.id);
         this.chapters = this.chapters.filter(ch => { return ch.id !== id });
         this.chapters.filter(ch => (ch.ordinalNumber > position))
                   .forEach(ch => {ch.ordinalNumber = ch.ordinalNumber - 1});
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
+    },
+    async fetchChapters() {
+      this.loading = true;
+      try {
+        this.chapters = await getStoryChapters(this.storyID);
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.loading = false;
+      }
     }
+  },
+  async mounted() {
+    await this.fetchChapters();
   }
 };
 </script>

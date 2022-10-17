@@ -64,7 +64,7 @@ export default {
     ...mapGetters('universe', ['universeID']),
     navigateToStory() {
       this.$router.push({
-        name: 'StoryPage',
+        name: 'StoryChaptersPage',
         params: {
           universeID: this.universeID,
           storyID: this.id

@@ -19,6 +19,11 @@ export default {
   components: {
     RichEditor,
   },
+  props: {
+    chapterID: {
+      type: Number,
+    }
+  },
   data() {
     return {
       chapter: {
@@ -53,23 +58,15 @@ export default {
     async saveChapterText() {
       const patch = createPatch("newText", JSON.stringify(this.oldChapterText), JSON.stringify(this.chapter.text));
       try {
-        await updateChapter(this.chapter.id, patch);
+        await updateChapter(this.chapterID, {textPatch: patch});
         this.oldChapterText = this.chapter.text;
-      } catch(err) {
-        console.log(err.message);
-      }
-    },
-    async postChapter() {
-      try {
-        let createdChapter = await createChapter(this.chapter);
-        this.chapter = createdChapter;
       } catch(err) {
         console.log(err.message);
       }
     },
     async getCurrentChapter() {
       try {
-        this.chapter = await getChapter(1);
+        this.chapter = await getChapter(this.chapterID);
         this.oldChapterText = this.chapter.text;
       } catch(err) {
         console.log(err.message);
