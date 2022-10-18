@@ -1,10 +1,10 @@
 <template>
   <div class="rich-editor">
     <div class="rich-editor__menu">
-      <button @click="bold">B</button>
-      <button @click="italic"><i>I</i></button>
-      <button @click="underline"><u>U</u></button>
-      <button class="rich-editor__save-btn" @click="$emit('save')">Save</button>
+      <button class="rich-editor__menu-btn rich-editor__menu-btn--bold" @click="bold">B</button>
+      <button class="rich-editor__menu-btn rich-editor__menu-btn--italic" @click="italic">I</button>
+      <button class="rich-editor__menu-btn rich-editor__menu-btn--underline" @click="underline">U</button>
+      <lb-button class="rich-editor__save-btn" variant="positive" :size="1.1" :loading="saveLoading" @click="$emit('save')">Save</lb-button>
     </div>
     <editor-content class="rich-editor__content" :editor="editor" />
   </div>
@@ -34,6 +34,10 @@ export default {
         };
       },
     },
+    saveLoading: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -77,36 +81,51 @@ export default {
 </script>
 
 <style lang="less">
+@import '../common.less';
+
 .rich-editor {
   display: flex;
-  background-color: #596d86;
+  background-color: @secondary-color;
   padding: 0.75em;
   border-radius: 0.5em;
-  min-width: 50%;
-  max-width: 70%;
+  width: 80%;
   flex-direction: column;
+  height: 90vh;
 
   .rich-editor__menu {
     display: flex;
     padding: 0.3em;
-    background-color: #284465;
+    gap: 0.5em;
+    background-color: @accent-darker-color;
+    align-items: center;
 
     .rich-editor__save-btn {
-      border: none;
-      color: white;
-      background-color: #20bd4a;
-      border-radius: 0.8em;
-      font-size: 1em;
-      padding: 0.3em;
       margin-left: auto;
+    }
+
+    .rich-editor__menu-btn {
+      border: none;
+      border-radius: 5px;
+      color: @light-text-color;
+      background-color: transparent;
+      font-size: 1.2rem;
+      padding: 0.3em 0.5em;
+      font-weight: 500;
 
       &:hover {
-        background-color: #1ba740;
+        background-color: @accent-color;
       }
 
-      &:active {
-        font-weight: bold;
-        background-color: #168032;
+      &--italic {
+        font-style: italic;
+      }
+
+      &--underline {
+        text-decoration: underline;
+      }
+
+      &--bold {
+        font-weight: 700;
       }
     }
   }
@@ -118,8 +137,9 @@ export default {
 
     .ProseMirror {
       width: 100%;
-      background-color: #ebebeb;
+      background-color: @canvas-white-color;
       padding: 0.4em;
+      overflow-y: auto;
     }
   }
 }
