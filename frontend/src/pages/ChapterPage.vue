@@ -1,45 +1,73 @@
 <template>
-  <div class="chapter">
-    <button @click="postChapter" class="chapter__post-btn">Post Chapter</button>
-    <rich-editor
-      :content="chapter.text"
-      @update="updateChapterText"
-      @save="saveChapterText">
-    </rich-editor>
+  <div class="chapter-page">
+    <div class="chapter-page__side-panel">
+      <div class="chapter-page__side-panel-content">
+        <h2 class="chapter-page__side-panel-header-text">
+          Links in Chapter
+        </h2>
+        <div class="util__horizontal-line--white"></div>
+        <div class="chapter-page__side-panel-bottom">
+          <lb-button icon="lb-link" :size="1.2">Add new link</lb-button>
+        </div>
+      </div>
+    </div>
+    <div class="chapter-page__main">
+      <div class="chapter-page__main-header">
+        <lb-editable-text :value="title"
+                          :maxLength="80"
+                          customClass="chapter-page__title"
+                          class="chapter-page__title-container"
+                          @onSave="changeChapterTitle"/>
+        <label class="chapter-page__main-header-label">Description</label>
+        <lb-editable-text :value="description"
+                          :maxLength="500"
+                          type="textarea"
+                          class="chapter-page__description-container"
+                          customClass="chapter-page__description"
+                          @onSave="changeChapterDescription"
+                          noContent="No description"/>
+      </div>
+      <div class="chapter-page__main-content">
+        <rich-editor
+          :content="chapterText"
+          :saveLoading="saveLoading"
+          @update="updateChapterText"
+          @save="saveChapterText">
+        </rich-editor>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import RichEditor from "../components/RichEditor.vue";
-import { createPatch, applyPatch } from "diff";
-import { createChapter, getChapter, updateChapter } from "../httpLayers/chapter.http.js";
+import { createPatch } from "diff";
+import { getChapter, updateChapter } from "../httpLayers/chapter.http.js";
+import { mapMutations } from 'vuex';
+import LbEditableText from '@/components/LbEditableText.vue';
 
 export default {
   name: "App",
   components: {
     RichEditor,
+    LbEditableText
   },
   props: {
     chapterID: {
-      type: Number,
+      type: String,
     }
   },
   data() {
     return {
-      chapter: {
-        id: null,
-        title: "Tytuł Chaptera",
-        description: "Opis Chaptera",
-        text: {
-            type: "doc",
-            content: [
-              {
-                type: "paragraph",
-              },
-            ],
+      title: '',
+      description: '',
+      chapterText: {
+        type: "doc",
+        content: [
+          {
+            type: "paragraph",
           },
-        ordinalNumber: 1,
-        storyID: 1
+        ],
       },
       oldChapterText: {
         type: "doc",
@@ -49,48 +77,147 @@ export default {
           },
         ],
       },
+      saveLoading: false
     };
   },
   methods: {
+    ...mapMutations('notifications', ['notify']),
     updateChapterText(newText) {
-      this.chapter.text = newText;
+      this.chapterText = newText;
     },
     async saveChapterText() {
-      const patch = createPatch("newText", JSON.stringify(this.oldChapterText), JSON.stringify(this.chapter.text));
+      this.saveLoading = true;
+      const patch = createPatch("newText", JSON.stringify(this.oldChapterText), JSON.stringify(this.chapterText));
       try {
         await updateChapter(this.chapterID, {textPatch: patch});
-        this.oldChapterText = this.chapter.text;
-      } catch(err) {
-        console.log(err.message);
+        this.oldChapterText = this.chapterText;
+      } catch(error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.saveLoading = false;
       }
     },
-    async getCurrentChapter() {
+    async fetchChapter() {
       try {
-        this.chapter = await getChapter(this.chapterID);
-        this.oldChapterText = this.chapter.text;
-      } catch(err) {
-        console.log(err.message);
+        const fetchedChapter = await getChapter(this.chapterID);
+        this.chapterText = fetchedChapter.text;
+        this.title = fetchedChapter.title;
+        this.description = fetchedChapter.description;
+        this.oldChapterText = this.chapterText;
+      } catch(error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      }
+    },
+    async changeChapterTitle(newValue) {
+      try {
+        await updateChapter(this.chapterID, {title: newValue});
+        this.title = newValue;
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      }
+    },
+    async changeChapterDescription(newValue) {
+      try {
+        await updateChapter(this.chapterID, {description: newValue});
+        this.description = newValue;
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
     }
   },
   async mounted() {
-    await this.getCurrentChapter();
+    await this.fetchChapter();
   }
 };
 </script>
 
 <style lang="less">
+@import "../common.less";
 
-.chapter {
+.chapter-page {
   display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
   min-height: 95vh;
 
-  .chatper__post-btn {
+  .chapter-page__side-panel {
     display: flex;
-    height: min-content;
+    flex-direction: column;
+    align-items: center;
+    width: ~"max(15%, 200px)";
+    background-color: @primary-side-color;
+    padding: 0.5em 0.2em;
+
+    .chapter-page__side-panel-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+
+      .chapter-page__side-panel-header-text {
+        margin: 0;
+        color: @light-text-color;
+      }
+
+      .chapter-page__side-panel-bottom {
+        position: fixed;
+        bottom: 1em;
+      }
+    }
+  }
+
+  .chapter-page__main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    padding: 1em;
+    position: relative;
+
+    .chapter-page__main-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 80%;
+      padding-bottom: 2em;
+
+      .chapter-page__title-container {
+        width: 100%;
+      }
+
+      .chapter-page__title {
+        font-weight: 600;
+        width: 100%;
+
+        .lb-editable-text__text, .lb-editable-text__input {
+          font-size: 2rem;
+          text-align: center;
+          width: 100%;
+        }
+      }
+
+      .chapter-page__description-container {
+        width: 100%;
+      }
+
+      .chapter-page__description {
+        width: 100%;
+      }
+
+      .chapter-page__main-header-label {
+        width: 100%;
+        text-align: start;
+        font-size: 0.9rem;
+        color: @secondary-color;
+      }
+    }
+
+    .chapter-page__main-content {
+      display: flex;
+      justify-content: center;
+      flex: 1;
+      height: 100%;
+      width: 100%;
+    }
   }
 }
 </style>
