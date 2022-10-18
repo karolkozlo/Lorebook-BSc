@@ -95,7 +95,7 @@ async function deleteContentLink(id, contentID) {
       });
 };
 
-async function createContentLink(targetID, categoryID, description, linkGroupID) {
+async function createLink(targetID, categoryID, description, linkGroupID, chapterID) {
   let targetType;
   switch (categoryID) {
     case 'Locations':
@@ -114,9 +114,15 @@ async function createContentLink(targetID, categoryID, description, linkGroupID)
   const bodyToSend = {
     targetID,
     targetType,
-    description,
-    linkGroupID
+    description
   };
+  if (linkGroupID && !chapterID) {
+    bodyToSend.linkGroupID = linkGroupID;
+  } else if (chapterID && !linkGroupID) {
+    bodyToSend.chapterID = chapterID;
+  } else {
+    throw new Error('You should give linkGroupID OR chapterID in arguments');
+  }
   return await LbAPI
     .post(`/links`, bodyToSend)
     .then((response) => {
@@ -140,5 +146,5 @@ export {
   deleteLinkGroup,
   deleteContentLink,
   updateContentLink,
-  createContentLink
+  createLink
 };
