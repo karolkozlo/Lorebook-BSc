@@ -81,6 +81,12 @@ async function createLink(targetID, targetType, description, chapterID, linkGrou
             throw new Error("Invalid targetType of Link!");
         };
         let Link = await db.Link.create(where);
+        if (linkGroupID) {
+            const linkGroup = await db.LinkGroup.findByPk(linkGroupID);
+            if (linkGroup) {
+                pingContentOwner(linkGroup.Content_id);
+            }
+        }
         return Link;
     } catch (err) {
         if (err instanceof ForeignKeyConstraintError) {
@@ -190,7 +196,9 @@ async function updateLink(id, description, contentID) {
     try {
         let subsetFields = { description: description };
         await db.Link.update(subsetFields, { where: { id: id } });
-        pingContentOwner(contentID);
+        if (contentID) {
+            pingContentOwner(contentID);
+        }
     } catch (err) {
         throw new Error(err.message);
     }

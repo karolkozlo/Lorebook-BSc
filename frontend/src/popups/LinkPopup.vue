@@ -27,7 +27,7 @@
       <lb-input name="Description" type="textarea" v-model:value="description" :maxLength="250"/>
       <div class="link-popup__buttons">
         <lb-button variant="outline" :size="1.4" @click="close">Cancel</lb-button>
-        <lb-button variant="positive" :size="1.4" @click="createLink" :disabled="isCreateButtonDisabled" :loading="createLoading">Create Link</lb-button>
+        <lb-button variant="positive" :size="1.4" @click="createNewLink" :disabled="isCreateButtonDisabled" :loading="createLoading">Create Link</lb-button>
       </div>
     </div>
   </lb-popup-box>
@@ -42,7 +42,7 @@ import LbSearchBar from '@/components/LbSearchBar.vue';
 import LbPageNav from '@/components/LbPageNav.vue';
 import { getUniverseCategories } from '@/httpLayers/category.http.js';
 import { searchElements } from '@/httpLayers/universeElement.interface.js';
-import { createContentLink } from '@/httpLayers/link.http.js';
+import { createLink } from '@/httpLayers/link.http.js';
 
 
 export default {
@@ -176,13 +176,16 @@ export default {
       this.currentPage = newPageNumber;
       await this.search(this.searchText);
     },
-    async createLink() {
+    async createNewLink() {
       try {
+        if (this.chapterID && this.linkGroupID) {
+          throw new Error('Only one of this must be defined (chapterID or linkGroupID)');
+        }
         this.createLoading = true;
         const category = this.categories.find(cat => (cat.id == this.selectedCategory));
         const targetElement = this.elements.find(el => (el.id == this.targetElementID));
         const descriptionToSend = this.description;
-        const createdLink = await createContentLink(this.targetElementID, this.selectedCategory, descriptionToSend, this.linkGroupID);
+        const createdLink = await createLink(this.targetElementID, this.selectedCategory, descriptionToSend, this.linkGroupID, this.chapterID);
         this.$emit('onResult', {
           id: createdLink.id,
           description: descriptionToSend,
@@ -201,6 +204,9 @@ export default {
   },
   async mounted() {
     await this.fetchCategories();
+  },
+  unmounted() {
+    this.closeLinkPopup();
   }
 };
 </script>

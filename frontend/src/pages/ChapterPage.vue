@@ -7,7 +7,7 @@
         </h2>
         <div class="util__horizontal-line--white"></div>
         <div class="chapter-page__side-panel-bottom">
-          <lb-button icon="lb-link" :size="1.2">Add new link</lb-button>
+          <lb-button icon="lb-link" :size="1.2" @click="openLinkPopup">Add new link</lb-button>
         </div>
       </div>
     </div>
@@ -36,6 +36,10 @@
         </rich-editor>
       </div>
     </div>
+    <link-popup v-if="isLinkPopupOpen"
+                :chapterID="parseInt(chapterID)"
+                @onResult="addNewLink">
+    </link-popup>
   </div>
 </template>
 
@@ -43,14 +47,16 @@
 import RichEditor from "../components/RichEditor.vue";
 import { createPatch } from "diff";
 import { getChapter, updateChapter } from "../httpLayers/chapter.http.js";
-import { mapMutations } from 'vuex';
+import { mapMutations, mapGetters } from 'vuex';
 import LbEditableText from '@/components/LbEditableText.vue';
+import LinkPopup from '@/popups/LinkPopup.vue';
 
 export default {
   name: "App",
   components: {
     RichEditor,
-    LbEditableText
+    LbEditableText,
+    LinkPopup
   },
   props: {
     chapterID: {
@@ -77,11 +83,16 @@ export default {
           },
         ],
       },
-      saveLoading: false
+      saveLoading: false,
+      links: [],
     };
+  },
+  computed: {
+    ...mapGetters('popups', ['isLinkPopupOpen']),
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
+    ...mapMutations('popups', ['openLinkPopup']),
     updateChapterText(newText) {
       this.chapterText = newText;
     },
@@ -123,6 +134,10 @@ export default {
       } catch (error) {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
+    },
+    addNewLink(newLink) {
+      console.log(newLink);
+      this.links.push(newLink);
     }
   },
   async mounted() {

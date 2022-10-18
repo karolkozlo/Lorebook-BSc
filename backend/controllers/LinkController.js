@@ -97,7 +97,7 @@ async function deleteLink(req, res) {
 async function patchLink(req, res) {
     try {
         const id = req.params.id;
-        await updateLink(id, req.body.description, req.params.chapterID);
+        await updateLink(id, req.body.description, req.params.contentID);
         res.status(200).send();
     } catch (e) {
         if (e instanceof NotFoundException) {

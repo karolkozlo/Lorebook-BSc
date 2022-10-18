@@ -31,16 +31,19 @@ async function findShortLists(universeID) {
             (SELECT id, name, description, last_modified, "Characters" as catID
             FROM characters ch
             WHERE ch.Universe_id = :universeID
+            ORDER BY last_modified DESC
             LIMIT 3)
             UNION ALL
             (SELECT id, name, description, last_modified, "Locations" as catID
             FROM locations l
             WHERE l.Universe_id = :universeID
+            ORDER BY last_modified DESC
             LIMIT 3)
             UNION ALL
             (SELECT id, name, description, last_modified, "Events" as catID
             FROM events e
             WHERE e.Universe_id = :universeID
+            ORDER BY last_modified DESC
             LIMIT 3)
             ORDER BY last_modified DESC;`,
             {
