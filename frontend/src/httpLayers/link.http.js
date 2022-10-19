@@ -42,9 +42,10 @@ function linkMapper(link) {
         });
 };
 
-async function updateContentLink(id, description, contentID) {
+async function updateLink(id, description, contentID) {
+  const url = contentID ? `/links/${id}/content/${contentID}` : `/links/${id}`;
   return await LbAPI
-      .patch(`/links/${id}/content/${contentID}`, description)
+      .patch(url, description)
       .then(() => {
           return true;
       })
@@ -95,9 +96,10 @@ async function deleteLinkGroup(id, contentID) {
         });
 };
 
-async function deleteContentLink(id, contentID) {
+async function deleteLink(id, contentID) {
+  const url = contentID ? `/links/${id}/content/${contentID}` : `/links/${id}`;
   return await LbAPI
-      .delete(`/links/${id}/content/${contentID}`)
+      .delete(url)
       .then(() => {
           return true;
       })
@@ -123,7 +125,7 @@ async function createLink(targetID, categoryID, description, linkGroupID, chapte
       targetType = 'Character';
     break;
     case 'Events':
-      targetType = 'Events';
+      targetType = 'Event';
     break;
     default:
       targetType = 'Entry';
@@ -182,8 +184,8 @@ export {
   createLinkGroup,
   updateLinkGroup,
   deleteLinkGroup,
-  deleteContentLink,
-  updateContentLink,
+  deleteLink,
+  updateLink,
   createLink,
   getChapterLinks
 };

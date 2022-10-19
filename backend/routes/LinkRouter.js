@@ -20,5 +20,6 @@ LinkRouter.route('/links/to/:targetType/:targetID').get(getLinksTo);
 LinkRouter.route('/links/:id').delete(deleteLink);
 LinkRouter.route('/links/:id/content/:contentID').delete(deleteLink);
 LinkRouter.route('/links/:id/content/:contentID').patch(patchLink);
+LinkRouter.route('/links/:id').patch(patchLink);
 
 export default LinkRouter;
