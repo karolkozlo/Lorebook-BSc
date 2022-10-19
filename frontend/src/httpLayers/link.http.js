@@ -1,5 +1,23 @@
 import LbAPI from "./LbAPI.js";
 
+function linkTargetID(link) {
+  if (link.Character_id) return link.Character_id;
+  if (link.Location_id) return link.Location_id;
+  if (link.Event_id) return link.Event_id;
+  if (link.Entry_id) return link.Entry_id;
+};
+
+function linkMapper(link) {
+  return {
+    id: link.id,
+    description: link.description,
+    targetName: link.target.name,
+    targetID: linkTargetID(link),
+    categoryName: link.target.Category.name,
+    categoryID: link.target.Category.id
+  };
+};
+
 /**
  *
  * @param {{ title: String }} fields
@@ -140,11 +158,32 @@ async function createLink(targetID, categoryID, description, linkGroupID, chapte
   });
 };
 
+async function getChapterLinks(chapterID) {
+  return await LbAPI
+    .get(`/links/chapter/${chapterID}`)
+    .then((response) => {
+          return response.data.map(l => {
+            return linkMapper(l);
+          });
+        })
+    .catch((error) => {
+      if (error.response && error.response.data.message) {
+        const err = new Error(`${error.response.data.message}`);
+        throw err;
+      } else if (error.request) {
+        throw new Error("Service refused connection");
+      } else {
+        throw new Error("Undefined error");
+      }
+    });
+};
+
 export {
   createLinkGroup,
   updateLinkGroup,
   deleteLinkGroup,
   deleteContentLink,
   updateContentLink,
-  createLink
+  createLink,
+  getChapterLinks
 };
