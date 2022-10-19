@@ -1,15 +1,25 @@
 <template>
   <div class="chapter-page">
     <div class="chapter-page__side-panel">
-      <div class="chapter-page__side-panel-content">
+      <div class="chapter-page__side-panel-content" :style="sidePanelVisibility">
         <h2 class="chapter-page__side-panel-header-text">
           Links in Chapter
         </h2>
         <div class="util__horizontal-line--white"></div>
+        <div class="chapter-page__side-panel-links" v-if="links.length">
+          <lb-chapter-link v-for="(link, index) in links" :key="index"
+                           v-bind="link"
+                           :chapterID="parseInt(chapterID)">
+          </lb-chapter-link>
+        </div>
+        <div class="chapter-page__side-panel-no-links" v-if="!links.length">
+          No links
+        </div>
         <div class="chapter-page__side-panel-bottom">
           <lb-button icon="lb-link" :size="1.2" @click="openLinkPopup">Add new link</lb-button>
         </div>
       </div>
+      <lb-spinner v-if="linksLoading"></lb-spinner>
     </div>
     <div class="chapter-page__main">
       <div class="chapter-page__main-header">
@@ -47,16 +57,19 @@
 import RichEditor from "../components/RichEditor.vue";
 import { createPatch } from "diff";
 import { getChapter, updateChapter } from "../httpLayers/chapter.http.js";
+import { getChapterLinks } from "@/httpLayers/link.http.js";
 import { mapMutations, mapGetters } from 'vuex';
 import LbEditableText from '@/components/LbEditableText.vue';
 import LinkPopup from '@/popups/LinkPopup.vue';
+import LbChapterLink from '@/components/LbChapterLink.vue';
 
 export default {
   name: "App",
   components: {
     RichEditor,
     LbEditableText,
-    LinkPopup
+    LinkPopup,
+    LbChapterLink
   },
   props: {
     chapterID: {
@@ -84,11 +97,15 @@ export default {
         ],
       },
       saveLoading: false,
+      linksLoading: false,
       links: [],
     };
   },
   computed: {
     ...mapGetters('popups', ['isLinkPopupOpen']),
+    sidePanelVisibility() {
+      return this.linksLoading ? 'visibility: hidden;' : 'visibility: visible;';
+    }
   },
   methods: {
     ...mapMutations('notifications', ['notify']),
@@ -119,6 +136,16 @@ export default {
         this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
     },
+    async fetchChapterLinks() {
+      try {
+        this.linksLoading = true;
+        this.links = await getChapterLinks(this.chapterID);
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.linksLoading = false;
+      }
+    },
     async changeChapterTitle(newValue) {
       try {
         await updateChapter(this.chapterID, {title: newValue});
@@ -142,6 +169,7 @@ export default {
   },
   async mounted() {
     await this.fetchChapter();
+    await this.fetchChapterLinks();
   }
 };
 </script>
@@ -167,10 +195,26 @@ export default {
       flex-direction: column;
       align-items: center;
       width: 100%;
+      gap: 0.5em;
 
       .chapter-page__side-panel-header-text {
         margin: 0;
         color: @light-text-color;
+      }
+
+      .chapter-page__side-panel-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 3px;
+        overflow-y: auto;
+        max-height: 83vh;
+      }
+
+      .chapter-page__side-panel-no-links {
+        display: flex;
+        width: 100%;
+        text-align: center;
       }
 
       .chapter-page__side-panel-bottom {

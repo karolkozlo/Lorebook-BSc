@@ -140,6 +140,11 @@ export default {
       background-color: @canvas-white-color;
       padding: 0.4em;
       overflow-y: auto;
+
+      p {
+        margin-block-start: 0.3em;
+        margin-block-end: 0.3em;
+      }
     }
   }
 }
