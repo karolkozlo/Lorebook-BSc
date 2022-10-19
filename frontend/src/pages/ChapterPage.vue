@@ -6,17 +6,19 @@
           Links in Chapter
         </h2>
         <div class="util__horizontal-line--white"></div>
+        <lb-button icon="lb-link" :size="1.1" @click="openLinkPopup">Add new link</lb-button>
         <div class="chapter-page__side-panel-links" v-if="links.length">
           <lb-chapter-link v-for="(link, index) in links" :key="index"
                            v-bind="link"
-                           :chapterID="parseInt(chapterID)">
+                           :chapterID="parseInt(chapterID)"
+                           @showLink="openChapterLinkPopup">
           </lb-chapter-link>
         </div>
         <div class="chapter-page__side-panel-no-links" v-if="!links.length">
           No links
         </div>
         <div class="chapter-page__side-panel-bottom">
-          <lb-button icon="lb-link" :size="1.2" @click="openLinkPopup">Add new link</lb-button>
+          <lb-button icon="lb-trash" variant="negative" :size="1.2" @click="removeChapter" :loading="chapterRemoveLoading">Remove chapter</lb-button>
         </div>
       </div>
       <lb-spinner v-if="linksLoading"></lb-spinner>
@@ -50,18 +52,26 @@
                 :chapterID="parseInt(chapterID)"
                 @onResult="addNewLink">
     </link-popup>
+    <chapter-link-popup v-if="isChapterLinkPopupOpen"
+                        :isOpen="isChapterLinkPopupOpen"
+                        v-bind="linkInPopup"
+                        @changeDescription="changeLinkDescription"
+                        @deleteLink="deleteLink"
+                        @close="closeChapterLinkPopup">
+    </chapter-link-popup>
   </div>
 </template>
 
 <script>
 import RichEditor from "../components/RichEditor.vue";
 import { createPatch } from "diff";
-import { getChapter, updateChapter } from "../httpLayers/chapter.http.js";
+import { getChapter, updateChapter, deleteChapter } from "../httpLayers/chapter.http.js";
 import { getChapterLinks } from "@/httpLayers/link.http.js";
 import { mapMutations, mapGetters } from 'vuex';
 import LbEditableText from '@/components/LbEditableText.vue';
 import LinkPopup from '@/popups/LinkPopup.vue';
 import LbChapterLink from '@/components/LbChapterLink.vue';
+import ChapterLinkPopup from '@/popups/ChapterLinkPopup.vue';
 
 export default {
   name: "App",
@@ -69,10 +79,14 @@ export default {
     RichEditor,
     LbEditableText,
     LinkPopup,
-    LbChapterLink
+    LbChapterLink,
+    ChapterLinkPopup
   },
   props: {
     chapterID: {
+      type: String,
+    },
+    storyID: {
       type: String,
     }
   },
@@ -99,10 +113,14 @@ export default {
       saveLoading: false,
       linksLoading: false,
       links: [],
+      linkInPopup: null,
+      isChapterLinkPopupOpen: false,
+      chapterRemoveLoading: false,
     };
   },
   computed: {
     ...mapGetters('popups', ['isLinkPopupOpen']),
+    ...mapGetters('universe', ['universeID']),
     sidePanelVisibility() {
       return this.linksLoading ? 'visibility: hidden;' : 'visibility: visible;';
     }
@@ -163,8 +181,48 @@ export default {
       }
     },
     addNewLink(newLink) {
-      console.log(newLink);
       this.links.push(newLink);
+    },
+    openChapterLinkPopup(linkID) {
+      this.linkInPopup = this.links.find(link => (link.id === linkID));
+      this.isChapterLinkPopupOpen = true;
+    },
+    closeChapterLinkPopup() {
+      this.isChapterLinkPopupOpen = false;
+      this.linkInPopup = null;
+    },
+    changeLinkDescription(change) {
+      try {
+        const { id, newValue } = change;
+        const link = this.links.find(link => (link.id === id));
+        link.description = newValue;
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      }
+    },
+    deleteLink(id) {
+      try {
+        this.links = this.links.filter(link => (link.id !== id));
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      }
+    },
+    async removeChapter() {
+      try {
+        this.chapterRemoveLoading = true;
+        await deleteChapter(this.chapterID);
+        this.$router.replace({
+          name: 'StoryChaptersPage',
+          params: {
+            universeID: this.universeID,
+            storyID: this.storyID
+          }
+        });
+      } catch (error) {
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
+      } finally {
+        this.chapterRemoveLoading = false;
+      }
     }
   },
   async mounted() {
@@ -208,7 +266,7 @@ export default {
         width: 100%;
         gap: 3px;
         overflow-y: auto;
-        max-height: 83vh;
+        max-height: 80vh;
       }
 
       .chapter-page__side-panel-no-links {

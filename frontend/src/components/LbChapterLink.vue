@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="lb-chapter-link__button">
-      <icon :size="1.1" icon="lb-info-circle" class="lb-chapter-link__button-icon"></icon>
+      <icon :size="1.1" icon="lb-info-circle" class="lb-chapter-link__button-icon" @click="showLink"></icon>
     </div>
   </div>
 </template>
@@ -19,6 +19,7 @@ import { mapGetters } from 'vuex';
 
 export default {
   name: 'LbChapterLink',
+  emits: ['showLink'],
   props: {
     chapterID: {
       type: Number,
@@ -61,6 +62,9 @@ export default {
           elementID: this.targetID
         }
       });
+    },
+    showLink() {
+      this.$emit('showLink', this.id);
     }
   }
 }
@@ -91,6 +95,7 @@ export default {
       font-weight: 400;
       font-size: 1rem;
       cursor: pointer;
+      width: fit-content;
 
       &:hover {
         color: @special-color;

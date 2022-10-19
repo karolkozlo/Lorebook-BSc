@@ -19,7 +19,7 @@
         <span class="event-date-section__date-part-value">{{ day }}</span>
       </div>
     </div>
-    <event-date-popup :isOpen="isPopupOpen"
+    <event-date-popup v-if="isPopupOpen" :isOpen="isPopupOpen"
                       @close="closePopup"
                       :year="year"
                       :month="month"

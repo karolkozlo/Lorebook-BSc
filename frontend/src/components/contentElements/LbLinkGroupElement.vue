@@ -18,7 +18,7 @@
                    :categoryID="link.categoryID"
                    :categoryName="link.categoryName"
                    :linkGroupID="id"
-                   @removeLink="deleteLink"></lb-content-link>
+                   @removeLink="deleteContentLink"></lb-content-link>
           <div class="util__horizontal-line--black"></div>
         </div>
       </div>
@@ -45,7 +45,7 @@ import { mapMutations, mapGetters } from 'vuex';
 import LbContentLink from './LbContentLink.vue';
 import {
   updateLinkGroup,
-  deleteContentLink
+  deleteLink
 } from '@/httpLayers/link.http.js';
 import LinkPopup from '@/popups/LinkPopup.vue';
 
@@ -97,9 +97,9 @@ export default {
       const element = this.getElementById(this.id, this.elementType);
       element.links.push(newLink);
     },
-    async deleteLink(id) {
+    async deleteContentLink(id) {
       try {
-        await deleteContentLink(id, this.contentID);
+        await deleteLink(id, this.contentID);
         const element = this.getElementById(this.id, this.elementType);
         element.links = element.links.filter(link => (link.id != id));
       } catch (error) {

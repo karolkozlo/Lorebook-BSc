@@ -31,7 +31,7 @@
 import LbEditableText from "@/components/LbEditableText.vue";
 import { mapGetters, mapMutations } from 'vuex';
 import {
-  updateContentLink
+  updateLink
 } from '@/httpLayers/link.http.js';
 
 export default {
@@ -81,7 +81,7 @@ export default {
     ...mapMutations('notifications', ['notify']),
     async saveDescription(newDesc) {
       try {
-        await updateContentLink(this.id,  {description: newDesc}, this.contentID);
+        await updateLink(this.id,  {description: newDesc}, this.contentID);
         const link = this.getLinkById(this.linkGroupID, this.id);
         link.description = newDesc;
       } catch(error) {
