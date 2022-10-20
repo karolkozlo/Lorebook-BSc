@@ -1,7 +1,7 @@
 <template>
   <div class="lb-accordion">
     <div class="lb-accordion__activator">
-      <h3 class="lb-accordion__title" v-if="!isTitleEditable">{{ title }}</h3>
+      <h3 class="lb-accordion__title lb-accordion__title--static" v-if="!isTitleEditable" @click="toggleContent">{{ title }}</h3>
       <lb-editable-text v-if="isTitleEditable"
                         :value="title"
                         :width="'100%'"
@@ -93,6 +93,14 @@ export default {
       color: @light-text-color;
       font-size: 1.4rem;
       font-weight: 500;
+      cursor: pointer;
+
+      &--static {
+        width: 100%;
+        &:hover {
+          color: @special-color;
+        }
+      }
 
       &--editable {
         font-weight: 500;
@@ -117,6 +125,11 @@ export default {
       .lb-accordion__activator-button {
         width: 2rem;
         color: @light-text-color;
+        cursor: pointer;
+
+        &:hover {
+          color: @special-color;
+        }
       }
     }
   }
