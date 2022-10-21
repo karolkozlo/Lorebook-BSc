@@ -136,7 +136,7 @@
                                     <img src="../assets/screenshots/edit-universe-title-2.jpg">
                                 </li>
                                 <li class="answer__olist-item">
-                                    If you want to save the text, click on green button.
+                                    If you want to save the text, click on green button or use Ctrl+S shortcut.
                                 </li>
                                 <li class="answer__olist-item">
                                     If you want to cancel changes, click on red button.
