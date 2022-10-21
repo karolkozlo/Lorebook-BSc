@@ -1,7 +1,7 @@
 export const dbConfig = {
-    HOST: 'localhost',
-    USER: 'karolkoz',
-    PASSWORD: 'ZakonMySQL1',
+    HOST: 'lorebook-db.cqtsbw4id9qa.eu-central-1.rds.amazonaws.com',
+    USER: 'admin',
+    PASSWORD: 'MySQLAdmin1',
     DB: 'Lorebook',
     dialect: 'mysql',
     pool: {
