@@ -23,8 +23,8 @@
                 </span>
             </div>
         </div>
-        <div v-else class="lb-search-select__no-content">
-            No items
+        <div v-if="filteredItems.length == 0" class="lb-search-select__no-content">
+          No items
         </div>
     </div>
   </div>
@@ -164,6 +164,8 @@ export default {
       width: 100%;
       overflow-y: scroll;
       max-height: 50vh;
+      background-color: @canvas-white-color;
+      color: @dark-text-color;
 
 
       .lb-search-select__item {
