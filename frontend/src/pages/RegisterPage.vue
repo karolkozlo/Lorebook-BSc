@@ -34,7 +34,7 @@
         </div>
       </div>
       <lb-spinner v-if="loading" size="70px" thickness="10px"></lb-spinner>
-      <lb-popup-box :isOpen="isPopupOpen" :title="resultTitle" :message="resultMessage" @close="closePopup"></lb-popup-box>
+      <lb-popup-box v-if="isPopupOpen" :isOpen="isPopupOpen" :title="resultTitle" :message="resultMessage" @close="closePopup"></lb-popup-box>
     </div>
   </div>
 </template>
