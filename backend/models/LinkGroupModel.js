@@ -31,7 +31,7 @@ const LinkGroup = (sequelize, DataTypes) => {
             timestamps: false,
             underscored: true,
             freezeTableName: true,
-            tableName: 'Link_groups',
+            tableName: 'link_groups',
         }
     );
     return LinkGroup;

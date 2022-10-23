@@ -37,7 +37,8 @@ const Relation = (sequelize, DataTypes) => {
                     unique: true,
                     fields: ['Character1_id', 'Character2_id']
                 }
-            ]
+            ],
+            tableName: 'relations'
         }
     );
     return Relation;

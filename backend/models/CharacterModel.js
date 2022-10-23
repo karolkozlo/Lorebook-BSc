@@ -46,6 +46,7 @@ const Character = (sequelize, DataTypes) => {
             modelName: 'Character',
             timestamps: false,
             underscored: true,
+            tableName: 'characters'
         }
     );
     return Character;

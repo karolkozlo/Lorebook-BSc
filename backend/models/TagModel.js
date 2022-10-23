@@ -30,6 +30,7 @@ const Tag = (sequelize, DataTypes) => {
             modelName: 'Tag',
             timestamps: false,
             underscored: true,
+            tableName: 'tags'
         }
     );
     return Tag;

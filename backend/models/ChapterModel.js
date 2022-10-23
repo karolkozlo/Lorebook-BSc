@@ -41,6 +41,7 @@ const Chapter = (sequelize, DataTypes) => {
             modelName: 'Chapter',
             timestamps: false,
             underscored: true,
+            tableName: 'chapters'
         }
     );
     return Chapter;

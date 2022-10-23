@@ -49,6 +49,7 @@ const Universe = (sequelize, DataTypes) => {
             modelName: 'Universe',
             timestamps: false,
             underscored: true,
+            tableName: 'universes'
         }
     );
     return Universe;
