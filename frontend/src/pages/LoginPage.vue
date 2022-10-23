@@ -23,7 +23,6 @@
         </div>
       </div>
       <lb-spinner v-if="loading" size="70px" thickness="10px"></lb-spinner>
-      <lb-popup-box v-if="isErrorOpen" :isOpen="isErrorOpen" title="Error" :message="resultMessage" :variant="resultType" @close="closeError"></lb-popup-box>
     </div>
   </div>
 </template>
@@ -31,7 +30,6 @@
 <script>
 import LbInput from "../components/LbInput.vue";
 import { loginUser } from "@/httpLayers/login.http.js";
-import LbPopupBox from '../components/LbPopupBox.vue';
 import { mapMutations, mapActions } from 'vuex';
 import LbSearchSelect from '../components/LbSearchSelect.vue';
 
@@ -39,7 +37,6 @@ export default {
   name: "LoginPage",
   components: {
     LbInput,
-    LbPopupBox,
     LbSearchSelect,
   },
   data() {
@@ -53,9 +50,6 @@ export default {
         errorMsg: ''
       },
       loading: false,
-      isErrorOpen: false,
-      resultMessage: '',
-      resultType: 'negative',
     };
   },
   computed: {
@@ -75,6 +69,7 @@ export default {
   methods: {
     ...mapMutations(['setUser']),
     ...mapActions('universe', ['fetchUserUniverses']),
+    ...mapMutations('notifications', ['notify']),
     setUsername(newValue) {
       this.username.value = newValue;
       this.username.errorMsg = '';
@@ -91,10 +86,6 @@ export default {
       }
       return false;
     },
-    closeError() {
-      this.isErrorOpen = false;
-      this.resultMessage = '';
-    },
     async logIn() {
       this.loading = true;
       let start = Date.now();
@@ -104,8 +95,7 @@ export default {
           result = await loginUser(this.username.value, this.password.value);
         } catch(err) {
           this.loading = false;
-          this.isErrorOpen = true;
-          this.resultMessage = err.message;
+          this.notify({type: 'negative', message: err.message});
         }
         if(result) {
           let timeRemaining = Date.now() - start;
