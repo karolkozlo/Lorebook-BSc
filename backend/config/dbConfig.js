@@ -1,7 +1,14 @@
 export const dbConfig = {
-    HOST: 'lorebook-db.cqtsbw4id9qa.eu-central-1.rds.amazonaws.com',
-    USER: 'admin',
-    PASSWORD: 'MySQLAdmin1',
+    production: {
+        HOST: process.env.DB_HOST,
+        USER: process.env.DB_USER,
+        PASSWORD: process.env.DB_PASSWORD,
+    },
+    development: {
+        HOST: 'localhost',
+        USER: 'karolkoz',
+        PASSWORD: 'ZakonMySQL1',
+    },
     DB: 'Lorebook',
     dialect: 'mysql',
     pool: {

@@ -218,7 +218,7 @@ export default {
         async init(categoryID, elementID) {
             const success = await this.fetchElement(categoryID, elementID);
             if (success) {
-                this.fetchFullContent(categoryID, elementID);
+                await this.fetchFullContent(categoryID, elementID);
             }
         }
     },
