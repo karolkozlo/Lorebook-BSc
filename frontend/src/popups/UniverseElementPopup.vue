@@ -196,6 +196,9 @@ export default {
       } catch(error) {
         this.notify({ type: 'negative', message: error.message });
       }
+    },
+    unmounted() {
+        this.closeUniverseElementPopup();
     }
 }
 </script>

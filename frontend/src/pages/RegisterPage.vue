@@ -34,7 +34,6 @@
         </div>
       </div>
       <lb-spinner v-if="loading" size="70px" thickness="10px"></lb-spinner>
-      <lb-popup-box :isOpen="isPopupOpen" :title="resultTitle" :message="resultMessage" @close="closePopup"></lb-popup-box>
     </div>
   </div>
 </template>
@@ -70,10 +69,6 @@ export default {
         errorMsg: ''
       },
       loading: false,
-      isPopupOpen: false,
-      resultTitle: '',
-      resultMessage: '',
-      resultType: ''
     };
   },
   computed: {
@@ -144,6 +139,10 @@ export default {
         this.loading = true;
         try {
           registeredUser = await registerUser(this.username.value, this.password.value, this.email.value);
+          if (registeredUser) {
+            this.notify({type: 'positive', message: 'User Created'});
+            this.$router.push('/login');
+          }
         } catch(err) {
             switch(err.path) {
               case 'password':
@@ -156,17 +155,12 @@ export default {
                 this.username.errorMsg = err.message;
               break;
               default:
-                this.resultTitle = 'Error';
-                this.resultMessage = err.message;
-                this.resultType = 'negative';
-                this.isPopupOpen = true;
+                this.notify({type: 'negative', message: err.message});
               break;
             }
+        } finally {
+          this.loading = false;
         }
-        if(registeredUser) {
-          this.notify({type: 'positive', message: 'User Created'});
-        }
-        this.loading = false;
       }
     },
   },

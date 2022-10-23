@@ -45,7 +45,8 @@ async function findUniverseStoryList(universeID) {
         const storyList = await db.sequelize.query(`
         SELECT s.id, s.title, s.description, COUNT(c.id) as chapterCount
         FROM stories s
-        LEFT JOIN chapters c ON c.Story_id = s.id AND s.Universe_id = :universeID
+        LEFT JOIN chapters c ON c.Story_id = s.id
+        WHERE s.Universe_id = :universeID
         GROUP BY s.id;`,
         {
             type: db.sequelize.QueryTypes.SELECT,

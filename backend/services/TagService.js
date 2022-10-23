@@ -117,8 +117,8 @@ async function searchTagList(universeID, expr, limit, offset) {
         SELECT COUNT(id) as totalCount FROM
         (SELECT t.id
         FROM tags t
-        LEFT JOIN tag_content tc ON t.id = tc.Tag_id AND t.Universe_id = :universeID
-        WHERE t.name REGEXP(:expr)
+        LEFT JOIN tag_content tc ON t.id = tc.Tag_id
+        WHERE t.name REGEXP(:expr) AND t.Universe_id = :universeID
         GROUP BY t.id) searchCount;`,
         {
             type: QueryTypes.SELECT,
@@ -131,8 +131,8 @@ async function searchTagList(universeID, expr, limit, offset) {
         const rows = await db.sequelize.query(`
         SELECT t.id, t.name, COUNT(tc.Tag_id) as elementCount
         FROM tags t
-        LEFT JOIN tag_content tc ON t.id = tc.Tag_id AND t.Universe_id = :universeID
-        WHERE t.name REGEXP(:expr)
+        LEFT JOIN tag_content tc ON t.id = tc.Tag_id
+        WHERE t.name REGEXP(:expr) AND t.Universe_id = :universeID
         GROUP BY t.id
         ORDER BY elementCount DESC
         LIMIT :limit

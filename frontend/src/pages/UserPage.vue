@@ -13,10 +13,10 @@
             <div class="account-section__data-row">
                 <span class="account-section__data-name">Username: </span>
                 <span class="account-section__data-value">{{ username }}</span>
-                <lb-button icon="lb-edit" :size="1.2"></lb-button>
+                <lb-button icon="lb-edit" :size="1.2" :disabled="true"></lb-button>
             </div>
             <div class="account-section__data-row">
-                <lb-button icon="lb-edit" :size="1.3">Change password</lb-button>
+                <lb-button icon="lb-edit" :size="1.3" :disabled="true">Change password</lb-button>
             </div>
         </div>
     </section>
@@ -92,7 +92,7 @@ export default {
       try {
         this.universes = await getUserUniverseList(this.userID);
       } catch (error) {
-        console.error(error.message);
+        this.notify({type: 'negative', message: `Error: ${error.message}`});
       }
     },
     async deleteUniverse(universeID, universeName) {

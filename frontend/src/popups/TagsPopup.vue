@@ -193,6 +193,9 @@ export default {
   },
   async mounted() {
     await this.fetchTagList('', 1);
+  },
+  unmounted() {
+    this.closeTagsPopup();
   }
 }
 </script>

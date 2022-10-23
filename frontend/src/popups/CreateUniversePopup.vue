@@ -88,6 +88,9 @@ export default {
         this.description = '';
         this.$emit('close');
     }
+  },
+  unmounted() {
+    this.close();
   }
 
 };
