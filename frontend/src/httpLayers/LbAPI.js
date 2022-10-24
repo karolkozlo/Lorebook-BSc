@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const env = {
-  production: 'https://ec2-35-158-239-89.eu-central-1.compute.amazonaws.com/api',
+  production: 'https://lorebook-server-j28lc.ondigitalocean.app/api',
   development: 'http://localhost:8080/api'
 };
 
