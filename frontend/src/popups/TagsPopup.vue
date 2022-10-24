@@ -175,7 +175,7 @@ export default {
         this.tagList.find(t => t.id == this.selectedTag).name = this.tagName;
         this.selectedTag = null;
         this.tagName = '';
-      } catch (erorr) {
+      } catch (error) {
         this.tagNameError = error.message;
       } finally {
         this.renameLoading = false;
@@ -186,7 +186,7 @@ export default {
         await deleteTag(id);
         this.tagList = this.tagList.filter(t => (t.id !== id));
         await this.fetchTagList(this.searchText, this.currentPage);
-      } catch (erorr) {
+      } catch (error) {
         this.notify({ type: 'negative', message: error.message });
       }
     }
