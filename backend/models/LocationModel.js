@@ -49,6 +49,7 @@ const Location = (sequelize, DataTypes) => {
             modelName: 'Location',
             timestamps: false,
             underscored: true,
+            tableName: 'locations'
         }
     );
     return Location;

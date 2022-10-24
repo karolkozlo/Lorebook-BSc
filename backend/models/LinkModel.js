@@ -47,7 +47,7 @@ const Link = (sequelize, DataTypes) => {
             timestamps: false,
             underscored: true,
             freezeTableName: true,
-            tableName: 'Links',
+            tableName: 'links',
         }
     );
     return Link;

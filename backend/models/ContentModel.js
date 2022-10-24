@@ -59,6 +59,7 @@ const Content = (sequelize, DataTypes) => {
             modelName: 'Content',
             timestamps: false,
             underscored: true,
+            tableName: 'contents'
         }
     );
     return Content;

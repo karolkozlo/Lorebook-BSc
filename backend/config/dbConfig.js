@@ -1,7 +1,14 @@
 export const dbConfig = {
-    HOST: 'localhost',
-    USER: 'karolkoz',
-    PASSWORD: 'ZakonMySQL1',
+    production: {
+        HOST: process.env.DB_HOST,
+        USER: process.env.DB_USER,
+        PASSWORD: process.env.DB_PASSWORD,
+    },
+    development: {
+        HOST: 'localhost',
+        USER: 'karolkoz',
+        PASSWORD: 'ZakonMySQL1',
+    },
     DB: 'Lorebook',
     dialect: 'mysql',
     pool: {

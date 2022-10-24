@@ -23,12 +23,14 @@ import LinkGroup from "./LinkGroupModel.js";
 import ImageGroup from "./ImageGroupModel.js";
 import Link from "./LinkModel.js";
 
+const env = process.env.NODE_ENV ? process.env.NODE_ENV : 'development';
+
 const sequelize = new Sequelize(
     dbConfig.DB,
-    dbConfig.USER,
-    dbConfig.PASSWORD,
+    dbConfig[env].USER,
+    dbConfig[env].PASSWORD,
     {
-        host: dbConfig.HOST,
+        host: dbConfig[env].HOST,
         dialect: dbConfig.dialect,
         operatorsAliases: false,
         pool: {

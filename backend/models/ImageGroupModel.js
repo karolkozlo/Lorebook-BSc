@@ -27,7 +27,7 @@ const ImageGroup = (sequelize, DataTypes) => {
             timestamps: false,
             underscored: true,
             freezeTableName: true,
-            tableName: 'Image_groups',
+            tableName: 'image_groups',
         }
     );
     return ImageGroup;

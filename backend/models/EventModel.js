@@ -61,6 +61,7 @@ const Event = (sequelize, DataTypes) => {
             modelName: 'Event',
             timestamps: false,
             underscored: true,
+            tableName: 'events'
         }
     );
     return Event;
