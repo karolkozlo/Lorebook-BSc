@@ -114,7 +114,7 @@ async function findSearchedElements(universeID, queryText, categories, tags, lim
                     .map(cat => {
                         const id = mapCategoryToID(cat);
                         return `(SELECT DISTINCT e.id, e.name, e.last_modified, "${cat}" as Category_id, "${cat}" as categoryName
-                        FROM ${cat} e
+                        FROM ${cat.toLowerCase()} e
                         ${queryTags(tags, id)}
                         WHERE e.Universe_id = :universeID ${regexAND})`
                     });
