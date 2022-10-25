@@ -1,7 +1,7 @@
 import { db } from '../models/index.js';
 import { NotFoundException } from "../errors.js";
 import { Sequelize } from "sequelize";
-import { applyPatch } from "diff";
+import { applyPatch, parsePatch } from "diff";
 
 async function updateStoryOrder(storyID, ordinalNumber, changeNumber) {
     try {
@@ -136,7 +136,7 @@ async function updateChapter(id, updatedFields) {
 
         if(updatedFields.textPatch) {
             let chapterToUpdate = await db.Chapter.findByPk(id);
-            let newText = applyPatch(JSON.stringify(chapterToUpdate.text), updatedFields.textPatch);
+            let newText = applyPatch(JSON.stringify(chapterToUpdate.text), parsePatch(updatedFields.textPatch), { fuzzFactor: 99999});
             subsetFields.text = JSON.parse(newText);
         }
 
