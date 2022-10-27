@@ -11,14 +11,14 @@
                    v-model="editedValue"
                    :maxlength="maxLength"
                    ref="input"
-                   @keydown.ctrl.prevent.stop="saveWithShortcut">
+                   @keydown.ctrl.stop="saveWithShortcut">
             <textarea v-show="active && type == 'textarea'"
                       class="lb-editable-text__input"
                       v-model="editedValue"
                       :maxlength="maxLength"
                       ref="textarea"
                       :style="`min-height: ${minHeight}px;`"
-                      @keydown.ctrl.prevent.stop="saveWithShortcut"/>
+                      @keydown.ctrl.stop="saveWithShortcut"/>
         <div class="lb-editable-text__save-button" v-if="active">
             <icon icon="lb-ok-circle-fill" :size="1.22" @click="save"></icon>
         </div>
@@ -100,10 +100,10 @@ export default {
             this.active = false;
         },
         saveWithShortcut(e) {
-            if (!(e.keyCode === 83 && e.ctrlKey)) {
-                return;
+            if (e.keyCode === 83 && e.ctrlKey) {
+                e.preventDefault();
+                this.save();
             }
-            this.save();
         }
     },
     watch: {

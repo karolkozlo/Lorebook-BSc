@@ -15,7 +15,8 @@
                     :value="password.value"
                     @update:value="setPassword"
                     :maxLength="60"
-                    :error="password.errorMsg"/>
+                    :error="password.errorMsg"
+                    @keydown="handleEnterPress"/>
         </div>
         <div class="login-page__bottom">
           <router-link to="/register" class="login-page__link">Don't have an account? Sign Up</router-link>
@@ -116,6 +117,12 @@ export default {
       }
       this.loading = false;
     },
+    async handleEnterPress(event) {
+      if (event.key == 'Enter') {
+        event.preventDefault();
+        await this.logIn();
+      }
+    }
   },
 };
 </script>
