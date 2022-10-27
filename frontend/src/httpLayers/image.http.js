@@ -41,7 +41,26 @@ async function deleteImageGroup(id, contentID) {
       });
 };
 
+async function updateImageGroup(id, fields, contentID) {
+    return await LbAPI
+        .patch(`/image_groups/${id}/content/${contentID}`, fields)
+        .then(() => {
+            return true;
+        })
+        .catch((error) => {
+            if (error.response && error.response.data.message) {
+                const err = new Error(`${error.response.data.message}`);
+                throw err;
+            } else if (error.request) {
+                throw new Error("Service refused connection");
+            } else {
+                throw new Error("Undefined error");
+            }
+        });
+  };
+
 export {
   createImageGroup,
-  deleteImageGroup
+  deleteImageGroup,
+  updateImageGroup
 };

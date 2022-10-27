@@ -6,7 +6,7 @@
       <button class="rich-editor__menu-btn rich-editor__menu-btn--underline" @click="underline">U</button>
       <lb-button class="rich-editor__save-btn" variant="positive" :size="1.1" :loading="saveLoading" @click="$emit('save')">Save</lb-button>
     </div>
-    <editor-content class="rich-editor__content" :editor="editor" @keydown.ctrl.prevent.stop="saveWithShortcut" />
+    <editor-content class="rich-editor__content" :editor="editor" @keydown.ctrl.stop="saveWithShortcut" />
   </div>
 </template>
 
@@ -55,10 +55,10 @@ export default {
       this.editor.chain().focus().toggleUnderline().run();
     },
     saveWithShortcut(e) {
-      if (!(e.keyCode === 83 && e.ctrlKey)) {
-        return;
+      if (e.keyCode === 83 && e.ctrlKey) {
+        e.preventDefault();
+        this.$emit('save');
       }
-      this.$emit('save');
     }
   },
   watch: {
