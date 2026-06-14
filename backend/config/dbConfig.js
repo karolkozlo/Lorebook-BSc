@@ -5,11 +5,12 @@ export const dbConfig = {
         PASSWORD: process.env.DB_PASSWORD,
     },
     development: {
-        HOST: 'localhost',
-        USER: 'karolkoz',
-        PASSWORD: 'ZakonMySQL1',
+        HOST: process.env.DB_HOST,
+        USER: process.env.DB_USER,
+        PASSWORD: process.env.DB_PASSWORD,
     },
-    DB: 'Lorebook',
+    DB: process.env.DB_NAME,
+    PORT: process.env.DB_PORT,
     dialect: 'mysql',
     pool: {
         max: 5,

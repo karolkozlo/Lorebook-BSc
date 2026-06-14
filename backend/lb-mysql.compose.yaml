@@ -1,0 +1,24 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: lorebook-mysql
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-Lorebook}
+      MYSQL_USER: ${DB_USER:-lorebook}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-lorebook123}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - lorebook_mysql_data:/var/lib/mysql
+      # lbDatabase.sql lives at the repo root; MySQL auto-runs it on first init only.
+      - ../lbDatabase.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+
+volumes:
+  lorebook_mysql_data:
